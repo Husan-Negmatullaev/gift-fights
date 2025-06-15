@@ -1,0 +1,33 @@
+@import './_fonts';
+@import 'tailwindcss';
+
+@theme {
+  --font-sans-francisco-pro: 'SF Pro Display', sans-serif;
+
+  --radius-2.5: 0.625rem;
+
+  --radius-4.5xl: 2.125rem;
+
+  --color-*: initial;
+  --color-dark-blue: #1d232a;
+  --color-dark-blue-50: #252e37;
+  --color-dark-blue-100: #202731;
+  --color-dark-blue-150: #1e3345;
+
+  --color-blue: #0098ea;
+  --color-blue-50: #2d83ec;
+  --color-blue-100: #1ac9ff;
+
+  --color-white: #fff;
+}
+
+@layer base {
+  html,
+  body {
+    @apply h-full font-sans-francisco-pro bg-dark-blue text-white;
+  }
+
+  #root {
+    @apply min-h-full grid grid-rows-1;
+  }
+}
