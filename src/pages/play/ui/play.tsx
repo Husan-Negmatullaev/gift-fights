@@ -14,12 +14,12 @@ export const Play = () => {
         <div className="bg-linear-90 from-blue-50 to-blue-100 p-4 rounded-xl rounded-tr-4.5xl">
           <img
             alt="to the moon rocket"
-            src="/public/assets/images/play/to-the-moon-rocket.webp"
+            src="/assets/images/play/to-the-moon-rocket.webp"
             className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
           />
           <img
             alt="telegram cap"
-            src="/public/assets/images/play/cap.webp"
+            src="/assets/images/play/cap.webp"
             className="pointer-events-none w-37.5 absolute -top-10 -right-3"
           />
 
@@ -46,13 +46,13 @@ export const Play = () => {
         <div className="bg-linear-90 from-blue-50 to-blue-100 p-4 rounded-xl rounded-tr-4.5xl">
           <img
             alt="octopus"
-            src="/public/assets/images/play/octopus.webp"
+            src="/assets/images/play/octopus.webp"
             className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
           />
           <img
             alt="telegram cap"
             className="pointer-events-none h-52 absolute -top-21 -right-2"
-            src="/public/assets/images/play/froggy.webp"
+            src="/assets/images/play/froggy.webp"
           />
           <h2 className="font-medium text-[1.125rem]/5 max-w-50 mb-12.5 relative">
             Подключайтесь к лобби и обыгрывайте их !
@@ -75,13 +75,13 @@ export const Play = () => {
         <div className="bg-linear-90 from-blue-50 to-blue-100 p-4 rounded-xl rounded-tr-4.5xl">
           <img
             alt="telegram"
-            src="/public/assets/images/play/telegram.webp"
+            src="/assets/images/play/telegram.webp"
             className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
           />
           <img
             alt="telegram cap"
             className="pointer-events-none w-40 absolute -top-9 -right-2"
-            src="/public/assets/images/play/ton-plus.webp"
+            src="/assets/images/play/ton-plus.webp"
           />
           <h2 className="font-medium text-[1.125rem]/5 max-w-50 mb-12.5 relative">
             Пополните баланс и ворвитесь в битвы !
