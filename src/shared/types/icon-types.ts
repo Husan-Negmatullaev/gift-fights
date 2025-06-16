@@ -5,6 +5,7 @@ export type IconNamesType =
   | 'plus'
   | 'user'
   | 'rocket'
+  | 'check'
   | 'trophy'
   | 'user-group';
 

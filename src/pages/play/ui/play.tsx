@@ -5,6 +5,8 @@ linear-gradient(90deg, #2D83EC 0%, #1AC9FF 100%);
 
 */
 
+import { Link } from 'react-router';
+
 export const Play = () => {
   return (
     <section className="px-3 py-8 grid gap-9">
@@ -12,13 +14,13 @@ export const Play = () => {
         <div className="bg-linear-90 from-blue-50 to-blue-100 p-4 rounded-xl rounded-tr-4.5xl">
           <img
             alt="to the moon rocket"
-            className="absolute top-0 left-0 h-37.5 w-77"
             src="/public/assets/images/play/to-the-moon-rocket.webp"
+            className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
           />
           <img
             alt="telegram cap"
-            className="w-37.5 absolute -top-10 -right-3"
             src="/public/assets/images/play/cap.webp"
+            className="pointer-events-none w-37.5 absolute -top-10 -right-3"
           />
 
           <h2 className="font-medium text-[1.125rem]/5 max-w-50 mb-12.5 relative">
@@ -30,11 +32,12 @@ export const Play = () => {
               игроки
             </p>
 
-            <button
-              type="button"
-              className="basis-29 cursor-pointer min-h-7.5 px-3 bg-white text-blue text-xs/3.5 font-medium rounded-lg">
+            <Link
+              // type="button"
+              to="/create-lobby"
+              className="grid place-items-center basis-29 cursor-pointer min-h-7.5 px-3 bg-white text-blue text-xs/3.5 font-medium rounded-lg">
               Создать
-            </button>
+            </Link>
           </div>
         </div>
       </article>
@@ -43,12 +46,12 @@ export const Play = () => {
         <div className="bg-linear-90 from-blue-50 to-blue-100 p-4 rounded-xl rounded-tr-4.5xl">
           <img
             alt="octopus"
-            className="absolute top-0 left-0 h-37.5 w-77"
             src="/public/assets/images/play/octopus.webp"
+            className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
           />
           <img
             alt="telegram cap"
-            className="h-52 absolute -top-21 -right-2"
+            className="pointer-events-none h-52 absolute -top-21 -right-2"
             src="/public/assets/images/play/froggy.webp"
           />
           <h2 className="font-medium text-[1.125rem]/5 max-w-50 mb-12.5 relative">
@@ -72,12 +75,12 @@ export const Play = () => {
         <div className="bg-linear-90 from-blue-50 to-blue-100 p-4 rounded-xl rounded-tr-4.5xl">
           <img
             alt="telegram"
-            className="absolute top-0 left-0 h-37.5 w-77"
             src="/public/assets/images/play/telegram.webp"
+            className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
           />
           <img
             alt="telegram cap"
-            className="w-40 absolute -top-9 -right-2"
+            className="pointer-events-none w-40 absolute -top-9 -right-2"
             src="/public/assets/images/play/ton-plus.webp"
           />
           <h2 className="font-medium text-[1.125rem]/5 max-w-50 mb-12.5 relative">

@@ -5,7 +5,6 @@
   --font-sans-francisco-pro: 'SF Pro Display', sans-serif;
 
   --radius-2.5: 0.625rem;
-
   --radius-4.5xl: 2.125rem;
 
   --color-*: initial;
@@ -13,12 +12,22 @@
   --color-dark-blue-50: #252e37;
   --color-dark-blue-100: #202731;
   --color-dark-blue-150: #1e3345;
+  --color-dark-blue-200: #1d242b;
+  --color-dark-blue-250: #415161;
 
   --color-blue: #0098ea;
   --color-blue-50: #2d83ec;
   --color-blue-100: #1ac9ff;
+  --color-blue-150: #1fb8fa;
+  --color-blue-200: #1dbcfc;
+
+  --color-gray: #5c5c5c;
+  --color-gray-50: #d9d9d9;
 
   --color-white: #fff;
+
+  --text-tiny: 0.625rem;
+  --text-tiny--line-height: 1.5;
 }
 
 @layer base {

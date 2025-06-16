@@ -1,3 +1,4 @@
+import { CreateLobby } from '@/pages/create-lobby';
 import { Leaders } from '@/pages/leaders';
 import { Play } from '@/pages/play';
 import { Profile } from '@/pages/profile';
@@ -20,6 +21,10 @@ export const BROWSER_ROUTERS = createBrowserRouter([
       {
         path: 'profile',
         Component: Profile,
+      },
+      {
+        path: 'create-lobby',
+        Component: CreateLobby,
       },
     ],
   },
