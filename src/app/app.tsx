@@ -5,6 +5,8 @@ import './styles/index.css';
 initTelegram();
 
 function App() {
+  // useEffect(() => initTelegram(), []);
+
   return <AppRouterProvider />;
 }
 
