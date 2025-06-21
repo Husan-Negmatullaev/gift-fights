@@ -27,10 +27,9 @@ export const Inventory = () => {
     },
   });
   const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+  const handleToggleModal = () => setOpen((prev) => !prev);
 
   const [open, setOpen] = useState(false);
-
-  const handleToggleModal = () => setOpen((prev) => !prev);
 
   return (
     <div className="pb-16">
