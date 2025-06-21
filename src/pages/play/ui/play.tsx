@@ -1,11 +1,6 @@
-/*
-
-background: linear-gradient(117.99deg, #0098EA -37.02%, #252E37 78.41%),
-linear-gradient(90deg, #2D83EC 0%, #1AC9FF 100%);
-
-*/
-
+import { AppLottie } from '@/shared/components/lottie/app-lottie';
 import { Link } from 'react-router';
+import Cap from '@/shared/assets/lottie/cap.json';
 
 export const Play = () => {
   return (
@@ -67,11 +62,15 @@ export const Play = () => {
             </Link>
           </div>
         </div>
-        <img
+        <AppLottie
+          animation={Cap}
+          className="pointer-events-none h-52 absolute -top-13.5 -right-9.5"
+        />
+        {/* <img
           alt="telegram cap"
           src="/assets/images/play/cap.webp"
           className="pointer-events-none w-37.5 absolute -top-10 -right-3"
-        />
+        /> */}
       </article>
 
       <article className="relative bg-linear-117 from-blue -from-37% to-dark-blue-50 to-78% rounded-xl rounded-tr-4.5xl text-white">
@@ -89,11 +88,11 @@ export const Play = () => {
               Вы подключаетесь уже к готовому лобби в котором уже кто то есть
             </p>
 
-            <button
-              type="button"
-              className="basis-29 cursor-pointer min-h-7.5 px-3 bg-white text-blue text-xs/3.5 font-medium rounded-lg">
+            <Link
+              to="/fight"
+              className="grid place-items-center basis-29 cursor-pointer min-h-7.5 px-3 bg-white text-blue text-xs/3.5 font-medium rounded-lg">
               Позвать друга
-            </button>
+            </Link>
           </div>
         </div>
         <img

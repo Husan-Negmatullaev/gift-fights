@@ -2,8 +2,13 @@ import { GiftHeaderCard } from '@/entities/gift';
 import { YourGifts } from '@/features/your-gifts';
 import { BlockTimer } from '@/shared/components/block-timer/block-timer';
 import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
+import { useNavigate } from 'react-router';
 
 export const LobbyPlayers = () => {
+  const navigate = useNavigate();
+
+  const handleNavigateToSpin = () => navigate('/spin');
+
   return (
     <div>
       <div className="pt-2 pb-4 px-6 flex items-center gap-2 justify-between">
@@ -37,7 +42,11 @@ export const LobbyPlayers = () => {
       </div>
 
       <div className="grid gap-6 px-6 pb-5">
-        <BottomButton className="w-full" content={'Поделиться лобби'} />
+        <BottomButton
+          className="w-full"
+          content={'Поделиться лобби'}
+          onClick={handleNavigateToSpin}
+        />
 
         <YourGifts />
       </div>

@@ -29,8 +29,6 @@ export const CreateLobbyForm = (props: CreateLobbyFormProps) => {
 
   return (
     <form className={className}>
-      <h1 className="font-bold text-xl text-white mb-7">Создание лобби</h1>
-
       <div className="grid gap-3 mb-8">
         <Input
           type="number"

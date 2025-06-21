@@ -1,5 +1,6 @@
 import { Icons } from '@/shared/ui/icons/icons';
 import clsx from 'clsx';
+import { Link } from 'react-router';
 
 type LobbyBattleProps = {
   min: number | null;
@@ -22,7 +23,7 @@ export const LobbyBattle = (props: LobbyBattleProps) => {
           <Icons name="user-group" width={20} height={20} />
         </div>
       </div>
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(52px,1fr))] gap-1 mb-3.5">
+      <div className="grid grid-flow-row grid-cols-[repeat(auto-fill,minmax(52px,52px))] auto-rows-[52px] gap-1 mb-3.5">
         {Array.from({ length: 6 }).map((_item, index) => {
           const isImage = index === 0 || index === 1;
 
@@ -61,12 +62,12 @@ export const LobbyBattle = (props: LobbyBattleProps) => {
           </div>
         </div>
 
-        <button
-          type="button"
+        <Link
+          to="/lobby-players/1"
           disabled={disabled}
-          className="block cursor-pointer rounded-four bg-blue text-xs font-medium min-h-7 px-3 disabled:bg-dark-blue-400 disabled:text-white/30 disabled:cursor-not-allowed">
+          className="grid place-content-center cursor-pointer rounded-four bg-blue text-xs font-medium min-h-7 px-3 disabled:bg-dark-blue-400 disabled:text-white/30 disabled:cursor-not-allowed">
           Подключится
-        </button>
+        </Link>
       </div>
 
       <span className="font-thin text-tiny">
