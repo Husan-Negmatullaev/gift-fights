@@ -74,7 +74,7 @@
   }
 
   #root {
-    @apply min-h-full overflow-hidden flex [&>main]:flex-1;
+    @apply min-h-full overflow-hidden flex [&>main]:flex-1 pt-safe-app-top;
   }
 
   input[type='number']::-webkit-inner-spin-button,
