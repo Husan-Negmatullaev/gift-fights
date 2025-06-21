@@ -5,15 +5,21 @@ import Trophy from '@/shared/assets/icons/trophy.svg?react';
 import UserGroup from '@/shared/assets/icons/user-group.svg?react';
 import User from '@/shared/assets/icons/user.svg?react';
 import Check from '@/shared/assets/icons/check.svg?react';
+import Question from '@/shared/assets/icons/question.svg?react';
+import Box from '@/shared/assets/icons/box.svg?react';
+import Cross from '@/shared/assets/icons/cross.svg?react';
 
 import type { IconComponentType, IconNamesType } from '../types/icon-types';
 
 export const ICON_COMPONENTS: Record<IconNamesType, IconComponentType> = {
-  user: User,
+  box: Box,
   ton: Ton,
+  user: User,
   plus: Plus,
-  trophy: Trophy,
-  rocket: Rocket,
   check: Check,
+  cross: Cross,
+  rocket: Rocket,
+  trophy: Trophy,
+  question: Question,
   'user-group': UserGroup,
 };

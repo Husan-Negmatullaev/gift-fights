@@ -1,6 +1,30 @@
+import type { IconNamesType } from '@/shared/types/icon-types';
 import { Icons } from '@/shared/ui/icons/icons';
 import clsx from 'clsx';
 import { NavLink, type NavLinkRenderProps } from 'react-router';
+
+const navList: Array<{ icon: IconNamesType; text: string; path: string }> = [
+  {
+    icon: 'trophy',
+    text: 'Лидеры',
+    path: '/leaders',
+  },
+  {
+    path: '/',
+    icon: 'rocket',
+    text: 'Играть',
+  },
+  {
+    icon: 'box',
+    path: '/inventory',
+    text: 'Инвентарь',
+  },
+  {
+    icon: 'user',
+    path: '/profile',
+    text: 'Профиль',
+  },
+];
 
 export const NavBar = () => {
   const setNavLinkClassName = (props: NavLinkRenderProps) => {
@@ -13,25 +37,15 @@ export const NavBar = () => {
 
   return (
     <nav className="grid items-center justify-center fixed left-0 bottom-0 min-h-21 w-full bg-dark-blue-50">
-      <ul className="max-w-76.5 grid grid-flow-col auto-cols-[68px] gap-12.5">
-        <li>
-          <NavLink to="/leaders" className={setNavLinkClassName}>
-            <Icons name="trophy" width={32} height={32} />
-            <span className="text-xs/3">Лидеры</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/" className={setNavLinkClassName}>
-            <Icons name="rocket" width={32} height={32} />
-            <span className="text-xs/3">Играть</span>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/profile" className={setNavLinkClassName}>
-            <Icons name="user" width={32} height={32} />
-            <span className="text-xs/3">Профиль</span>
-          </NavLink>
-        </li>
+      <ul className="grid grid-flow-col auto-cols-[68px] gap-6">
+        {navList.map((item) => (
+          <li key={item.path}>
+            <NavLink to={item.path} className={setNavLinkClassName}>
+              <Icons name={item.icon} width={32} height={32} />
+              <span className="text-xs/3">{item.text}</span>
+            </NavLink>
+          </li>
+        ))}
       </ul>
     </nav>
   );

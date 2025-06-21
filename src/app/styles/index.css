@@ -4,7 +4,10 @@
 @theme {
   --font-sans-francisco-pro: 'SF Pro Display', sans-serif;
 
+  --radius-four: 0.25rem;
+  --radius-two: 0.125rem;
   --radius-2.5: 0.625rem;
+  --radius-2.5xl: 1.25rem;
   --radius-4.5xl: 2.125rem;
 
   --color-*: initial;
@@ -14,6 +17,17 @@
   --color-dark-blue-150: #1e3345;
   --color-dark-blue-200: #1d242b;
   --color-dark-blue-250: #415161;
+  --color-dark-blue-300: #12171c;
+  --color-dark-blue-350: #003241;
+  --color-dark-blue-400: #0f1924;
+  --color-dark-blue-450: #323d48;
+  --color-dark-blue-500: #1d3e5b;
+  --color-dark-blue-550: #1d252d;
+  --color-dark-blue-600: #1f262d;
+  --color-dark-blue-650: #2d445c;
+  --color-dark-blue-700: #002031;
+  --color-dark-blue-750: #215d8a;
+  --color-dark-blue-800: #243240;
 
   --color-blue: #0098ea;
   --color-blue-50: #2d83ec;
@@ -25,9 +39,27 @@
   --color-gray-50: #d9d9d9;
 
   --color-white: #fff;
+  --color-black: #000;
+
+  --color-green: #00fb36;
+
+  --color-red: #fb0000;
+  --color-red-50: #ff1a1a;
+  --color-red-100: #ea0000;
+  --color-red-150: #ec2d30;
+  --color-red-200: #981417;
 
   --text-tiny: 0.625rem;
   --text-tiny--line-height: 1.5;
+
+  --text-nine: 0.563rem;
+  --text-nine--line-height: 1.2;
+
+  --text-eight: 0.5rem;
+  --text-eight--line-height: 1.2;
+
+  --text-six: 0.375rem;
+  --text-six--line-height: 1.2;
 }
 
 @layer base {
@@ -37,6 +69,12 @@
   }
 
   #root {
-    @apply min-h-full grid grid-rows-1;
+    @apply min-h-full overflow-hidden flex [&>main]:flex-1;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 }

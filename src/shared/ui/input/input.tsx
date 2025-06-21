@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useId, type ComponentPropsWithRef, type ReactNode } from 'react';
 
 type InputProps = {
@@ -6,7 +7,7 @@ type InputProps = {
 } & ComponentPropsWithRef<'input'>;
 
 export const Input = (props: InputProps) => {
-  const { label, right, ...restProps } = props;
+  const { label, right, className, ...restProps } = props;
   const id = useId();
 
   return (
@@ -22,7 +23,10 @@ export const Input = (props: InputProps) => {
         <input
           id={id}
           {...restProps}
-          className="min-h-9.5 placeholder:text-white/30 text-xs font-thin"
+          className={clsx(
+            className,
+            'min-h-9.5 placeholder:text-white/30 text-xs font-thin',
+          )}
         />
         {right}
       </label>

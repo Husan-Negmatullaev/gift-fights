@@ -2,11 +2,14 @@ import type { ComponentPropsWithRef, FunctionComponent } from 'react';
 
 export type IconNamesType =
   | 'ton'
+  | 'box'
+  | 'cross'
   | 'plus'
   | 'user'
   | 'rocket'
   | 'check'
   | 'trophy'
+  | 'question'
   | 'user-group';
 
 export type IconComponentType = FunctionComponent<IconProps>;
