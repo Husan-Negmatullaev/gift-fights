@@ -5,7 +5,7 @@ import { Header } from './header';
 export const Layout = () => {
   return (
     <>
-      <main className="pt-15 pb-21 grid grid-rows-1">
+      <main className="pt-15 pb-21 grid grid-rows-1 mt-safe-top">
         <Outlet />
       </main>
       <Header />
