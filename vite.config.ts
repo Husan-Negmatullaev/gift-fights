@@ -6,6 +6,11 @@ import path from 'node:path';
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    port: 1337,
+    host: true,
+    allowedHosts: true,
+  },
   plugins: [
     react(),
     svgr({

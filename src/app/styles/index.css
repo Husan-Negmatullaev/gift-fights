@@ -65,6 +65,7 @@
     var(--tg-content-safe-area-inset-top) + var(--tg-safe-area-inset-top)
   );
   --spacing-safe-content-bottom: var(--tg-content-safe-area-inset-bottom);
+  --spacing-safe-area-bottom: var(--tg-safe-area-inset-bottom);
 }
 
 @layer base {

@@ -36,8 +36,8 @@ export const NavBar = () => {
   };
 
   return (
-    <nav className="grid items-center justify-center fixed left-0 bottom-0 min-h-21 w-full bg-dark-blue-50">
-      <ul className="grid grid-flow-col auto-cols-[68px] gap-6">
+    <nav className="grid items-center justify-center fixed left-0 bottom-0 min-h-21 w-full bg-dark-blue-50 py-2">
+      <ul className="grid grid-flow-col auto-cols-[68px] gap-6 pb-safe-area-bottom">
         {navList.map((item) => (
           <li key={item.path}>
             <NavLink to={item.path} className={setNavLinkClassName}>

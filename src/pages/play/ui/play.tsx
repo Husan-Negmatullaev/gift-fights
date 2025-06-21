@@ -63,6 +63,10 @@ export const Play = () => {
           </div>
         </div>
         <AppLottie
+          style={{
+            top: -54,
+            right: -178,
+          }}
           animation={Cap}
           className="pointer-events-none h-52 absolute -top-13.5 -right-9.5"
         />

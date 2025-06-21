@@ -17,6 +17,7 @@ const mockGifts = [
 ];
 
 export const Inventory = () => {
+  const [open, setOpen] = useState(false);
   const {
     register,
     handleSubmit,
@@ -26,10 +27,13 @@ export const Inventory = () => {
       gifts: [],
     },
   });
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+
   const handleToggleModal = () => setOpen((prev) => !prev);
 
-  const [open, setOpen] = useState(false);
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    console.log(data);
+    handleToggleModal();
+  };
 
   return (
     <div className="pb-16">
@@ -60,12 +64,35 @@ export const Inventory = () => {
       </div>
 
       <Modal open={open} onClose={handleToggleModal}>
-        <div className="mb-4">
-          <h2 className="mb-2">Вывод Gift’s</h2>
-          <p className="mb-4">Вы хотите вывести gift’s на сумму:</p>
+        <div className="mb-4 text-center">
+          <h2 className="mb-2 font-medium text-lg/4.5">Вывод Gift’s</h2>
+          <p className="mb-4 text-xs">Вы хотите вывести gift’s на сумму:</p>
           <span className="font-medium text-base text-blue-100">
             34,154 TON
           </span>
+        </div>
+
+        <div className="grid gap-2 justify-center grid-flow-dense auto-rows-[92px] grid-cols-[repeat(3,_92px)] mb-17">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <img
+              alt="gift"
+              key={index}
+              className="rounded-lg"
+              src="/assets/images/gifts/gift.webp"
+            />
+          ))}
+        </div>
+
+        <div className="text-center">
+          <p className="text-xs text-white/50 mb-4">
+            Комиссия будет составлять:
+          </p>
+          <BottomButton
+            withShadow
+            content="Вывести"
+            className="w-full"
+            onClick={handleToggleModal}
+          />
         </div>
       </Modal>
     </div>

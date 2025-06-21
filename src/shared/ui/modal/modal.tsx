@@ -9,7 +9,7 @@ type ModalProps = {
 };
 
 export const Modal = (props: ModalProps) => {
-  const { open, onClose } = props;
+  const { open, onClose, children } = props;
 
   return (
     <ReactModal
@@ -33,7 +33,7 @@ export const Modal = (props: ModalProps) => {
         <Icons name="cross" width={24} height={24} className="text-dark/40" />
       </button>
 
-      <></>
+      <div>{children}</div>
     </ReactModal>
   );
 };
