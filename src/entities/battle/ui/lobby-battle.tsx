@@ -63,9 +63,9 @@ export const LobbyBattle = (props: LobbyBattleProps) => {
         </div>
 
         <Link
+          aria-disabled={disabled}
           to="/lobby-players/1"
-          disabled={disabled}
-          className="grid place-content-center cursor-pointer rounded-four bg-blue text-xs font-medium min-h-7 px-3 disabled:bg-dark-blue-400 disabled:text-white/30 disabled:cursor-not-allowed">
+          className="grid place-content-center cursor-pointer rounded-four bg-blue text-xs font-medium min-h-7 px-3 aria-disabled:bg-dark-blue-400 aria-disabled:text-white/30 aria-disabled:cursor-not-allowed">
           Подключится
         </Link>
       </div>
