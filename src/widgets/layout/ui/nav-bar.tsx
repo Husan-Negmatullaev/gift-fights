@@ -10,9 +10,14 @@ const navList: Array<{ icon: IconNamesType; text: string; path: string }> = [
     path: '/leaders',
   },
   {
-    path: '/',
+    path: '/spin',
     icon: 'rocket',
     text: 'Играть',
+  },
+  {
+    path: '/',
+    icon: 'home',
+    text: 'Главная',
   },
   {
     icon: 'box',

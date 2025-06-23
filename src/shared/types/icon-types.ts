@@ -4,6 +4,7 @@ export type IconNamesType =
   | 'ton'
   | 'box'
   | 'cross'
+  | 'home'
   | 'plus'
   | 'user'
   | 'rocket'
