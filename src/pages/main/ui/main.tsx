@@ -8,7 +8,7 @@ export const Main = () => {
             src="/assets/images/play/octopus.webp"
             className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
           />
-          <div className="max-w-40.5 ">
+          <div className="max-w-48 relative">
             <h2 className="text-lg/5 font-medium mb-1.5">Прокрут Бомжа</h2>
             <p className="text-tiny mb-2">
               Делайте ставки, выигрывайте, но не превышайте сумму ставки:
@@ -37,7 +37,7 @@ export const Main = () => {
             src="/assets/images/play/octopus.webp"
             className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
           />
-          <div className="max-w-40.5 ">
+          <div className="max-w-48 relative">
             <h2 className="text-lg/5 font-medium mb-1.5">Прокрут Новичка</h2>
             <p className="text-tiny mb-2">
               Делайте ставки, выигрывайте, но не превышайте сумму ставки:
@@ -66,7 +66,7 @@ export const Main = () => {
             src="/assets/images/play/octopus.webp"
             className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
           />
-          <div className="max-w-44">
+          <div className="max-w-48 relative">
             <h2 className="text-lg/5 font-medium mb-1.5">Прокрут Инвестора</h2>
             <p className="text-tiny mb-2">
               Делайте ставки, выигрывайте, но не превышайте сумму ставки:
@@ -95,7 +95,7 @@ export const Main = () => {
             src="/assets/images/play/octopus.webp"
             className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
           />
-          <div className="max-w-40.5 ">
+          <div className="max-w-48 relative">
             <h2 className="text-lg/5 font-medium mb-1.5">Прокрут Удачи</h2>
             <p className="text-tiny mb-2">
               Делайте ставки, выигрывайте, но не превышайте сумму ставки:
@@ -124,7 +124,7 @@ export const Main = () => {
             src="/assets/images/play/octopus.webp"
             className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
           />
-          <div className="max-w-40.5 ">
+          <div className="max-w-48 relative">
             <h2 className="text-lg/5 font-medium mb-1.5">Эпический прокрут</h2>
             <p className="text-tiny mb-2">
               Делайте ставки, выигрывайте, но не превышайте сумму ставки:
@@ -153,7 +153,7 @@ export const Main = () => {
             src="/assets/images/play/octopus.webp"
             className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
           />
-          <div className="max-w-48 ">
+          <div className="max-w-48 relative">
             <h2 className="text-lg/5 font-medium mb-1.5">
               Безлимитный прокрут
             </h2>
