@@ -1,5 +1,6 @@
 @import "./_fonts";
 @import "tailwindcss";
+@tailwind utilities;
 
 @theme {
     --font-sans-francisco-pro: "SF Pro Display", sans-serif;
@@ -68,10 +69,22 @@
     --text-six--line-height: 1.2;
 
     --spacing-safe-app-top: calc(
+        var(--tg-safe-area-inset-top) + var(--tg-content-safe-area-inset-top) +
+            60px
+    );
+    --spacing-safe-app-bottom: calc(
+        var(--tg-safe-area-inset-bottom) +
+            var(--tg-content-safe-area-inset-bottom) + 84px
+    );
+
+    --spacing-header: calc(
         var(--tg-content-safe-area-inset-top) + var(--tg-safe-area-inset-top)
     );
-    --spacing-safe-content-bottom: var(--tg-content-safe-area-inset-bottom);
-    --spacing-safe-area-bottom: var(--tg-safe-area-inset-bottom);
+
+    --spacing-navbar: calc(
+        var(--tg-content-safe-area-inset-bottom) +
+            var(--tg-safe-area-inset-bottom)
+    );
 }
 
 @layer base {
@@ -81,13 +94,19 @@
     }
 
     #root {
-        @apply min-h-full overflow-hidden flex [&>main]:flex-1 pt-safe-app-top;
+        @apply min-h-full overflow-hidden flex [&>main]:flex-1;
     }
 
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
         -webkit-appearance: none;
         margin: 0;
+    }
+}
+
+@layer utilities {
+    .container-safe {
+        @apply mx-auto w-full max-w-113; /* 452px = 432px + (16px * 2) */
     }
 }
 
@@ -106,3 +125,21 @@
   --tg-content-safe-area-inset-left: 0px;
   --tg-content-safe-area-inset-right: 0px; */
 /* } */
+
+.lottie-wrapper svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    margin: 0;
+    padding: 0;
+    display: block;
+}
+
+.lottie-wrapper {
+    /* width: 150px;
+    height: 150px; */
+    overflow: hidden; /* обрежет внешний холст */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -1,11 +1,11 @@
-import clsx from 'clsx';
-import type { ComponentPropsWithRef } from 'react';
+import clsx from "clsx";
+import type { ComponentPropsWithRef } from "react";
 
 type BottomButtonProps = {
   content: string;
   className?: string;
   withShadow?: boolean;
-} & ComponentPropsWithRef<'button'>;
+} & ComponentPropsWithRef<"button">;
 
 export const BottomButton = (props: BottomButtonProps) => {
   const { content, className, withShadow, ...restProps } = props;
@@ -16,14 +16,13 @@ export const BottomButton = (props: BottomButtonProps) => {
       className={clsx(
         className,
         withShadow &&
-          'shadow-[0px_0px_19.6px_0px_--alpha(var(--color-blue-200)_/_50%)]',
-        'min-h-13.5 rounded-2xl bg-linear-360 from-blue-50 from-0% to-blue-100 to-100% cursor-pointer text-white',
-        'disabled:bg-dark-blue-700 disabled:text-white/50 disabled:shadow-none disabled:bg-linear-[none] disabled:cursor-not-allowed',
+          "shadow-[0px_0px_19.6px_0px_--alpha(var(--color-blue-200)_/_50%)]",
+        "min-h-13.5 rounded-2xl bg-linear-360 from-blue-50 from-0% to-blue-100 to-100% cursor-pointer text-white",
+        "disabled:bg-dark-blue-700 disabled:text-white/50 disabled:shadow-none disabled:bg-linear-[none] disabled:cursor-not-allowed",
       )}
-      {...restProps}>
-      {/* <div className="bg-linear-0 from-gray-50 to-gray-50"> */}
+      {...restProps}
+    >
       <span className="font-medium text-lg/5">{content}</span>
-      {/* </div> */}
     </button>
   );
 };

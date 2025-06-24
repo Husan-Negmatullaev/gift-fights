@@ -85,16 +85,16 @@ export const PlaySpin = () => {
       )}
       {!resultSpin && (
         <>
-          <header className="flex justify-between items-center">
+          <header className="flex justify-between items-center mb-3">
             <div className="basis-31.5 rounded-lg text-tiny/3 min-h-8 flex items-center justify-center gap-2 bg-dark-blue-150 text-blue-100">
               На победу <span className="font-semibold"> 41%</span>
             </div>
-            <button
+            {/* <button
               type="button"
               className="basis-31.5 rounded-lg text-tiny/3 cursor-pointer min-h-8 flex items-center justify-center bg-dark-blue-150 text-blue-100 font-semibold"
             >
               Смена лобби
-            </button>
+            </button> */}
           </header>
           <div className="mb-5">
             <SpinCarousel onResult={handleResultSpin} />

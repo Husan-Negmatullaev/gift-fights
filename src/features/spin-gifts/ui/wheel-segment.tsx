@@ -28,7 +28,7 @@ export const WheelSegment = (props: WheelSegmentProps) => {
   return (
     <div
       className={`${className} transition-all duration-500 ${
-        isActive ? "scale-110 z-10" : ""
+        isActive ? "scale-110" : ""
       }`}
       style={{
         transform: `rotate(${rotation}deg)`,
@@ -120,7 +120,6 @@ export const WheelSegment = (props: WheelSegmentProps) => {
           {Shape}
         </div>
 
-        {/* Content Overlay - oriented toward center */}
         <div
           className="absolute inset-0 flex flex-col items-center justify-center text-center p-2"
           style={{
@@ -128,48 +127,8 @@ export const WheelSegment = (props: WheelSegmentProps) => {
           }}
         >
           <Avatar className="size-7" url="/assets/images/leaders/avatar.webp" />
-          {/* Icon */}
-          {/* <div
-            className={`p-2 rounded-full mb-1 ${
-              isActive ? "bg-white/30 shadow-lg" : "bg-white/20"
-            } transition-all duration-300`}
-          >
-            <Icon
-              className={clsx(
-                isActive && "animate-pulse",
-                "w-5 h-5 text-white drop-shadow-sm",
-              )}
-            />
-          </div>
-
-          <div className="text-white text-xs font-bold leading-tight drop-shadow-md mb-1">
-            {prize.name}
-          </div>
-
-          {prize.value > 0 && (
-            <div className="text-white/90 text-xs font-semibold bg-black/20 px-2 py-0.5 rounded-full">
-              {prize.value}
-            </div>
-          )}
-
-          <div
-            className={`w-2 h-2 rounded-full mt-1 ${
-              prize.rarity === "legendary"
-                ? "bg-yellow-400 shadow-yellow-400/50"
-                : prize.rarity === "epic"
-                  ? "bg-purple-400 shadow-purple-400/50"
-                  : prize.rarity === "rare"
-                    ? "bg-blue-400 shadow-blue-400/50"
-                    : "bg-green-400 shadow-green-400/50"
-            } ${isActive ? "shadow-lg animate-ping" : "shadow-sm"}`}
-            /> */}
         </div>
       </div>
-
-      {/* Segment Number (for debugging) */}
-      {/* <div className="absolute -top-2 -right-2 w-5 h-5 bg-gray-800 text-white text-xs rounded-full flex items-center justify-center border border-gray-600 opacity-0 hover:opacity-100 transition-opacity z-20">
-        {segmentNumber}
-      </div> */}
     </div>
   );
 };

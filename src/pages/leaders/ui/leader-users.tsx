@@ -1,25 +1,28 @@
-import { Avatar } from '@/shared/ui/avatar/avatar';
-import { Icons } from '@/shared/ui/icons/icons';
+import { AppLottie } from "@/shared/components/lottie/app-lottie";
+import { Avatar } from "@/shared/ui/avatar/avatar";
+import { Icons } from "@/shared/ui/icons/icons";
+import Cap from "@/shared/assets/lottie/cap.json";
+import Froggy from "@/shared/assets/lottie/kissed-froggy.json";
 
 export const LeaderUsers = () => {
   const battleLeaders = [
     {
       left: 0,
-      username: '<username>',
-      image: '/assets/images/play/cap.webp',
-      position: { top: '45px' },
+      animation: Cap,
+      username: "<username>",
+      position: { top: "45px" },
     },
     {
       left: 40,
-      username: '<username>',
-      image: '/assets/images/play/cap.webp',
-      position: { top: '0px' },
+      animation: Cap,
+      username: "<username>",
+      position: { top: "0px" },
     },
     {
       left: 75,
-      username: '<username>',
-      image: '/assets/images/play/froggy.webp',
-      position: { top: '40px' },
+      image: Cap,
+      animation: "<username>",
+      position: { top: "40px" },
     },
   ];
 
@@ -30,7 +33,7 @@ export const LeaderUsers = () => {
       </h1>
       <div className="min-h-50 max-w-89 mx-auto relative mb-4">
         {battleLeaders.map((leader, index) => {
-          // console.log('Math.pow(50, index)', Math.pow(50, index));
+          const animation = index < 2 ? Cap : Froggy;
 
           return (
             <div
@@ -39,12 +42,18 @@ export const LeaderUsers = () => {
               style={{
                 left: `${leader.left}%`,
                 top: leader.position.top,
-              }}>
-              <div className="pb-[69%] relative">
-                <img
-                  alt="Leader"
-                  src={leader.image}
-                  className="absolute inset-0 size-full object-cover"
+              }}
+            >
+              <div style={{ width: 93, height: 80 }}>
+                <AppLottie
+                  animation={animation}
+                  style={{
+                    width: 93 * 1.8,
+                    height: 80 * 1.8,
+                    left: -35,
+                    top: -20,
+                  }}
+                  className="absolute inset-0 object-cover"
                 />
               </div>
 

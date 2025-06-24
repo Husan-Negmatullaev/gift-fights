@@ -9,11 +9,11 @@ const navList: Array<{ icon: IconNamesType; text: string; path: string }> = [
     text: "Лидеры",
     path: "/leaders",
   },
-  {
-    path: "/spin",
-    icon: "rocket",
-    text: "Играть",
-  },
+  // {
+  //   path: "/spin",
+  //   icon: "rocket",
+  //   text: "Играть",
+  // },
   {
     path: "/",
     icon: "home",
@@ -41,17 +41,19 @@ export const NavBar = () => {
   };
 
   return (
-    <nav className="grid items-center justify-center fixed left-0 bottom-0 min-h-21 w-full bg-dark-blue-50 py-2">
-      <ul className="grid grid-flow-col auto-cols-[68px] gap-2 pb-safe-area-bottom justify-between">
-        {navList.map((item) => (
-          <li key={item.path}>
-            <NavLink to={item.path} className={setNavLinkClassName}>
-              <Icons name={item.icon} width={32} height={32} />
-              <span className="text-xs/3">{item.text}</span>
-            </NavLink>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <div className="fixed left-0 bottom-0 w-full bg-dark-blue-50 py-2">
+      <nav className="pb-navbar">
+        <ul className="grid grid-flow-col items-center auto-cols-[68px] justify-between container-safe px-2.5">
+          {navList.map((item) => (
+            <li key={item.path}>
+              <NavLink to={item.path} className={setNavLinkClassName}>
+                <Icons name={item.icon} width={32} height={32} />
+                <span className="text-xs/3">{item.text}</span>
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
   );
 };

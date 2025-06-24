@@ -1,5 +1,5 @@
-import { Icons } from '@/shared/ui/icons/icons';
-import { LeaderUsers } from './leader-users';
+import { Icons } from "@/shared/ui/icons/icons";
+import { LeaderUsers } from "./leader-users";
 
 export const Leaders = () => {
   return (
