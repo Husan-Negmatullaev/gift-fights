@@ -1,9 +1,10 @@
-import Lottie, { type LottieComponentProps } from 'lottie-react';
+import clsx from "clsx";
+import Lottie, { type LottieComponentProps } from "lottie-react";
 
 type AppLottieProps = {
   animation: unknown;
   className?: string;
-} & Omit<LottieComponentProps, 'animationData'>;
+} & Omit<LottieComponentProps, "animationData">;
 
 export const AppLottie = (props: AppLottieProps) => {
   const { animation, className, ...restProps } = props;
@@ -12,8 +13,8 @@ export const AppLottie = (props: AppLottieProps) => {
     <Lottie
       loop={true}
       autoplay={true}
-      className={className}
       animationData={animation}
+      className={clsx("lottie-wrapper", className)}
       {...restProps}
     />
   );

@@ -1,10 +1,9 @@
-import { playWinSound } from "@/entities/gift";
 import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
 import { Modal } from "@/shared/ui/modal/modal";
 import { useCallback, useState, type ReactNode } from "react";
 import { Icons } from "@/shared/ui/icons/icons";
 import { WheelSegment } from "./wheel-segment";
-import { playSpinSound } from "@/entities/gift/utils/gift-sounds";
+import { playSpinSound, playWinSound } from "@/entities/gift/utils/gift-sounds";
 
 export interface SpinResult {
   prize: {
@@ -103,7 +102,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
 
   const [countdown, setCountdown] = useState(30);
   const [openModal, setOpenModal] = useState(false);
-  const [isPlaceBet, setIsPlaceBet] = useState(false);
+  const [_isPlaceBet, setIsPlaceBet] = useState(false);
   const [isSpinning, setIsSpinning] = useState(false);
 
   const [rotation, setRotation] = useState(0);
@@ -186,22 +185,19 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="relative w-full max-w-md mx-auto">
       <div className="relative min-h-86 mb-6 mx-auto">
         <div
-          className={`absolute w-86 h-86 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform ease-out ${
-            isSpinning ? "duration-30000" : "duration-500"
-          }`}
+          className="duration-30000 absolute w-86 h-86 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform origin-center ease-out"
           style={{
             transform: `rotate(${rotation}deg)`,
-            transformOrigin: "center center",
           }}
         >
           <WheelSegment
-            prize={PRIZES[0]}
             rotation={-90}
+            prize={PRIZES[0]}
             segmentNumber={1}
-            className="absolute w-[100px] h-[100px] top-0 left-[122px] flex items-center justify-center"
+            className="absolute size-25 top-0 left-[122px] flex items-center justify-center"
             isActive={result?.winningSegment === 1 && showResult}
           />
 
@@ -209,68 +205,60 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
             prize={PRIZES[1]}
             rotation={-44}
             segmentNumber={2}
-            className="absolute w-[100px] h-[100px] top-[35px] left-[212px] flex items-center justify-center"
             isActive={result?.winningSegment === 2 && showResult}
+            className="absolute size-25 top-[35px] left-[212px] flex items-center justify-center"
           />
 
           <WheelSegment
             prize={PRIZES[2]}
-            className="absolute w-[100px] h-[100px] top-[122px] left-[245px] flex items-center justify-center"
             rotation={0}
             segmentNumber={3}
             isActive={result?.winningSegment === 3 && showResult}
+            className="absolute size-25 top-[122px] left-[245px] flex items-center justify-center"
           />
 
           <WheelSegment
             prize={PRIZES[3]}
             rotation={45}
             segmentNumber={4}
-            className="absolute w-[100px] h-[100px] top-[210px] left-[210px] flex items-center justify-center"
             isActive={result?.winningSegment === 4 && showResult}
+            className="absolute size-25 top-[210px] left-[210px] flex items-center justify-center"
           />
 
           <WheelSegment
             prize={PRIZES[4]}
-            className="absolute w-[100px] h-[100px] top-[245px] left-[122px] flex items-center justify-center"
             rotation={90}
             segmentNumber={5}
             isActive={result?.winningSegment === 5 && showResult}
+            className="absolute size-25 top-[245px] left-[122px] flex items-center justify-center"
           />
 
           <WheelSegment
             prize={PRIZES[5]}
-            className="absolute w-[100px] h-[100px] top-[205px] left-[35px] flex items-center justify-center"
             rotation={135}
             segmentNumber={6}
             isActive={result?.winningSegment === 6 && showResult}
+            className="absolute size-25 top-[205px] left-[35px] flex items-center justify-center"
           />
 
           <WheelSegment
             prize={PRIZES[6]}
             rotation={-180}
             segmentNumber={7}
-            className="absolute w-[100px] h-[100px] top-[122px] left-[0px] flex items-center justify-center"
             isActive={result?.winningSegment === 7 && showResult}
+            className="absolute size-25 top-[122px] left-[0px] flex items-center justify-center"
           />
 
           <WheelSegment
             prize={PRIZES[7]}
             rotation={-135}
             segmentNumber={8}
-            className="absolute w-[100px] h-[100px] top-[35px] left-[35px] flex items-center justify-center"
             isActive={result?.winningSegment === 8 && showResult}
+            className="absolute size-25 top-[35px] left-[35px] flex items-center justify-center"
           />
         </div>
 
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-7 flex items-center justify-center">
-          {Arrow}
-        </div>
-
-        <div
-          // onClick={spinWheel}
-          // disabled={isSpinning}
-          className="absolute w-[118px] h-[118px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-dark-blue-950 rounded-full shadow-[inset_0px_0px_15px_rgba(26,201,255,0.5),inset_0px_0px_8px_rgba(255,255,255,0.2)] flex flex-col items-center justify-center"
-        >
+        <div className="absolute size-29.5 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-dark-blue-950 rounded-full shadow-[inset_0px_0px_15px_rgba(26,201,255,0.5),inset_0px_0px_8px_rgba(255,255,255,0.2)] flex flex-col items-center justify-center">
           <div className="w-12 h-12 bg-blue-50 rounded-full blur-[15px] absolute opacity-60" />
           <div className="relative">
             <div className="text-white text-xs text-center font-medium whitespace-nowrap mb-1">
@@ -281,9 +269,13 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
             </div>
           </div>
         </div>
+
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-7 flex items-center justify-center">
+          {Arrow}
+        </div>
       </div>
 
-      {!isPlaceBet && (
+      {!isSpinning && (
         <BottomButton
           withShadow
           disabled={isSpinning}
@@ -292,18 +284,15 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
           onClick={handleToggleModal}
         />
       )}
-      {isPlaceBet && (
-        <button
-          type="button"
-          className="w-full shadow-[0px_0px_19.6px_0px_--alpha(var(--color-blue-200)_/_50%)] min-h-13.5 rounded-2xl bg-linear-360 from-blue-50 from-0% to-blue-100 to-100% cursor-pointer text-white disabled:bg-dark-blue-700 disabled:text-white/50 disabled:shadow-none disabled:bg-linear-[none] disabled:cursor-not-allowed px-5"
-        >
+      {isSpinning && (
+        <div className="w-full shadow-[0px_0px_19.6px_0px_--alpha(var(--color-blue-200)_/_50%)] min-h-13.5 grid content-center rounded-2xl bg-linear-360 from-blue-50 from-0% to-blue-100 to-100% text-white px-5">
           <div className="font-medium text-lg/5 grid grid-cols-2">
             <div className="text-tiny/3 font-thin text-left">Ставка:</div>
             <div className="text-tiny/3 font-thin text-right">Шанс победы:</div>
             <div className="text-lg/5 font-medium text-left">12 TON</div>
             <div className="text-lg/5 font-medium text-right">42%</div>
           </div>
-        </button>
+        </div>
       )}
       <Modal open={openModal} onClose={handleToggleModal}>
         <p className="text-lg font-medium mb-7.5 text-center mt-2 mx-2">

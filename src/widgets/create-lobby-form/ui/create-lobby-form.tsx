@@ -1,8 +1,8 @@
-import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
-import { Input } from '@/shared/ui/input/input';
-import { Toggle } from '@/shared/ui/toggle/toggle';
-import { GiftsForBetting } from '@/features/gifts-for-betting';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
+import { Input } from "@/shared/ui/input/input";
+import { Toggle } from "@/shared/ui/toggle/toggle";
+import { GiftsForBetting } from "@/features/gifts-for-betting";
+import { useForm, type SubmitHandler } from "react-hook-form";
 
 type CreateLobbyFormProps = {
   className?: string;
@@ -46,9 +46,9 @@ export const CreateLobbyForm = (props: CreateLobbyFormProps) => {
         />
       </div>
 
-      <GiftsForBetting checkbox={register('gifts', { required: true })} />
+      <GiftsForBetting checkbox={register("gifts", { required: true })} />
 
-      <div className="fixed w-full bottom-21 left-1/2 -translate-x-1/2 px-6 pb-4.5">
+      <div className="fixed w-full bottom-safe-app-bottom left-1/2 -translate-x-1/2 px-6 pb-4.5">
         <BottomButton
           withShadow
           className="w-full"

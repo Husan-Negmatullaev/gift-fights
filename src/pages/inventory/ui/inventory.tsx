@@ -1,19 +1,19 @@
-import { GiftCheckboxCard } from '@/entities/gift';
-import { ProfileInformation } from '@/entities/user';
-import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
-import { Modal } from '@/shared/ui/modal/modal';
-import { useState } from 'react';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { GiftCheckboxCard } from "@/entities/gift";
+import { ProfileInformation } from "@/entities/user";
+import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
+import { Modal } from "@/shared/ui/modal/modal";
+import { useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
 
 interface IFormInput {
   gifts: number[];
 }
 
 const mockGifts = [
-  { id: '1', name: 'Plush Pepe', value: 10 },
-  { id: '2', name: 'Plush Pepe', value: 10 },
-  { id: '3', name: 'Plush Pepe', value: 10 },
-  { id: '4', name: 'Plush Pepe', value: 10 },
+  { id: "1", name: "Plush Pepe", value: 10 },
+  { id: "2", name: "Plush Pepe", value: 10 },
+  { id: "3", name: "Plush Pepe", value: 10 },
+  { id: "4", name: "Plush Pepe", value: 10 },
 ];
 
 export const Inventory = () => {
@@ -48,12 +48,12 @@ export const Inventory = () => {
           <GiftCheckboxCard
             size="lg"
             key={gift.id}
-            checkbox={register('gifts', { required: true })}
+            checkbox={register("gifts", { required: true })}
           />
         ))}
       </div>
 
-      <div className="fixed w-full bottom-21 left-1/2 -translate-x-1/2 px-6 pb-4.5">
+      <div className="fixed w-full bottom-safe-app-bottom left-1/2 -translate-x-1/2 px-6 pb-4.5">
         <BottomButton
           withShadow
           content="Вывести"
