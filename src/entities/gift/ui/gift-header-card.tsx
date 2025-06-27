@@ -1,5 +1,7 @@
+import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
 import { Avatar } from '@/shared/ui/avatar/avatar';
 import { Icons } from '@/shared/ui/icons/icons';
+import Gift from '@/shared/assets/lottie/berrybox.json';
 
 type GiftHeaderCardProps = {
   url?: string;
@@ -24,11 +26,15 @@ export const GiftHeaderCard = (props: GiftHeaderCardProps) => {
 
       {url ? (
         <div className="relative pb-[100%] mb-1">
-          <img
+          <TouchableLottie
+            animation={Gift}
+            className="absolute size-full inset-0 object-cover overflow-hidden rounded-four"
+          />
+          {/* <img
             src={url}
             alt="gift"
             className="absolute size-full inset-0 object-cover"
-          />
+          /> */}
         </div>
       ) : (
         <div className="bg-dark-blue-400 grid place-content-center mb-1">

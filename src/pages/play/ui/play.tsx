@@ -1,6 +1,6 @@
-import { AppLottie } from '@/shared/components/lottie/app-lottie';
-import { Link } from 'react-router';
-import Cap from '@/shared/assets/lottie/cap.json';
+import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
+import { Link } from "react-router";
+import Cap from "@/shared/assets/lottie/cap.json";
 
 export const Play = () => {
   return (
@@ -22,13 +22,15 @@ export const Play = () => {
 
             <Link
               to="/active-lobby"
-              className="grid place-content-center basis-29 cursor-pointer min-h-7.5 px-3 bg-dark-blue-350 text-blue-100 text-xs/3.5 font-medium rounded-lg">
+              className="grid place-content-center basis-29 cursor-pointer min-h-7.5 px-3 bg-dark-blue-350 text-blue-100 text-xs/3.5 font-medium rounded-lg"
+            >
               Мои битвы
             </Link>
           </div>
           <Link
             to="/join-lobby"
-            className="grid place-content-center w-full cursor-pointer min-h-10 px-3 bg-white text-blue text-xs/3.5 font-medium rounded-lg">
+            className="grid place-content-center w-full cursor-pointer min-h-10 px-3 bg-white text-blue text-xs/3.5 font-medium rounded-lg"
+          >
             Подключиться
           </Link>
         </div>
@@ -57,12 +59,13 @@ export const Play = () => {
 
             <Link
               to="/create-lobby"
-              className="grid place-items-center basis-29 cursor-pointer min-h-7.5 px-3 bg-white text-blue text-xs/3.5 font-medium rounded-lg">
+              className="grid place-items-center basis-29 cursor-pointer min-h-7.5 px-3 bg-white text-blue text-xs/3.5 font-medium rounded-lg"
+            >
               Создать
             </Link>
           </div>
         </div>
-        <AppLottie
+        <TouchableLottie
           style={{
             top: -54,
             right: -178,
@@ -94,7 +97,8 @@ export const Play = () => {
 
             <Link
               to="/fight"
-              className="grid place-items-center basis-29 cursor-pointer min-h-7.5 px-3 bg-white text-blue text-xs/3.5 font-medium rounded-lg">
+              className="grid place-items-center basis-29 cursor-pointer min-h-7.5 px-3 bg-white text-blue text-xs/3.5 font-medium rounded-lg"
+            >
               Позвать друга
             </Link>
           </div>
@@ -123,7 +127,8 @@ export const Play = () => {
 
             <button
               type="button"
-              className="basis-29 cursor-pointer min-h-7.5 px-3 bg-white text-blue text-xs/3.5 font-medium rounded-lg">
+              className="basis-29 cursor-pointer min-h-7.5 px-3 bg-white text-blue text-xs/3.5 font-medium rounded-lg"
+            >
               Пополнить
             </button>
           </div>

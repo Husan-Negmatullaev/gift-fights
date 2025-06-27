@@ -1,4 +1,4 @@
-import type { WebApp } from '@twa-dev/types';
+import type { WebApp } from "@telegram-apps/types";
 
 declare global {
   interface Window {

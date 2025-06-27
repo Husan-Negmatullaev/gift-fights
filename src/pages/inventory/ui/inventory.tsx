@@ -1,19 +1,21 @@
-import { GiftCheckboxCard } from "@/entities/gift";
-import { ProfileInformation } from "@/entities/user";
-import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
-import { Modal } from "@/shared/ui/modal/modal";
-import { useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { GiftCheckboxCard } from '@/entities/gift';
+import { ProfileInformation } from '@/entities/user';
+import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
+import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
+import { Modal } from '@/shared/ui/modal/modal';
+import { useState } from 'react';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import Gift from '@/shared/assets/lottie/berrybox.json';
 
 interface IFormInput {
   gifts: number[];
 }
 
 const mockGifts = [
-  { id: "1", name: "Plush Pepe", value: 10 },
-  { id: "2", name: "Plush Pepe", value: 10 },
-  { id: "3", name: "Plush Pepe", value: 10 },
-  { id: "4", name: "Plush Pepe", value: 10 },
+  { id: '1', name: 'Plush Pepe', value: 10 },
+  { id: '2', name: 'Plush Pepe', value: 10 },
+  { id: '3', name: 'Plush Pepe', value: 10 },
+  { id: '4', name: 'Plush Pepe', value: 10 },
 ];
 
 export const Inventory = () => {
@@ -48,7 +50,7 @@ export const Inventory = () => {
           <GiftCheckboxCard
             size="lg"
             key={gift.id}
-            checkbox={register("gifts", { required: true })}
+            checkbox={register('gifts', { required: true })}
           />
         ))}
       </div>
@@ -74,12 +76,18 @@ export const Inventory = () => {
 
         <div className="grid gap-2 justify-center grid-flow-dense auto-rows-[92px] grid-cols-[repeat(3,_92px)] mb-17">
           {Array.from({ length: 6 }).map((_, index) => (
-            <img
-              alt="gift"
-              key={index}
-              className="rounded-lg"
-              src="/assets/images/gifts/gift.webp"
-            />
+            <div key={index} className="relative pb-[69%]">
+              <TouchableLottie
+                animation={Gift}
+                className="absolute inset-0 size-full object-cover"
+              />
+              {/* <img
+                alt="gift"
+                key={index}
+                className="rounded-lg"
+                src="/assets/images/gifts/gift.webp"
+              /> */}
+            </div>
           ))}
         </div>
 

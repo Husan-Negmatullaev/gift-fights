@@ -1,8 +1,27 @@
-export const initTelegram = () => {
-  if (!import.meta.env.PROD) return;
+import {
+  backButton,
+  closingBehavior,
+  enableClosingConfirmation,
+  expandViewport,
+  init,
+  miniApp,
+  swipeBehavior,
+} from '@telegram-apps/sdk-react';
 
-  window.Telegram.WebApp.ready();
-  window.Telegram.WebApp.disableVerticalSwipes();
-  window.Telegram.WebApp.enableClosingConfirmation();
-  window.Telegram.WebApp.requestFullscreen();
+export const initTelegram = () => {
+  // if (!import.meta.env.PROD) return;
+
+  init();
+  expandViewport();
+  backButton.mount();
+  closingBehavior.mount();
+
+  enableClosingConfirmation();
+
+  if (swipeBehavior.isSupported()) {
+    swipeBehavior.mount();
+    swipeBehavior.disableVertical();
+  }
+
+  miniApp.ready();
 };

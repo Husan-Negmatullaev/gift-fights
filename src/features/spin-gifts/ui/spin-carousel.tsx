@@ -1,398 +1,322 @@
-import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
-import { Modal } from "@/shared/ui/modal/modal";
-import { useCallback, useState, type ReactNode } from "react";
-import { Icons } from "@/shared/ui/icons/icons";
-import { WheelSegment } from "./wheel-segment";
-import { playSpinSound, playWinSound } from "@/entities/gift/utils/gift-sounds";
+import { useState, useEffect } from 'react';
+import { Avatar } from '@/shared/ui/avatar/avatar';
+import clsx from 'clsx';
 
-export interface SpinResult {
-  prize: {
-    id: number;
-    name: string;
-    value: number;
-    color: string;
-    icon: ReactNode;
-    rarity: string;
-  };
-  winningSegment: number;
-  spinNumber: number;
-  timestamp: number;
+interface Segment {
+  id: number;
+  url: string;
+  value: string;
+  color: string;
 }
 
-const PRIZES: Array<{
-  id: number;
-  name: string;
-  value: number;
-  color: string;
-  icon: ReactNode;
-  rarity: string;
-}> = [
-  {
-    id: 1,
-    name: "JACKPOT",
-    value: 1000,
-    color: "#FFD700",
-    icon: <Icons name="box" />,
-    rarity: "legendary",
-  },
-  {
-    id: 2,
-    name: "MEGA WIN",
-    value: 500,
-    color: "#FF6B35",
-    icon: <Icons name="box" />,
-    rarity: "epic",
-  },
-  {
-    id: 3,
-    name: "BIG PRIZE",
-    value: 250,
-    color: "#4ECDC4",
-    icon: <Icons name="box" />,
-    rarity: "rare",
-  },
-  {
-    id: 4,
-    name: "BONUS",
-    value: 100,
-    color: "#45B7D1",
-    icon: <Icons name="box" />,
-    rarity: "rare",
-  },
-  {
-    id: 5,
-    name: "COINS",
-    value: 50,
-    color: "#96CEB4",
-    icon: <Icons name="box" />,
-    rarity: "common",
-  },
-  {
-    id: 6,
-    name: "GIFT",
-    value: 75,
-    color: "#FECA57",
-    icon: <Icons name="box" />,
-    rarity: "common",
-  },
-  {
-    id: 7,
-    name: "AWARD",
-    value: 150,
-    color: "#FF9FF3",
-    icon: <Icons name="box" />,
-    rarity: "rare",
-  },
-  {
-    id: 8,
-    name: "SUPER",
-    value: 300,
-    color: "#A8E6CF",
-    icon: <Icons name="box" />,
-    rarity: "epic",
-  },
-];
-
 type SpinCarouselProps = {
-  onResult(result: SpinResult): void;
+  onSelected(): void;
 };
 
 export const SpinCarousel = (props: SpinCarouselProps) => {
-  const { onResult } = props;
-
-  const [countdown, setCountdown] = useState(30);
-  const [openModal, setOpenModal] = useState(false);
-  const [_isPlaceBet, setIsPlaceBet] = useState(false);
+  const { onSelected } = props;
   const [isSpinning, setIsSpinning] = useState(false);
-
   const [rotation, setRotation] = useState(0);
-  const [result, setResult] = useState<SpinResult | null>(null);
-  const [showResult, setShowResult] = useState(false);
+  const [countdown, setCountdown] = useState(30);
+  const [gameTimer, setGameTimer] = useState(5);
+  const [selectedSegment, setSelectedSegment] = useState<number | null>(null);
+  const [gamePhase, setGamePhase] = useState<
+    'waiting' | 'spinning' | 'finished' | 'celebrating'
+  >('waiting');
+  const [isHighlighting, setIsHighlighting] = useState(false);
 
-  // const handleSpinClick = () => {
+  // const segments: Segment[] = [
+  //   { id: 0, гкд: <Trophy className="w-6 h-6 text-white" />, value: 'Grand Prize', color: '#2D353F' },
+  //   { id: 1, гкд: <Gift className="w-6 h-6 text-white" />, value: 'Gift Box', color: '#2D353F' },
+  //   { id: 2, гкд: <Star className="w-6 h-6 text-white" />, value: 'Star Bonus', color: '#2D353F' },
+  //   { id: 3, гкд: <Diamond className="w-6 h-6 text-white" />, value: 'Diamond', color: '#2D353F' },
+  //   { id: 4, гкд: <Crown className="w-6 h-6 text-white" />, value: 'Royal Crown', color: '#2D353F' },
+  //   { id: 5, гкд: <Coins className="w-6 h-6 text-white" />, value: 'Gold Coins', color: '#2D353F' },
+  //   { id: 6, гкд: <Gem className="w-6 h-6 text-white" />, value: 'Precious Gem', color: '#2D353F' },
+  //   { id: 7, гкд: <Zap className="w-6 h-6 text-white" />, value: 'Lightning Bonus', color: '#2D353F' }
+  // ];
 
-  // };
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
 
-  const handleToggleModal = () => {
-    setOpenModal((prev) => !prev);
-  };
-
-  const spinWheel = useCallback(() => {
-    if (isSpinning) return;
-
-    setIsSpinning(true);
-    setShowResult(false);
-    setResult(null);
-
-    // Play spin sound
-    playSpinSound();
-
-    // Calculate random rotation for 30 seconds of spinning
-    // More rotations for longer spin time
-    const baseRotation = 360 * (50 + Math.random() * 20); // 50-70 full rotations over 30 seconds
-    const finalAngle = Math.random() * 360;
-    const totalRotation = rotation + baseRotation + finalAngle;
-
-    setRotation(totalRotation);
-
-    // Determine winning segment (8 segments, 45 degrees each)
-    const normalizedAngle = (360 - (finalAngle % 360)) % 360;
-    const segmentAngle = 360 / 8;
-    const winningSegment = Math.floor(normalizedAngle / segmentAngle) + 1;
-    const prize = PRIZES[winningSegment - 1];
-
-    if (!isSpinning) {
-      setIsSpinning(true);
-      setCountdown(30);
-
-      // Start countdown
-      const countdownInterval = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(countdownInterval);
-            setIsSpinning(false);
-            return 30;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+    if (gamePhase === 'waiting' && countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (gamePhase === 'waiting' && countdown === 0) {
+      handleAutoSpin();
     }
 
-    // Stop spinning after 30 seconds
+    return () => clearTimeout(timer);
+  }, [countdown, gamePhase]);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+
+    if (gamePhase === 'spinning' && gameTimer > 0) {
+      timer = setTimeout(() => setGameTimer(gameTimer - 1), 1000);
+    }
+
+    return () => clearTimeout(timer);
+  }, [gameTimer, gamePhase]);
+
+  const handleAutoSpin = () => {
+    setGamePhase('spinning');
+    setIsSpinning(true);
+    setGameTimer(5);
+
+    const spins = 5 + Math.random() * 5;
+    const finalRotation = rotation + spins * 360 + Math.random() * 360;
+    setRotation(finalRotation);
+
     setTimeout(() => {
       setIsSpinning(false);
-      const spinResult: SpinResult = {
-        prize,
-        winningSegment,
-        spinNumber: 1,
-        timestamp: Date.now(),
-      };
-      setResult(spinResult);
-      setShowResult(true);
 
-      // Play win sound after a short delay
-      onResult(spinResult);
-      setIsPlaceBet(true);
+      const segmentAngle = 360 / segments.length;
+      const normalizedRotation = (360 - (finalRotation % 360)) % 360;
+      const selectedIndex = Math.floor(normalizedRotation / segmentAngle);
+      setSelectedSegment(selectedIndex);
+
+      // Start celebration phase with highlighting
+      setGamePhase('celebrating');
+      setIsHighlighting(true);
+
+      // After 800ms, move to finished state
       setTimeout(() => {
-        playWinSound(prize.rarity);
-      }, 500);
-    }, 30000); // 30 seconds
-  }, [isSpinning, onResult, rotation]);
+        onSelected();
+        setGamePhase('finished');
+        setIsHighlighting(false);
+      }, 800);
+    }, 5000);
+  };
 
-  const handleToggleBet = () => {
-    spinWheel();
-    handleToggleModal();
+  // const handleManualSpin = () => {
+  //   if (isSpinning || gamePhase !== 'waiting') return;
+  //   handleAutoSpin();
+  // };
+
+  const getPhaseText = () => {
+    switch (gamePhase) {
+      case 'waiting':
+        return countdown > 0 ? `${countdown} сек` : 'Starting...';
+      case 'spinning':
+        return `${gameTimer} сек`;
+      case 'celebrating':
+        return selectedSegment !== null
+          ? segments[selectedSegment].value
+          : 'Winner!';
+      case 'finished':
+        return selectedSegment !== null
+          ? segments[selectedSegment].value
+          : 'Game Over';
+      default:
+        return `${countdown} сек`;
+    }
+  };
+
+  const getPhaseLabel = () => {
+    switch (gamePhase) {
+      case 'waiting':
+        return 'Начало через:';
+      case 'spinning':
+        return 'Игра:';
+      case 'celebrating':
+      case 'finished':
+        return 'Победитель:';
+      default:
+        return 'Начало через:';
+    }
+  };
+
+  const getWinnerIconStyle = (segmentIndex: number) => {
+    const isWinner = selectedSegment === segmentIndex;
+    const isCelebrating = gamePhase === 'celebrating' && isHighlighting;
+
+    if (isWinner && isCelebrating) {
+      return {
+        background: 'linear-gradient(45deg, #ffd700, #ffed4e, #ffd700)',
+        borderColor: '#ffd700',
+        boxShadow:
+          '0 0 30px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.4)',
+        transform: 'translate(-50%, -50%) scale(1.3)',
+        animation: 'pulse 0.5s ease-in-out infinite alternate',
+      };
+    } else if (isWinner && gamePhase === 'finished') {
+      return {
+        background: 'linear-gradient(45deg, #ffd700, #ffed4e)',
+        borderColor: '#ffd700',
+        boxShadow: '0 0 20px rgba(255, 215, 0, 0.6)',
+        transform: 'translate(-50%, -50%) scale(1.2)',
+      };
+    }
+
+    return {};
   };
 
   return (
-    <div className="relative w-full max-w-md mx-auto">
-      <div className="relative min-h-86 mb-6 mx-auto">
-        <div
-          className="duration-30000 absolute w-86 h-86 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-transform origin-center ease-out"
-          style={{
-            transform: `rotate(${rotation}deg)`,
-          }}
-        >
-          <WheelSegment
-            rotation={-90}
-            prize={PRIZES[0]}
-            segmentNumber={1}
-            className="absolute size-25 top-0 left-[122px] flex items-center justify-center"
-            isActive={result?.winningSegment === 1 && showResult}
-          />
+    <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+      <div className="flex flex-col items-center">
+        <div className="relative">
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 blur-3xl scale-110"></div>
+          <div className="relative w-80 h-80 rounded-full">
+            <div
+              className={clsx(
+                gamePhase === 'celebrating'
+                  ? 'transition-transform duration-300 ease-out'
+                  : '',
+                'size-full rounded-full relative overflow-hidden transition-transform duration-[5000ms] ease-out shadow-[inset_0px_0px_10px_0px_--alpha(var(--color-blue-100)_/_50%),inset_0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)]',
+              )}
+              style={{
+                background: '#2D353F',
+                transform: `rotate(${rotation}deg)`,
+                transitionTimingFunction: isSpinning
+                  ? 'cubic-bezier(0.17, 0.67, 0.12, 0.99)'
+                  : 'ease',
+              }}>
+              {/* Segment Lines */}
+              {segments.map((_, index) => (
+                <div
+                  key={index}
+                  className="shadow-[inset_0px_0px_10px_0px_--alpha(var(--color-blue-100)_/_50%),inset_0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)] absolute w-0.5 h-40 top-0 left-1/2 transform -translate-x-1/2 origin-bottom"
+                  style={{
+                    transform: `translateX(-50%) rotate(${index * 45}deg)`,
+                  }}
+                />
+              ))}
 
-          <WheelSegment
-            prize={PRIZES[1]}
-            rotation={-44}
-            segmentNumber={2}
-            isActive={result?.winningSegment === 2 && showResult}
-            className="absolute size-25 top-[35px] left-[212px] flex items-center justify-center"
-          />
+              {/* Icons - Properly Centered in Each Segment */}
+              {segments.map((segment, index, list) => {
+                const segmentAngle = 360 / list.length; // 360 / 8 segments
+                const angleInRadians =
+                  (index * segmentAngle + segmentAngle / 2) * (Math.PI / 180);
+                const radius = 115; // Distance from center
+                const x = Math.cos(angleInRadians - Math.PI / 2) * radius;
+                const y = Math.sin(angleInRadians - Math.PI / 2) * radius;
 
-          <WheelSegment
-            prize={PRIZES[2]}
-            rotation={0}
-            segmentNumber={3}
-            isActive={result?.winningSegment === 3 && showResult}
-            className="absolute size-25 top-[122px] left-[245px] flex items-center justify-center"
-          />
-
-          <WheelSegment
-            prize={PRIZES[3]}
-            rotation={45}
-            segmentNumber={4}
-            isActive={result?.winningSegment === 4 && showResult}
-            className="absolute size-25 top-[210px] left-[210px] flex items-center justify-center"
-          />
-
-          <WheelSegment
-            prize={PRIZES[4]}
-            rotation={90}
-            segmentNumber={5}
-            isActive={result?.winningSegment === 5 && showResult}
-            className="absolute size-25 top-[245px] left-[122px] flex items-center justify-center"
-          />
-
-          <WheelSegment
-            prize={PRIZES[5]}
-            rotation={135}
-            segmentNumber={6}
-            isActive={result?.winningSegment === 6 && showResult}
-            className="absolute size-25 top-[205px] left-[35px] flex items-center justify-center"
-          />
-
-          <WheelSegment
-            prize={PRIZES[6]}
-            rotation={-180}
-            segmentNumber={7}
-            isActive={result?.winningSegment === 7 && showResult}
-            className="absolute size-25 top-[122px] left-[0px] flex items-center justify-center"
-          />
-
-          <WheelSegment
-            prize={PRIZES[7]}
-            rotation={-135}
-            segmentNumber={8}
-            isActive={result?.winningSegment === 8 && showResult}
-            className="absolute size-25 top-[35px] left-[35px] flex items-center justify-center"
-          />
-        </div>
-
-        <div className="absolute size-29.5 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-dark-blue-950 rounded-full shadow-[inset_0px_0px_15px_rgba(26,201,255,0.5),inset_0px_0px_8px_rgba(255,255,255,0.2)] flex flex-col items-center justify-center">
-          <div className="w-12 h-12 bg-blue-50 rounded-full blur-[15px] absolute opacity-60" />
-          <div className="relative">
-            <div className="text-white text-xs text-center font-medium whitespace-nowrap mb-1">
-              Начало через :
+                return (
+                  <div
+                    key={segment.id}
+                    className={clsx(
+                      selectedSegment === index && isHighlighting
+                        ? 'animate-pulse'
+                        : '',
+                      'shadow-[0px_0px_15px_3px_var(--color-blue-350)] absolute rounded-full flex items-center justify-center',
+                    )}
+                    style={{
+                      top: `calc(50% + ${y}px)`,
+                      left: `calc(50% + ${x}px)`,
+                      transform: 'translate(-50%, -50%)',
+                      ...getWinnerIconStyle(index),
+                    }}>
+                    <Avatar
+                      className="size-6.5"
+                      url="/assets/images/leaders/avatar.webp"
+                    />
+                  </div>
+                );
+              })}
             </div>
-            <div className="text-white text-2xl text-center font-medium">
-              {countdown} сек
+
+            <div
+              className={clsx(
+                gamePhase === 'celebrating'
+                  ? 'scale-110 border-yellow-400/70 shadow-yellow-500/30'
+                  : '',
+                'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-dark-blue-950 rounded-full  flex flex-col items-center justify-center shadow-[0px_0px_10px_0px_--alpha(var(--color-blue-100)_/_50%),0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)] border-15 border-dark-blue box-content ',
+              )}>
+              <p className="text-xs mb-px font-medium">{getPhaseLabel()}</p>
+              <p className="text-2xl font-medium truncate w-32 mx-auto text-center">
+                {getPhaseText()}
+              </p>
             </div>
           </div>
+
+          <Arrow className="drop-shadow-[0px_0px_6.3px] drop-shadow-blue-100 absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-7" />
         </div>
 
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-7 flex items-center justify-center">
-          {Arrow}
-        </div>
+        {/* Winner Display */}
+        {/* {selectedSegment !== null && gamePhase === 'finished' && (
+          <div className="text-center p-6 bg-slate-800/50 rounded-lg border border-cyan-400/30 shadow-lg shadow-cyan-500/25">
+            <div className="flex items-center justify-center space-x-3 mb-2">
+              <div className="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center border border-cyan-400/50">
+                {segments[selectedSegment].icon}
+              </div>
+              <p className="text-xl font-bold text-cyan-400">
+                {segments[selectedSegment].value}
+              </p>
+            </div>
+            <p className="text-sm text-slate-400">Congratulations! You won!</p>
+          </div>
+        )} */}
       </div>
-
-      {!isSpinning && (
-        <BottomButton
-          withShadow
-          disabled={isSpinning}
-          className="w-full mb-5"
-          content="Сделать ставку"
-          onClick={handleToggleModal}
-        />
-      )}
-      {isSpinning && (
-        <div className="w-full shadow-[0px_0px_19.6px_0px_--alpha(var(--color-blue-200)_/_50%)] min-h-13.5 grid content-center rounded-2xl bg-linear-360 from-blue-50 from-0% to-blue-100 to-100% text-white px-5">
-          <div className="font-medium text-lg/5 grid grid-cols-2">
-            <div className="text-tiny/3 font-thin text-left">Ставка:</div>
-            <div className="text-tiny/3 font-thin text-right">Шанс победы:</div>
-            <div className="text-lg/5 font-medium text-left">12 TON</div>
-            <div className="text-lg/5 font-medium text-right">42%</div>
-          </div>
-        </div>
-      )}
-      <Modal open={openModal} onClose={handleToggleModal}>
-        <p className="text-lg font-medium mb-7.5 text-center mt-2 mx-2">
-          Вы хотите сделать ставку ? После подтверждения ее нельзя будет
-          отменить !
-        </p>
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <button
-            type="button"
-            onClick={handleToggleModal}
-            className="cursor-pointer min-h-10.5 grid place-content-center border border-white rounded-lg"
-          >
-            Не буду ставить
-          </button>
-          <button
-            type="button"
-            onClick={handleToggleBet}
-            className="cursor-pointer min-h-10.5 grid place-content-center bg-blue rounded-lg"
-          >
-            Сделать ставку
-          </button>
-        </div>
-      </Modal>
     </div>
   );
 };
 
-const Arrow = (
-  <svg
-    width="56"
-    height="50"
-    viewBox="0 0 56 50"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <g filter="url(#filter0_di_264_815)">
+const Arrow = ({ className }: { className: string }) => {
+  return (
+    <svg
+      width="44"
+      height="37"
+      fill="none"
+      viewBox="0 0 44 37"
+      className={className}
+      xmlns="http://www.w3.org/2000/svg">
       <path
-        d="M7.66932 16.1581C5.19489 12.161 8.06985 7 12.7709 7H28H43.2291C47.9301 7 50.8051 12.161 48.3307 16.1581L33.1016 40.759C30.7559 44.5481 25.2441 44.5481 22.8984 40.759L7.66932 16.1581Z"
         fill="#2D3B4B"
-      />
-      <path
-        d="M12.7705 8H43.2295C47.1468 8.00029 49.5424 12.301 47.4805 15.6318L32.251 40.2324C30.2962 43.39 25.7038 43.39 23.749 40.2324L8.51953 15.6318C6.45758 12.301 8.8532 8.00029 12.7705 8Z"
         stroke="white"
-        stroke-width="2"
+        strokeWidth="2"
+        d="M6.77051 1H37.2295C41.1468 1.00029 43.5424 5.30099 41.4805 8.63184L26.251 33.2324C24.2962 36.39 19.7038 36.39 17.749 33.2324L2.51953 8.63184C0.457582 5.30099 2.8532 1.00029 6.77051 1Z"
       />
-    </g>
-    <defs>
-      <filter
-        id="filter0_di_264_815"
-        x="0.461719"
-        y="0.7"
-        width="55.0766"
-        height="49.2008"
-        filterUnits="userSpaceOnUse"
-        color-interpolation-filters="sRGB"
-      >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
-        <feColorMatrix
-          in="SourceAlpha"
-          type="matrix"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-          result="hardAlpha"
-        />
-        <feOffset />
-        <feGaussianBlur stdDeviation="3.15" />
-        <feComposite in2="hardAlpha" operator="out" />
-        <feColorMatrix
-          type="matrix"
-          values="0 0 0 0 0.101961 0 0 0 0 0.788235 0 0 0 0 1 0 0 0 1 0"
-        />
-        <feBlend
-          mode="normal"
-          in2="BackgroundImageFix"
-          result="effect1_dropShadow_264_815"
-        />
-        <feBlend
-          mode="normal"
-          in="SourceGraphic"
-          in2="effect1_dropShadow_264_815"
-          result="shape"
-        />
-        <feColorMatrix
-          in="SourceAlpha"
-          type="matrix"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-          result="hardAlpha"
-        />
-        <feOffset />
-        <feGaussianBlur stdDeviation="5.2" />
-        <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
-        <feColorMatrix
-          type="matrix"
-          values="0 0 0 0 0.101961 0 0 0 0 0.788235 0 0 0 0 1 0 0 0 1 0"
-        />
-        <feBlend
-          mode="normal"
-          in2="shape"
-          result="effect2_innerShadow_264_815"
-        />
-      </filter>
-    </defs>
-  </svg>
-);
+    </svg>
+  );
+};
+
+const segments: Segment[] = [
+  {
+    id: 0,
+    color: '#2D353F',
+    value: 'Grand Prize',
+    url: '/assets/images/leaders/avatar.webp',
+  },
+  {
+    id: 1,
+    color: '#2D353F',
+    value: 'Gift Box',
+    url: '/assets/images/leaders/avatar.webp',
+  },
+  {
+    id: 2,
+    color: '#2D353F',
+    value: 'Star Bonus',
+    url: '/assets/images/leaders/avatar.webp',
+  },
+  {
+    id: 3,
+    color: '#2D353F',
+    value: 'Diamond',
+    url: '/assets/images/leaders/avatar.webp',
+  },
+  {
+    id: 4,
+    color: '#2D353F',
+    value: 'Royal Crown',
+    url: '/assets/images/leaders/avatar.webp',
+  },
+  {
+    id: 5,
+    color: '#2D353F',
+    value: 'Gold Coins',
+    url: '/assets/images/leaders/avatar.webp',
+  },
+  {
+    id: 6,
+    color: '#2D353F',
+    value: 'Precious Gem',
+    url: '/assets/images/leaders/avatar.webp',
+  },
+  {
+    id: 7,
+    color: '#2D353F',
+    value: 'Lightning Bonus',
+    url: '/assets/images/leaders/avatar.webp',
+  },
+];
