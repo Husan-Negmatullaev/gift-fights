@@ -6,7 +6,7 @@ export const Header = () => {
   return (
     <header className="fixed w-full top-0 left-0 bg-dark-blue-50 pt-header">
       <div className="container-safe">
-        <div className="min-h-15 py-3 px-6 grid place-items-end grid-cols-[auto_1fr] gap-2">
+        <div className="min-h-15 py-3 px-4 grid place-items-end grid-cols-[auto_1fr] gap-2">
           <ConnectWalletTon />
 
           <div className="flex items-center gap-1.5">

@@ -42,7 +42,7 @@ export const NavBar = () => {
 
   return (
     <div className="fixed left-0 bottom-0 w-full bg-dark-blue-50 py-2">
-      <nav className="pb-navbar">
+      <nav className="">
         <ul className="grid grid-flow-col items-center auto-cols-[68px] justify-between container-safe px-2.5">
           {navList.map((item) => (
             <li key={item.path}>

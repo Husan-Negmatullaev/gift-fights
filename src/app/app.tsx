@@ -1,20 +1,17 @@
-import { initTelegram } from "@/entities/telegram";
-import { AppRouterProvider } from "./providers/router-provider/ui/app-router-provider";
-import "./styles/index.css";
-import ReactModal from "react-modal";
-
-initTelegram();
+import { initTelegram } from '@/entities/telegram';
+import { AppRouterProvider } from './providers/router-provider/ui/app-router-provider';
+import './styles/index.css';
+import ReactModal from 'react-modal';
+import { useEffect } from 'react';
 
 function App() {
-  console.log(window.Telegram.WebApp.initData);
+  useEffect(() => {
+    initTelegram();
+  }, []);
 
-  return (
-    // <TelegramSDKProvider>
-    <AppRouterProvider />
-    // </TelegramSDKProvider>
-  );
+  return <AppRouterProvider />;
 }
 
 export default App;
 
-ReactModal.setAppElement("#root");
+ReactModal.setAppElement('#root');

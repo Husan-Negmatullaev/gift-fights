@@ -13,13 +13,13 @@ export const LeaderUsers = () => {
       position: { top: "45px" },
     },
     {
-      left: 40,
+      left: 50,
       animation: Cap,
       username: "<username>",
       position: { top: "0px" },
     },
     {
-      left: 75,
+      left: 100,
       image: Cap,
       animation: "<username>",
       position: { top: "40px" },
@@ -41,6 +41,7 @@ export const LeaderUsers = () => {
               className="absolute"
               style={{
                 left: `${leader.left}%`,
+                transform: `translateX(-${leader.left}%)`,
                 top: leader.position.top,
               }}
             >
@@ -50,8 +51,8 @@ export const LeaderUsers = () => {
                   style={{
                     width: 93 * 1.8,
                     height: 80 * 1.8,
-                    left: -35,
-                    top: -20,
+                    left: -40,
+                    top: -15,
                   }}
                   className="absolute inset-0 object-cover"
                 />

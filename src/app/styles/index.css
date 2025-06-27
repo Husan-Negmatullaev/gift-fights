@@ -1,113 +1,112 @@
-@import "./_fonts";
-@import "tailwindcss";
+@import './_fonts';
+@import 'tailwindcss';
 @tailwind utilities;
 
 @theme {
-    --font-sans-francisco-pro: "SF Pro Display", sans-serif;
+  --font-sans-francisco-pro: 'SF Pro Display', sans-serif;
 
-    --radius-four: 0.25rem;
-    --radius-two: 0.125rem;
-    --radius-2.5: 0.625rem;
-    --radius-2.5xl: 1.25rem;
-    --radius-4.5xl: 2.125rem;
+  --radius-four: 0.25rem;
+  --radius-two: 0.125rem;
+  --radius-2.5: 0.625rem;
+  --radius-2.5xl: 1.25rem;
+  --radius-4.5xl: 2.125rem;
 
-    --color-*: initial;
-    --color-dark-blue: #1d232a;
-    --color-dark-blue-50: #252e37;
-    --color-dark-blue-100: #202731;
-    --color-dark-blue-150: #1e3345;
-    --color-dark-blue-200: #1d242b;
-    --color-dark-blue-250: #415161;
-    --color-dark-blue-300: #12171c;
-    --color-dark-blue-350: #003241;
-    --color-dark-blue-400: #0f1924;
-    --color-dark-blue-450: #323d48;
-    --color-dark-blue-500: #1d3e5b;
-    --color-dark-blue-550: #1d252d;
-    --color-dark-blue-600: #1f262d;
-    --color-dark-blue-650: #2d445c;
-    --color-dark-blue-700: #002031;
-    --color-dark-blue-750: #215d8a;
-    --color-dark-blue-800: #243240;
-    --color-dark-blue-850: #184b7e;
-    --color-dark-blue-900: #20272f;
-    --color-dark-blue-950: #273c56;
-    --color-dark-blue-1000: #2d353f;
+  --color-*: initial;
+  --color-dark-blue: #1d232a;
+  --color-dark-blue-50: #252e37;
+  --color-dark-blue-100: #202731;
+  --color-dark-blue-150: #1e3345;
+  --color-dark-blue-200: #1d242b;
+  --color-dark-blue-250: #415161;
+  --color-dark-blue-300: #12171c;
+  --color-dark-blue-350: #003241;
+  --color-dark-blue-400: #0f1924;
+  --color-dark-blue-450: #323d48;
+  --color-dark-blue-500: #1d3e5b;
+  --color-dark-blue-550: #1d252d;
+  --color-dark-blue-600: #1f262d;
+  --color-dark-blue-650: #2d445c;
+  --color-dark-blue-700: #002031;
+  --color-dark-blue-750: #215d8a;
+  --color-dark-blue-800: #243240;
+  --color-dark-blue-850: #184b7e;
+  --color-dark-blue-900: #20272f;
+  --color-dark-blue-950: #273c56;
+  --color-dark-blue-1000: #2d353f;
 
-    --color-blue: #0098ea;
-    --color-blue-50: #2d83ec;
-    --color-blue-100: #1ac9ff;
-    --color-blue-150: #1fb8fa;
-    --color-blue-200: #1dbcfc;
-    --color-blue-250: #0098ea;
-    --color-blue-300: #1dc1fd;
+  --color-blue: #0098ea;
+  --color-blue-50: #2d83ec;
+  --color-blue-100: #1ac9ff;
+  --color-blue-150: #1fb8fa;
+  --color-blue-200: #1dbcfc;
+  --color-blue-250: #0098ea;
+  --color-blue-300: #1dc1fd;
+  --color-blue-350: #23a6cf;
 
-    --color-gray: #5c5c5c;
-    --color-gray-50: #d9d9d9;
+  --color-gray: #5c5c5c;
+  --color-gray-50: #d9d9d9;
 
-    --color-white: #fff;
-    --color-black: #000;
+  --color-white: #ffffff;
+  --color-black: #000000;
 
-    --color-green: #00fb36;
+  --color-green: #00fb36;
 
-    --color-red: #fb0000;
-    --color-red-50: #ff1a1a;
-    --color-red-100: #ea0000;
-    --color-red-150: #ec2d30;
-    --color-red-200: #981417;
+  --color-red: #fb0000;
+  --color-red-50: #ff1a1a;
+  --color-red-100: #ea0000;
+  --color-red-150: #ec2d30;
+  --color-red-200: #981417;
 
-    --text-tiny: 0.625rem;
-    --text-tiny--line-height: 1.5;
+  --text-tiny: 0.625rem;
+  --text-tiny--line-height: 1.5;
 
-    --text-nine: 0.563rem;
-    --text-nine--line-height: 1.2;
+  --text-nine: 0.563rem;
+  --text-nine--line-height: 1.2;
 
-    --text-eight: 0.5rem;
-    --text-eight--line-height: 1.2;
+  --text-eight: 0.5rem;
+  --text-eight--line-height: 1.2;
 
-    --text-six: 0.375rem;
-    --text-six--line-height: 1.2;
+  --text-six: 0.375rem;
+  --text-six--line-height: 1.2;
 
-    --spacing-safe-app-top: calc(
-        var(--tg-safe-area-inset-top) + var(--tg-content-safe-area-inset-top) +
-            60px
-    );
-    --spacing-safe-app-bottom: calc(
-        var(--tg-safe-area-inset-bottom) +
-            var(--tg-content-safe-area-inset-bottom) + 84px
-    );
+  --spacing-safe-app-top: calc(
+    var(--tg-safe-area-inset-top) + var(--tg-content-safe-area-inset-top) + 60px
+  );
+  --spacing-safe-app-bottom: calc(
+    var(--tg-safe-area-inset-bottom) + var(--tg-content-safe-area-inset-bottom) +
+      84px
+  );
 
-    --spacing-header: calc(
-        var(--tg-content-safe-area-inset-top) + var(--tg-safe-area-inset-top)
-    );
+  --spacing-header: calc(
+    var(--tg-content-safe-area-inset-top) + var(--tg-safe-area-inset-top)
+  );
 
-    --spacing-navbar: calc(
-        var(--tg-content-safe-area-inset-bottom) +
-            var(--tg-safe-area-inset-bottom)
-    );
+  --spacing-navbar: calc(
+    var(--tg-content-safe-area-inset-bottom) + var(--tg-safe-area-inset-bottom)
+  );
 }
 
 @layer base {
-    html,
-    body {
-        @apply h-full font-sans-francisco-pro bg-dark-blue text-white;
-    }
+  html,
+  body {
+    @apply h-full font-sans-francisco-pro bg-dark-blue text-white;
+  }
 
-    #root {
-        @apply min-h-full overflow-hidden flex [&>main]:flex-1;
-    }
+  #root {
+    @apply min-h-full overflow-hidden flex [&>main]:flex-1;
+  }
 
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
 
 @layer utilities {
-    .container-safe {
-        @apply mx-auto w-full max-w-113; /* 452px = 432px + (16px * 2) */
-    }
+  .container-safe {
+    @apply mx-auto w-full max-w-113; /* 452px = 432px + (16px * 2) */
+  }
 }
 
 /* @layer inline { */
@@ -127,19 +126,19 @@
 /* } */
 
 .lottie-wrapper svg {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    margin: 0;
-    padding: 0;
-    display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  margin: 0;
+  padding: 0;
+  display: block;
 }
 
 .lottie-wrapper {
-    /* width: 150px;
+  /* width: 150px;
     height: 150px; */
-    overflow: hidden; /* обрежет внешний холст */
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  overflow: hidden; /* обрежет внешний холст */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

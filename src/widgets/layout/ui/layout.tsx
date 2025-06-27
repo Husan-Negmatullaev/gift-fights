@@ -1,6 +1,7 @@
-import { Outlet, ScrollRestoration } from "react-router";
-import { NavBar } from "./nav-bar";
-import { Header } from "./header";
+import { Outlet, ScrollRestoration } from 'react-router';
+import { NavBar } from './nav-bar';
+import { Header } from './header';
+import { TelegramBackHandler } from '@/entities/telegram';
 
 export const Layout = () => {
   return (
@@ -12,6 +13,8 @@ export const Layout = () => {
       <ScrollRestoration />
       <Header />
       <NavBar />
+
+      <TelegramBackHandler />
     </>
   );
 };
