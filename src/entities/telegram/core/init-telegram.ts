@@ -1,16 +1,16 @@
-import {
-  backButton,
-  closingBehavior,
-  disableVerticalSwipes,
-  enableClosingConfirmation,
-  expandViewport,
-  init,
-  miniApp,
-  swipeBehavior,
-  requestFullscreen,
-  isFullscreen,
-  viewport,
-} from '@telegram-apps/sdk-react';
+// import {
+//   backButton,
+//   closingBehavior,
+//   disableVerticalSwipes,
+//   enableClosingConfirmation,
+//   expandViewport,
+//   init,
+//   miniApp,
+//   swipeBehavior,
+//   requestFullscreen,
+//   isFullscreen,
+//   viewport,
+// } from '@telegram-apps/sdk-react';
 import type { TelegramWebApps } from 'telegram-webapps';
 
 // import { requestFullscreen, isFullscreen } from '@telegram-apps/sdk';
