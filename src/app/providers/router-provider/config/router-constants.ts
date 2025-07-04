@@ -50,7 +50,7 @@ export const BROWSER_ROUTERS = createBrowserRouter([
         Component: LobbyPlayers,
       },
       {
-        path: 'spin',
+        path: 'spin/:id',
         children: [
           {
             index: true,

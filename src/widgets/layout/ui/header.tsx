@@ -1,7 +1,7 @@
-import { TelegramAvatar, useTelegram } from '@/entities/telegram';
-import { ConnectWalletTon } from '@/entities/ton';
-import { AddTon } from '@/features/add-ton';
-import clsx from 'clsx';
+import { TelegramAvatar, useTelegram } from "@/entities/telegram";
+import { AddTon } from "@/features/add-ton";
+import { ConnectTonWallet } from "@/features/connect-wallet";
+import clsx from "clsx";
 
 export const Header = () => {
   const telegram = useTelegram();
@@ -11,11 +11,11 @@ export const Header = () => {
       <div className="container-safe">
         <div
           className={clsx(
-            telegram.platform !== 'tdesktop' ? 'min-h-13' : 'min-h-15',
-            'px-4 grid place-items-center justify-items-end grid-cols-[auto_1fr] gap-2',
-          )}>
-          {/* py-3 */}
-          <ConnectWalletTon />
+            telegram.platform !== "tdesktop" ? "min-h-13" : "min-h-15",
+            "px-4 grid place-items-center justify-items-end grid-cols-[auto_1fr] gap-2",
+          )}
+        >
+          <ConnectTonWallet />
 
           <div className="flex items-center gap-1.5">
             <AddTon />

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Avatar } from '@/shared/ui/avatar/avatar';
 import clsx from 'clsx';
+import type { GetLobbyQuery } from '@/shared/api/graphql/graphql';
+import { useUserJoinedToLobbySocket } from '../hooks/use-user-joined-to-lobby-subscription';
 
 interface Segment {
   id: number;
@@ -10,43 +12,37 @@ interface Segment {
 }
 
 type SpinCarouselProps = {
+  gifts: string[];
   onSelected(): void;
+  lobby: GetLobbyQuery['lobby'];
+  participants: GetLobbyQuery['lobby']['participants'];
 };
 
 export const SpinCarousel = (props: SpinCarouselProps) => {
-  const { onSelected } = props;
+  const { onSelected, lobby, participants } = props;
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
-  const [countdown, setCountdown] = useState(30);
   const [gameTimer, setGameTimer] = useState(5);
+  const [countdown, setCountdown] = useState(lobby.timeToStart);
   const [selectedSegment, setSelectedSegment] = useState<number | null>(null);
   const [gamePhase, setGamePhase] = useState<
     'waiting' | 'spinning' | 'finished' | 'celebrating'
   >('waiting');
   const [isHighlighting, setIsHighlighting] = useState(false);
 
-  // const segments: Segment[] = [
-  //   { id: 0, гкд: <Trophy className="w-6 h-6 text-white" />, value: 'Grand Prize', color: '#2D353F' },
-  //   { id: 1, гкд: <Gift className="w-6 h-6 text-white" />, value: 'Gift Box', color: '#2D353F' },
-  //   { id: 2, гкд: <Star className="w-6 h-6 text-white" />, value: 'Star Bonus', color: '#2D353F' },
-  //   { id: 3, гкд: <Diamond className="w-6 h-6 text-white" />, value: 'Diamond', color: '#2D353F' },
-  //   { id: 4, гкд: <Crown className="w-6 h-6 text-white" />, value: 'Royal Crown', color: '#2D353F' },
-  //   { id: 5, гкд: <Coins className="w-6 h-6 text-white" />, value: 'Gold Coins', color: '#2D353F' },
-  //   { id: 6, гкд: <Gem className="w-6 h-6 text-white" />, value: 'Precious Gem', color: '#2D353F' },
-  //   { id: 7, гкд: <Zap className="w-6 h-6 text-white" />, value: 'Lightning Bonus', color: '#2D353F' }
-  // ];
+  const hasEnoughPlayers = participants.length >= 2;
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
 
-    if (gamePhase === 'waiting' && countdown > 0) {
+    if (gamePhase === 'waiting' && countdown > 0 && hasEnoughPlayers) {
       timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-    } else if (gamePhase === 'waiting' && countdown === 0) {
+    } else if (gamePhase === 'waiting' && countdown === 0 && hasEnoughPlayers) {
       handleAutoSpin();
     }
 
     return () => clearTimeout(timer);
-  }, [countdown, gamePhase]);
+  }, [countdown, gamePhase, hasEnoughPlayers]);
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -59,6 +55,8 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   }, [gameTimer, gamePhase]);
 
   const handleAutoSpin = () => {
+    if (!hasEnoughPlayers) return;
+
     setGamePhase('spinning');
     setIsSpinning(true);
     setGameTimer(5);
@@ -89,11 +87,16 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   };
 
   // const handleManualSpin = () => {
-  //   if (isSpinning || gamePhase !== 'waiting') return;
+  //   if (isSpinning || gamePhase !== 'waiting' || !hasEnoughPlayers) return;
   //   handleAutoSpin();
+  //   joinToLobby(lobby.id);
   // };
 
   const getPhaseText = () => {
+    if (!hasEnoughPlayers) {
+      return 'Нужно 2+ \n игроков';
+    }
+
     switch (gamePhase) {
       case 'waiting':
         return countdown > 0 ? `${countdown} сек` : 'Starting...';
@@ -113,6 +116,10 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   };
 
   const getPhaseLabel = () => {
+    if (!hasEnoughPlayers) {
+      return 'Waiting:';
+    }
+
     switch (gamePhase) {
       case 'waiting':
         return 'Начало через:';
@@ -151,18 +158,29 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
     return {};
   };
 
+  // const handleToggleModal = () => {
+  //   setIsOpenModal((prev) => !prev);
+  // };
+
+  useUserJoinedToLobbySocket(lobby.id, (payload) => {
+    console.log('Кто-то присоединился к лобби!', payload);
+  });
+
   return (
     <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <div className="flex flex-col items-center">
-        <div className="relative">
+        <div className={`relative ${!hasEnoughPlayers ? 'opacity-60' : ''}`}>
           <div className="absolute inset-0 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 blur-3xl scale-110"></div>
           <div className="relative w-80 h-80 rounded-full">
             <div
               className={clsx(
+                hasEnoughPlayers
+                  ? 'shadow-[inset_0px_0px_10px_0px_--alpha(var(--color-blue-100)_/_50%),inset_0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)]'
+                  : 'shadow-[inset_0px_0px_10px_0px_--alpha(var(--color-red-100)_/_50%),inset_0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)]',
                 gamePhase === 'celebrating'
                   ? 'transition-transform duration-300 ease-out'
                   : '',
-                'size-full rounded-full relative overflow-hidden transition-transform duration-[5000ms] ease-out shadow-[inset_0px_0px_10px_0px_--alpha(var(--color-blue-100)_/_50%),inset_0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)]',
+                'size-full rounded-full relative overflow-hidden transition-transform duration-[5000ms] ease-out ',
               )}
               style={{
                 background: '#2D353F',
@@ -172,7 +190,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
                   : 'ease',
               }}>
               {/* Segment Lines */}
-              {segments.map((_, index) => (
+              {participants.map((_, index) => (
                 <div
                   key={index}
                   className="shadow-[inset_0px_0px_10px_0px_--alpha(var(--color-blue-100)_/_50%),inset_0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)] absolute w-0.5 h-40 top-0 left-1/2 transform -translate-x-1/2 origin-bottom"
@@ -183,7 +201,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
               ))}
 
               {/* Icons - Properly Centered in Each Segment */}
-              {segments.map((segment, index, list) => {
+              {participants.map((segment, index, list) => {
                 const segmentAngle = 360 / list.length; // 360 / 8 segments
                 const angleInRadians =
                   (index * segmentAngle + segmentAngle / 2) * (Math.PI / 180);
@@ -220,10 +238,17 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
                 gamePhase === 'celebrating'
                   ? 'scale-110 border-yellow-400/70 shadow-yellow-500/30'
                   : '',
-                'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-dark-blue-950 rounded-full  flex flex-col items-center justify-center shadow-[0px_0px_10px_0px_--alpha(var(--color-blue-100)_/_50%),0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)] border-15 border-dark-blue box-content ',
+                'absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-dark-blue-950 rounded-full flex flex-col items-center justify-center border-15 border-dark-blue box-content',
+                !hasEnoughPlayers &&
+                  'shadow-[0px_0px_10px_0px_--alpha(var(--color-red-100)_/_50%),0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)]',
+                hasEnoughPlayers &&
+                  'shadow-[0px_0px_10px_0px_--alpha(var(--color-blue-100)_/_50%),0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)]',
               )}>
               <p className="text-xs mb-px font-medium">{getPhaseLabel()}</p>
-              <p className="text-2xl font-medium truncate w-32 mx-auto text-center">
+              <p
+                className={clsx(
+                  'text-2xl font-medium line-clamp-2 w-32 mx-auto text-center',
+                )}>
                 {getPhaseText()}
               </p>
             </div>
@@ -247,6 +272,27 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
           </div>
         )} */}
       </div>
+
+      {/* <Modal open={isOpenModal} onClose={handleToggleModal}>
+        <p className="text-lg font-medium mb-7.5 text-center mt-2 mx-2">
+          Вы хотите сделать ставку ? После подтверждения ее нельзя будет
+          отменить !
+        </p>
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <button
+            type="button"
+            onClick={handleToggleModal}
+            className="cursor-pointer min-h-10.5 grid place-content-center border border-white rounded-lg">
+            Не буду ставить
+          </button>
+          <button
+            type="button"
+            onClick={handleManualSpin}
+            className="cursor-pointer min-h-10.5 grid place-content-center bg-blue rounded-lg">
+            Сделать ставку
+          </button>
+        </div>
+      </Modal> */}
     </div>
   );
 };
