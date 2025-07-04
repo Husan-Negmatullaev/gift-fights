@@ -3,13 +3,24 @@ import { AppRouterProvider } from './providers/router-provider/ui/app-router-pro
 import './styles/index.css';
 import ReactModal from 'react-modal';
 import { useEffect } from 'react';
+import { ApoloProvider } from './providers/apolo-provider';
+import { TonConnectProvider } from '@/entities/ton';
+import { ProfileUserProvider } from '@/features/profile-user';
 
 function App() {
   useEffect(() => {
     initTelegram();
   }, []);
 
-  return <AppRouterProvider />;
+  return (
+    <TonConnectProvider>
+      <ApoloProvider>
+        <ProfileUserProvider>
+          <AppRouterProvider />
+        </ProfileUserProvider>
+      </ApoloProvider>
+    </TonConnectProvider>
+  );
 }
 
 export default App;

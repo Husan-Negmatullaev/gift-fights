@@ -1,7 +1,12 @@
 import { GiftBorderCard } from '@/entities/gift';
 import { ProfileInformation } from '@/entities/user';
+import { useProfileContext } from '@/features/profile-user';
 
 export const Profile = () => {
+  const { profile } = useProfileContext();
+
+  console.log(profile);
+
   return (
     <section className="grid gap-5 pb-7.5">
       <ProfileInformation />

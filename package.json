@@ -7,11 +7,17 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
+    "@apollo/client": "^3.13.8",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@telegram-apps/sdk-react": "^3.3.2",
+    "@tonconnect/ui": "^2.2.0",
+    "@tonconnect/ui-react": "^2.2.0",
     "clsx": "^2.1.1",
+    "graphql": "^16.11.0",
     "lottie-react": "^2.4.1",
     "motion": "^12.19.2",
     "number-flow": "^0.5.8",
@@ -19,10 +25,19 @@
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.58.0",
     "react-modal": "^3.16.3",
-    "react-router": "^7.6.2"
+    "react-router": "^7.6.2",
+    "socket.io-client": "^4.8.1",
+    "urql": "^4.2.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
+    "@graphql-codegen/cli": "^5.0.7",
+    "@graphql-codegen/client-preset": "4.8.3",
+    "@graphql-codegen/introspection": "4.0.3",
+    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/typescript-operations": "^4.6.1",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.3",
+    "@parcel/watcher": "^2.5.1",
     "@tailwindcss/vite": "^4.1.10",
     "@types/node": "^24.0.1",
     "@types/react": "^19.1.2",

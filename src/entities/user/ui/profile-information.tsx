@@ -1,8 +1,6 @@
 import { Avatar } from '@/shared/ui/avatar/avatar';
 
 export const ProfileInformation = () => {
-  // background: linear-gradient(360deg, #2D83EC 0%, #1AC9FF 100%);
-
   return (
     <article className="overflow-hidden relative bg-linear-180 from-blue-50 to-blue-100 text-white">
       <div className="grid gap-2 place-items-center relative p-4">
