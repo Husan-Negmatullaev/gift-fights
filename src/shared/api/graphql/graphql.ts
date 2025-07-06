@@ -1,5 +1,5 @@
 /* eslint-disable */
-import type { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+import type { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-node/core";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -18,7 +18,7 @@ export type MakeEmpty<
 export type Incremental<T> =
   | T
   | {
-      [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never;
+      [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never;
     };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -33,127 +33,153 @@ export type Scalars = {
 
 export type ConfirmCreationTransactionInput = {
   /** BOC */
-  boc: Scalars['String']['input'];
+  boc: Scalars["String"]["input"];
   /** UUID v7 */
-  id: Scalars['String']['input'];
+  id: Scalars["String"]["input"];
+};
+
+export type CreateGiftInput = {
+  /** Background */
+  background: Scalars["String"]["input"];
+  /** Background permille */
+  backgroundPermille: Scalars["Int"]["input"];
+  /** External service ID */
+  externalId: Scalars["String"]["input"];
+  /** Model */
+  model: Scalars["String"]["input"];
+  /** Message ID from external service */
+  msgId: Scalars["Int"]["input"];
+  /** Price */
+  price: Scalars["Float"]["input"];
+  /** Rarity permille */
+  rarityPermille: Scalars["Int"]["input"];
+  /** Slug */
+  slug: Scalars["String"]["input"];
+  /** Symbol */
+  symbol: Scalars["String"]["input"];
+  /** Symbol permille */
+  symbolPermille: Scalars["Int"]["input"];
+  /** Title */
+  title: Scalars["String"]["input"];
 };
 
 export type CreateLobbyInput = {
   /** Maximal Bet */
-  maxBet?: InputMaybe<Scalars['Float']['input']>;
+  maxBet?: InputMaybe<Scalars["Float"]["input"]>;
   /** Minimal Bet */
-  minBet?: InputMaybe<Scalars['Float']['input']>;
+  minBet?: InputMaybe<Scalars["Float"]["input"]>;
   /** Time to start in sec */
-  timeToStart?: InputMaybe<Scalars['Int']['input']>;
+  timeToStart?: InputMaybe<Scalars["Int"]["input"]>;
   /** title */
-  title: Scalars['String']['input'];
+  title: Scalars["String"]["input"];
 };
 
 export type CreateTransactionInput = {
   /** Amount */
-  amount: Scalars['Float']['input'];
+  amount: Scalars["Float"]["input"];
   /** Type of transaction */
   type: TransactionType;
 };
 
 export type Gift = {
-  __typename?: 'Gift';
+  __typename?: "Gift";
   /** Background */
-  background: Scalars['String']['output'];
+  background: Scalars["String"]["output"];
   /** Background permille */
-  backgroundPermille: Scalars['Int']['output'];
+  backgroundPermille: Scalars["Int"]["output"];
   /** Blocked */
-  blocked: Scalars['Boolean']['output'];
+  blocked: Scalars["Boolean"]["output"];
   /** Created Date */
-  createdAt: Scalars['DateTime']['output'];
+  createdAt: Scalars["DateTime"]["output"];
   /** External service ID */
-  externalId: Scalars['String']['output'];
+  externalId: Scalars["String"]["output"];
   /** UUID v7 */
-  id: Scalars['String']['output'];
+  id: Scalars["String"]["output"];
   /** Model */
-  model: Scalars['String']['output'];
+  model: Scalars["String"]["output"];
   /** Message ID from external service */
-  msgId: Scalars['Int']['output'];
+  msgId: Scalars["Int"]["output"];
   /** Price */
-  price: Scalars['Float']['output'];
+  price: Scalars["Float"]["output"];
   /** Rarity permille */
-  rarityPermille: Scalars['Int']['output'];
+  rarityPermille: Scalars["Int"]["output"];
   /** Slug */
-  slug: Scalars['String']['output'];
+  slug: Scalars["String"]["output"];
   /** Symbol */
-  symbol: Scalars['String']['output'];
+  symbol: Scalars["String"]["output"];
   /** Symbol permille */
-  symbolPermille: Scalars['Int']['output'];
+  symbolPermille: Scalars["Int"]["output"];
   /** Title */
-  title: Scalars['String']['output'];
+  title: Scalars["String"]["output"];
   /** Updated Date */
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars["DateTime"]["output"];
   /** Owner */
   user: User;
   /** User telegram ID */
-  userId: Scalars['String']['output'];
+  userId: Scalars["String"]["output"];
 };
 
 export type IntegrateTonWalletToUserInput = {
   /** Ton Address */
-  address: Scalars['String']['input'];
+  address: Scalars["String"]["input"];
 };
 
 export type JoinToLobbyInput = {
   /** Gifts UUIDs v7 */
-  giftsIds: Array<Scalars['String']['input']>;
+  giftsIds: Array<Scalars["String"]["input"]>;
   /** Lobby ID */
-  lobbyId: Scalars['Int']['input'];
+  lobbyId: Scalars["Int"]["input"];
 };
 
 export type LeaderboardRow = {
-  __typename?: 'LeaderboardRow';
+  __typename?: "LeaderboardRow";
   /** Rank */
-  rank?: Maybe<Scalars['Int']['output']>;
+  rank?: Maybe<Scalars["Int"]["output"]>;
   /** Score */
-  score?: Maybe<Scalars['Int']['output']>;
+  score?: Maybe<Scalars["Int"]["output"]>;
   /** User */
   user: User;
   /** User ID */
-  userId: Scalars['Int']['output'];
+  userId: Scalars["Int"]["output"];
 };
 
 export type Lobby = {
-  __typename?: 'Lobby';
+  __typename?: "Lobby";
   /** Created Date */
-  createdAt: Scalars['DateTime']['output'];
+  createdAt: Scalars["DateTime"]["output"];
   /** ID */
-  id: Scalars['Int']['output'];
+  id: Scalars["Int"]["output"];
   /** Maximal Bet */
-  maxBet?: Maybe<Scalars['Float']['output']>;
+  maxBet?: Maybe<Scalars["Float"]["output"]>;
   /** Minimal Bet */
-  minBet?: Maybe<Scalars['Float']['output']>;
+  minBet?: Maybe<Scalars["Float"]["output"]>;
   /** Participants List */
   participants: Array<Participant>;
   /** Status of lobby */
   status: LobbyStatus;
   /** Time to start */
-  timeToStart: Scalars['Int']['output'];
+  timeToStart: Scalars["Int"]["output"];
   /** Title */
-  title: Scalars['String']['output'];
+  title: Scalars["String"]["output"];
   /** Updated Date */
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars["DateTime"]["output"];
   /** Winner */
   winner?: Maybe<User>;
   /** Winner ID */
-  winnerId?: Maybe<Scalars['Int']['output']>;
+  winnerId?: Maybe<Scalars["Int"]["output"]>;
 };
 
 export enum LobbyStatus {
-  Completed = 'Completed',
-  Countdown = 'Countdown',
-  InProcess = 'InProcess',
-  WaitingForPlayers = 'WaitingForPlayers',
+  Completed = "Completed",
+  Countdown = "Countdown",
+  InProcess = "InProcess",
+  WaitingForPlayers = "WaitingForPlayers",
 }
 
 export type Mutation = {
-  __typename?: 'Mutation';
+  __typename?: "Mutation";
   confirmCreationTransaction: Transaction;
+  createGift: Gift;
   createLobby: Lobby;
   createTransaction: Transaction;
   integrateTonWalletToUser: User;
@@ -163,6 +189,10 @@ export type Mutation = {
 
 export type MutationConfirmCreationTransactionArgs = {
   data: ConfirmCreationTransactionInput;
+};
+
+export type MutationCreateGiftArgs = {
+  data: CreateGiftInput;
 };
 
 export type MutationCreateLobbyArgs = {
@@ -186,29 +216,29 @@ export type MutationWithdrawGiftsArgs = {
 };
 
 export type Participant = {
-  __typename?: 'Participant';
+  __typename?: "Participant";
   /** Amount */
-  amount: Scalars['Int']['output'];
+  amount: Scalars["Int"]["output"];
   /** Created Date */
-  createdAt: Scalars['DateTime']['output'];
+  createdAt: Scalars["DateTime"]["output"];
   /** Gifts */
   gifts: Array<Gift>;
   /** ID */
-  id: Scalars['Int']['output'];
+  id: Scalars["Int"]["output"];
   /** Lobby */
   lobby: Lobby;
   /** Lobby ID */
-  lobbyId: Scalars['Int']['output'];
+  lobbyId: Scalars["Int"]["output"];
   /** Updated Date */
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars["DateTime"]["output"];
   /** User */
   user: User;
   /** User ID */
-  userId: Scalars['Int']['output'];
+  userId: Scalars["Int"]["output"];
 };
 
 export type Query = {
-  __typename?: 'Query';
+  __typename?: "Query";
   gift: Gift;
   gifts: Array<Gift>;
   leaderboard: Array<LeaderboardRow>;
@@ -226,142 +256,146 @@ export type Query = {
 };
 
 export type QueryGiftArgs = {
-  id: Scalars['String']['input'];
+  id: Scalars["String"]["input"];
 };
 
 export type QueryGiftsArgs = {
-  blocked?: InputMaybe<Scalars['Boolean']['input']>;
-  skip: Scalars['Int']['input'];
-  take: Scalars['Int']['input'];
-  userId?: InputMaybe<Scalars['String']['input']>;
+  blocked?: InputMaybe<Scalars["Boolean"]["input"]>;
+  max?: InputMaybe<Scalars["Float"]["input"]>;
+  min?: InputMaybe<Scalars["Float"]["input"]>;
+  skip: Scalars["Int"]["input"];
+  take: Scalars["Int"]["input"];
+  userId?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type QueryLeaderboardArgs = {
-  end?: Scalars['Int']['input'];
-  start: Scalars['Int']['input'];
+  end?: Scalars["Int"]["input"];
+  start: Scalars["Int"]["input"];
 };
 
 export type QueryLobbiesArgs = {
-  skip: Scalars['Int']['input'];
+  skip: Scalars["Int"]["input"];
   status?: InputMaybe<LobbyStatus>;
-  take: Scalars['Int']['input'];
+  take: Scalars["Int"]["input"];
 };
 
 export type QueryLobbyArgs = {
-  id: Scalars['Int']['input'];
+  id: Scalars["Int"]["input"];
 };
 
 export type QueryParticipantArgs = {
-  id: Scalars['Int']['input'];
+  id: Scalars["Int"]["input"];
 };
 
 export type QueryTransactionArgs = {
-  id: Scalars['Int']['input'];
+  id: Scalars["Int"]["input"];
 };
 
 export type QueryTransactionsArgs = {
-  skip: Scalars['Int']['input'];
-  take: Scalars['Int']['input'];
+  skip: Scalars["Int"]["input"];
+  take: Scalars["Int"]["input"];
 };
 
 export type QueryUserArgs = {
-  id: Scalars['Int']['input'];
+  id: Scalars["Int"]["input"];
 };
 
 export type QueryUsersArgs = {
-  skip: Scalars['Int']['input'];
-  take: Scalars['Int']['input'];
+  skip: Scalars["Int"]["input"];
+  take: Scalars["Int"]["input"];
 };
 
 export type QueryWithdrawnGiftArgs = {
-  id: Scalars['Int']['input'];
+  id: Scalars["Int"]["input"];
 };
 
 export type QueryWithdrawnGiftsArgs = {
-  skip: Scalars['Int']['input'];
-  take: Scalars['Int']['input'];
+  skip: Scalars["Int"]["input"];
+  take: Scalars["Int"]["input"];
 };
 
 export type Transaction = {
-  __typename?: 'Transaction';
+  __typename?: "Transaction";
   /** Amount */
-  amount: Scalars['Float']['output'];
+  amount: Scalars["Float"]["output"];
   /** Created Date */
-  createdAt: Scalars['DateTime']['output'];
+  createdAt: Scalars["DateTime"]["output"];
   /** Destination wallet */
-  from: Scalars['String']['output'];
+  from: Scalars["String"]["output"];
   /** Hash of transaction */
-  hash: Scalars['String']['output'];
+  hash: Scalars["String"]["output"];
   /** UUID v7 */
-  id: Scalars['String']['output'];
+  id: Scalars["String"]["output"];
   /** Type of transaction */
   status: TransactionStatus;
   /** Source wallet */
-  to: Scalars['String']['output'];
+  to: Scalars["String"]["output"];
   /** Type of transaction */
   type: TransactionType;
   /** Updated Date */
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars["DateTime"]["output"];
   /** Owner */
   user: User;
   /** User ID */
-  userId: Scalars['Int']['output'];
+  userId: Scalars["Int"]["output"];
 };
 
 export enum TransactionStatus {
-  Confirmed = 'Confirmed',
-  Draft = 'Draft',
-  Failed = 'Failed',
-  Pending = 'Pending',
+  Confirmed = "Confirmed",
+  Draft = "Draft",
+  Failed = "Failed",
+  Pending = "Pending",
 }
 
 export enum TransactionType {
-  WalletTopUp = 'wallet_top_up',
-  WalletWithdrawal = 'wallet_withdrawal',
+  WalletTopUp = "wallet_top_up",
+  WalletWithdrawal = "wallet_withdrawal",
 }
 
 export type User = {
-  __typename?: 'User';
+  __typename?: "User";
   /** Balance */
-  balance: Scalars['Float']['output'];
+  balance: Scalars["Float"]["output"];
   /** Created Date */
-  createdAt: Scalars['DateTime']['output'];
+  createdAt: Scalars["DateTime"]["output"];
   /** Display Name */
-  displayName: Scalars['String']['output'];
+  displayName: Scalars["String"]["output"];
   /** First Name */
-  firstName: Scalars['String']['output'];
+  firstName: Scalars["String"]["output"];
   /** User's gifts */
   gifts: Array<Gift>;
   /** ID */
-  id: Scalars['Int']['output'];
+  id: Scalars["Int"]["output"];
+  /** Avatar */
+  image?: Maybe<Scalars["String"]["output"]>;
   /** Last Name */
-  lastName: Scalars['String']['output'];
+  lastName: Scalars["String"]["output"];
   /** Lost games count */
-  losses?: Maybe<Scalars['Int']['output']>;
+  losses?: Maybe<Scalars["Int"]["output"]>;
   /** User's participated lobbies */
   participation: Array<Participant>;
   /** Referral code */
-  referralCode: Scalars['String']['output'];
+  referralCode: Scalars["String"]["output"];
   /** Referral users */
   referrals: Array<User>;
   /** Referred by */
-  referredBy?: Maybe<Scalars['String']['output']>;
+  referredBy?: Maybe<Scalars["String"]["output"]>;
   /** Referrer */
   referrer?: Maybe<User>;
   /** Telegram ID */
-  tgId: Scalars['String']['output'];
+  tgId: Scalars["String"]["output"];
   /** Ton wallet address */
-  tonAddress?: Maybe<Scalars['String']['output']>;
+  tonAddress?: Maybe<Scalars["String"]["output"]>;
   /** User's transactions */
   transactions: Array<Transaction>;
   /** Updated Date */
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars["DateTime"]["output"];
   /** Telegram User Name */
-  username: Scalars['String']['output'];
+  username: Scalars["String"]["output"];
   /** Win rate */
-  winRate?: Maybe<Scalars['Float']['output']>;
+  winRate?: Maybe<Scalars["Float"]["output"]>;
   /** Won games count */
-  wins?: Maybe<Scalars['Int']['output']>;
+  wins?: Maybe<Scalars["Int"]["output"]>;
   withdrawnGifts: Array<WithdrawnGift>;
   /** User's won lobbies */
   wonGames: Array<Lobby>;
@@ -369,62 +403,64 @@ export type User = {
 
 export type WithdrawGiftInput = {
   /** Gifts UUIDs v7 */
-  giftsIds: Array<Scalars['String']['input']>;
+  giftsIds: Array<Scalars["String"]["input"]>;
   /** Transaction UUIDs v7 */
-  transactionId: Scalars['String']['input'];
+  transactionId: Scalars["String"]["input"];
 };
 
 export type WithdrawnGift = {
-  __typename?: 'WithdrawnGift';
+  __typename?: "WithdrawnGift";
   /** Background */
-  background: Scalars['String']['output'];
+  background: Scalars["String"]["output"];
   /** Background permille */
-  backgroundPermille: Scalars['Int']['output'];
+  backgroundPermille: Scalars["Int"]["output"];
   /** Created Date */
-  createdAt: Scalars['DateTime']['output'];
+  createdAt: Scalars["DateTime"]["output"];
   /** External service ID */
-  externalId: Scalars['String']['output'];
+  externalId: Scalars["String"]["output"];
   /** UUID v7 */
-  id: Scalars['String']['output'];
+  id: Scalars["String"]["output"];
   /** Model */
-  model: Scalars['String']['output'];
+  model: Scalars["String"]["output"];
   /** Message ID from external service */
-  msgId: Scalars['Int']['output'];
+  msgId: Scalars["Int"]["output"];
   /** Price */
-  price: Scalars['Float']['output'];
+  price: Scalars["Float"]["output"];
   /** Rarity permille */
-  rarityPermille: Scalars['Int']['output'];
+  rarityPermille: Scalars["Int"]["output"];
   /** Slug */
-  slug: Scalars['String']['output'];
+  slug: Scalars["String"]["output"];
   /** Symbol */
-  symbol: Scalars['String']['output'];
+  symbol: Scalars["String"]["output"];
   /** Symbol permille */
-  symbolPermille: Scalars['Int']['output'];
+  symbolPermille: Scalars["Int"]["output"];
   /** Title */
-  title: Scalars['String']['output'];
+  title: Scalars["String"]["output"];
   /** Transaction */
   transaction: Transaction;
   /** Transaction ID */
-  transactionId: Scalars['String']['output'];
+  transactionId: Scalars["String"]["output"];
   /** Updated Date */
-  updatedAt: Scalars['DateTime']['output'];
+  updatedAt: Scalars["DateTime"]["output"];
   /** Owner */
   user: User;
   /** User telegram ID */
-  userId: Scalars['String']['output'];
+  userId: Scalars["String"]["output"];
 };
 
 export type GetGiftsQueryVariables = Exact<{
-  take: Scalars['Int']['input'];
-  skip: Scalars['Int']['input'];
-  userId?: InputMaybe<Scalars['String']['input']>;
-  blocked?: InputMaybe<Scalars['Boolean']['input']>;
+  take: Scalars["Int"]["input"];
+  skip: Scalars["Int"]["input"];
+  userId?: InputMaybe<Scalars["String"]["input"]>;
+  min?: InputMaybe<Scalars["Float"]["input"]>;
+  max?: InputMaybe<Scalars["Float"]["input"]>;
+  blocked?: InputMaybe<Scalars["Boolean"]["input"]>;
 }>;
 
 export type GetGiftsQuery = {
-  __typename?: 'Query';
+  __typename?: "Query";
   gifts: Array<{
-    __typename?: 'Gift';
+    __typename?: "Gift";
     id: string;
     slug: string;
     msgId: number;
@@ -442,15 +478,15 @@ export type GetGiftsQuery = {
 };
 
 export type GetLobbiesQueryVariables = Exact<{
-  take: Scalars['Int']['input'];
-  skip: Scalars['Int']['input'];
+  take: Scalars["Int"]["input"];
+  skip: Scalars["Int"]["input"];
   status?: InputMaybe<LobbyStatus>;
 }>;
 
 export type GetLobbiesQuery = {
-  __typename?: 'Query';
+  __typename?: "Query";
   lobbies: Array<{
-    __typename?: 'Lobby';
+    __typename?: "Lobby";
     id: number;
     title: string;
     status: LobbyStatus;
@@ -463,13 +499,13 @@ export type GetLobbiesQuery = {
 };
 
 export type GetLobbyQueryVariables = Exact<{
-  id: Scalars['Int']['input'];
+  id: Scalars["Int"]["input"];
 }>;
 
 export type GetLobbyQuery = {
-  __typename?: 'Query';
+  __typename?: "Query";
   lobby: {
-    __typename?: 'Lobby';
+    __typename?: "Lobby";
     id: number;
     title: string;
     status: LobbyStatus;
@@ -480,16 +516,17 @@ export type GetLobbyQuery = {
     createdAt: any;
     updatedAt: any;
     participants: Array<{
-      __typename?: 'Participant';
+      __typename?: "Participant";
       id: number;
       userId: number;
       amount: number;
-      user: { __typename?: 'User'; username: string };
+      user: { __typename?: "User"; image?: string | null; username: string };
       gifts: Array<{
-        __typename?: 'Gift';
+        __typename?: "Gift";
         id: string;
-        price: number;
         slug: string;
+        price: number;
+        blocked: boolean;
       }>;
     }>;
   };
@@ -500,9 +537,9 @@ export type JoinToLobbyMutationVariables = Exact<{
 }>;
 
 export type JoinToLobbyMutation = {
-  __typename?: 'Mutation';
+  __typename?: "Mutation";
   joinToLobby: {
-    __typename?: 'Lobby';
+    __typename?: "Lobby";
     id: number;
     title: string;
     status: LobbyStatus;
@@ -513,10 +550,33 @@ export type JoinToLobbyMutation = {
     createdAt: any;
     updatedAt: any;
     participants: Array<{
-      __typename?: 'Participant';
+      __typename?: "Participant";
       id: number;
-      user: { __typename?: 'User'; id: number; username: string };
+      user: { __typename?: "User"; id: number; username: string };
     }>;
+  };
+};
+
+export type ProfileQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ProfileQuery = {
+  __typename?: "Query";
+  profile: {
+    __typename?: "User";
+    id: number;
+    tgId: string;
+    username: string;
+    lastName: string;
+    firstName: string;
+    tonAddress?: string | null;
+    referralCode: string;
+    referredBy?: string | null;
+    balance: number;
+    displayName: string;
+    createdAt: any;
+    updatedAt: any;
+    wonGames: Array<{ __typename?: "Lobby"; id: number }>;
+    withdrawnGifts: Array<{ __typename?: "WithdrawnGift"; id: string }>;
   };
 };
 
@@ -525,9 +585,9 @@ export type IntegrateTonWalletToUserMutationVariables = Exact<{
 }>;
 
 export type IntegrateTonWalletToUserMutation = {
-  __typename?: 'Mutation';
+  __typename?: "Mutation";
   integrateTonWalletToUser: {
-    __typename?: 'User';
+    __typename?: "User";
     id: number;
     tgId: string;
     username: string;
@@ -545,9 +605,9 @@ export type CreateTransactionMutationVariables = Exact<{
 }>;
 
 export type CreateTransactionMutation = {
-  __typename?: 'Mutation';
+  __typename?: "Mutation";
   createTransaction: {
-    __typename?: 'Transaction';
+    __typename?: "Transaction";
     id: string;
     to: string;
     from: string;
@@ -562,27 +622,27 @@ export type CreateTransactionMutation = {
 };
 
 export type GetUserQueryVariables = Exact<{
-  id: Scalars['Int']['input'];
+  id: Scalars["Int"]["input"];
 }>;
 
 export type GetUserQuery = {
-  __typename?: 'Query';
+  __typename?: "Query";
   user: {
-    __typename?: 'User';
+    __typename?: "User";
     id: number;
     username: string;
     displayName: string;
     lastName: string;
     tonAddress?: string | null;
     gifts: Array<{
-      __typename?: 'Gift';
+      __typename?: "Gift";
       id: string;
       title: string;
       slug: string;
       price: number;
     }>;
     withdrawnGifts: Array<{
-      __typename?: 'WithdrawnGift';
+      __typename?: "WithdrawnGift";
       id: string;
       slug: string;
       title: string;
@@ -591,134 +651,137 @@ export type GetUserQuery = {
   };
 };
 
-export type ProfileQueryVariables = Exact<{ [key: string]: never }>;
-
-export type ProfileQuery = {
-  __typename?: 'Query';
-  profile: {
-    __typename?: 'User';
-    id: number;
-    tgId: string;
-    username: string;
-    lastName: string;
-    firstName: string;
-    tonAddress?: string | null;
-    referralCode: string;
-    referredBy?: string | null;
-    balance: number;
-    displayName: string;
-    createdAt: any;
-    updatedAt: any;
-    wonGames: Array<{ __typename?: 'Lobby'; id: number }>;
-    withdrawnGifts: Array<{ __typename?: 'WithdrawnGift'; id: string }>;
-  };
-};
-
 export const GetGiftsDocument = {
-  kind: 'Document',
+  kind: "Document",
   definitions: [
     {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetGifts' },
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetGifts" },
       variableDefinitions: [
         {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'take' } },
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "take" } },
           type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
           },
         },
         {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "skip" } },
           type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
           },
         },
         {
-          kind: 'VariableDefinition',
+          kind: "VariableDefinition",
           variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'userId' },
+            kind: "Variable",
+            name: { kind: "Name", value: "userId" },
           },
-          type: { kind: 'NamedType', name: { kind: 'Name', value: 'String' } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
         },
         {
-          kind: 'VariableDefinition',
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "min" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Float" } },
+        },
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "max" } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Float" } },
+        },
+        {
+          kind: "VariableDefinition",
           variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'blocked' },
+            kind: "Variable",
+            name: { kind: "Name", value: "blocked" },
           },
-          type: { kind: 'NamedType', name: { kind: 'Name', value: 'Boolean' } },
+          type: { kind: "NamedType", name: { kind: "Name", value: "Boolean" } },
         },
       ],
       selectionSet: {
-        kind: 'SelectionSet',
+        kind: "SelectionSet",
         selections: [
           {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'gifts' },
+            kind: "Field",
+            name: { kind: "Name", value: "gifts" },
             arguments: [
               {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'take' },
+                kind: "Argument",
+                name: { kind: "Name", value: "take" },
                 value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'take' },
+                  kind: "Variable",
+                  name: { kind: "Name", value: "take" },
                 },
               },
               {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'skip' },
+                kind: "Argument",
+                name: { kind: "Name", value: "skip" },
                 value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'skip' },
+                  kind: "Variable",
+                  name: { kind: "Name", value: "skip" },
                 },
               },
               {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'userId' },
+                kind: "Argument",
+                name: { kind: "Name", value: "userId" },
                 value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'userId' },
+                  kind: "Variable",
+                  name: { kind: "Name", value: "userId" },
                 },
               },
               {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'blocked' },
+                kind: "Argument",
+                name: { kind: "Name", value: "min" },
                 value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'blocked' },
+                  kind: "Variable",
+                  name: { kind: "Name", value: "min" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "max" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "max" },
+                },
+              },
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "blocked" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "blocked" },
                 },
               },
             ],
             selectionSet: {
-              kind: 'SelectionSet',
+              kind: "SelectionSet",
               selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'slug' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'msgId' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'title' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'model' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'price' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'symbol' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'blocked' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'externalId' } },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "slug" } },
+                { kind: "Field", name: { kind: "Name", value: "msgId" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                { kind: "Field", name: { kind: "Name", value: "model" } },
+                { kind: "Field", name: { kind: "Name", value: "price" } },
+                { kind: "Field", name: { kind: "Name", value: "symbol" } },
+                { kind: "Field", name: { kind: "Name", value: "userId" } },
+                { kind: "Field", name: { kind: "Name", value: "blocked" } },
+                { kind: "Field", name: { kind: "Name", value: "externalId" } },
                 {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'symbolPermille' },
+                  kind: "Field",
+                  name: { kind: "Name", value: "symbolPermille" },
                 },
                 {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'rarityPermille' },
+                  kind: "Field",
+                  name: { kind: "Name", value: "rarityPermille" },
                 },
                 {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'backgroundPermille' },
+                  kind: "Field",
+                  name: { kind: "Name", value: "backgroundPermille" },
                 },
               ],
             },
@@ -729,84 +792,84 @@ export const GetGiftsDocument = {
   ],
 } as unknown as DocumentNode<GetGiftsQuery, GetGiftsQueryVariables>;
 export const GetLobbiesDocument = {
-  kind: 'Document',
+  kind: "Document",
   definitions: [
     {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetLobbies' },
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetLobbies" },
       variableDefinitions: [
         {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'take' } },
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "take" } },
           type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
           },
         },
         {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "skip" } },
           type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
           },
         },
         {
-          kind: 'VariableDefinition',
+          kind: "VariableDefinition",
           variable: {
-            kind: 'Variable',
-            name: { kind: 'Name', value: 'status' },
+            kind: "Variable",
+            name: { kind: "Name", value: "status" },
           },
           type: {
-            kind: 'NamedType',
-            name: { kind: 'Name', value: 'LobbyStatus' },
+            kind: "NamedType",
+            name: { kind: "Name", value: "LobbyStatus" },
           },
         },
       ],
       selectionSet: {
-        kind: 'SelectionSet',
+        kind: "SelectionSet",
         selections: [
           {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'lobbies' },
+            kind: "Field",
+            name: { kind: "Name", value: "lobbies" },
             arguments: [
               {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'take' },
+                kind: "Argument",
+                name: { kind: "Name", value: "take" },
                 value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'take' },
+                  kind: "Variable",
+                  name: { kind: "Name", value: "take" },
                 },
               },
               {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'skip' },
+                kind: "Argument",
+                name: { kind: "Name", value: "skip" },
                 value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'skip' },
+                  kind: "Variable",
+                  name: { kind: "Name", value: "skip" },
                 },
               },
               {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'status' },
+                kind: "Argument",
+                name: { kind: "Name", value: "status" },
                 value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'status' },
+                  kind: "Variable",
+                  name: { kind: "Name", value: "status" },
                 },
               },
             ],
             selectionSet: {
-              kind: 'SelectionSet',
+              kind: "SelectionSet",
               selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'title' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'status' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'minBet' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'maxBet' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'timeToStart' } },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                { kind: "Field", name: { kind: "Name", value: "minBet" } },
+                { kind: "Field", name: { kind: "Name", value: "maxBet" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+                { kind: "Field", name: { kind: "Name", value: "timeToStart" } },
               ],
             },
           },
@@ -816,95 +879,103 @@ export const GetLobbiesDocument = {
   ],
 } as unknown as DocumentNode<GetLobbiesQuery, GetLobbiesQueryVariables>;
 export const GetLobbyDocument = {
-  kind: 'Document',
+  kind: "Document",
   definitions: [
     {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetLobby' },
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetLobby" },
       variableDefinitions: [
         {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
           type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
           },
         },
       ],
       selectionSet: {
-        kind: 'SelectionSet',
+        kind: "SelectionSet",
         selections: [
           {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'lobby' },
+            kind: "Field",
+            name: { kind: "Name", value: "lobby" },
             arguments: [
               {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'id' },
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
                 value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'id' },
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
                 },
               },
             ],
             selectionSet: {
-              kind: 'SelectionSet',
+              kind: "SelectionSet",
               selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'title' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'status' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'minBet' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'maxBet' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'timeToStart' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'winnerId' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                { kind: "Field", name: { kind: "Name", value: "minBet" } },
+                { kind: "Field", name: { kind: "Name", value: "maxBet" } },
+                { kind: "Field", name: { kind: "Name", value: "timeToStart" } },
+                { kind: "Field", name: { kind: "Name", value: "winnerId" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
                 {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'participants' },
+                  kind: "Field",
+                  name: { kind: "Name", value: "participants" },
                   selectionSet: {
-                    kind: 'SelectionSet',
+                    kind: "SelectionSet",
                     selections: [
-                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
                       {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'userId' },
+                        kind: "Field",
+                        name: { kind: "Name", value: "userId" },
                       },
                       {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'amount' },
+                        kind: "Field",
+                        name: { kind: "Name", value: "amount" },
                       },
                       {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'user' },
+                        kind: "Field",
+                        name: { kind: "Name", value: "user" },
                         selectionSet: {
-                          kind: 'SelectionSet',
+                          kind: "SelectionSet",
                           selections: [
                             {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'username' },
+                              kind: "Field",
+                              name: { kind: "Name", value: "image" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "username" },
                             },
                           ],
                         },
                       },
                       {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'gifts' },
+                        kind: "Field",
+                        name: { kind: "Name", value: "gifts" },
                         selectionSet: {
-                          kind: 'SelectionSet',
+                          kind: "SelectionSet",
                           selections: [
                             {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'id' },
+                              kind: "Field",
+                              name: { kind: "Name", value: "id" },
                             },
                             {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'price' },
+                              kind: "Field",
+                              name: { kind: "Name", value: "slug" },
                             },
                             {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'slug' },
+                              kind: "Field",
+                              name: { kind: "Name", value: "price" },
+                            },
+                            {
+                              kind: "Field",
+                              name: { kind: "Name", value: "blocked" },
                             },
                           ],
                         },
@@ -921,73 +992,73 @@ export const GetLobbyDocument = {
   ],
 } as unknown as DocumentNode<GetLobbyQuery, GetLobbyQueryVariables>;
 export const JoinToLobbyDocument = {
-  kind: 'Document',
+  kind: "Document",
   definitions: [
     {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'JoinToLobby' },
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "JoinToLobby" },
       variableDefinitions: [
         {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'data' } },
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "data" } },
           type: {
-            kind: 'NonNullType',
+            kind: "NonNullType",
             type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'JoinToLobbyInput' },
+              kind: "NamedType",
+              name: { kind: "Name", value: "JoinToLobbyInput" },
             },
           },
         },
       ],
       selectionSet: {
-        kind: 'SelectionSet',
+        kind: "SelectionSet",
         selections: [
           {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'joinToLobby' },
+            kind: "Field",
+            name: { kind: "Name", value: "joinToLobby" },
             arguments: [
               {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'data' },
+                kind: "Argument",
+                name: { kind: "Name", value: "data" },
                 value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'data' },
+                  kind: "Variable",
+                  name: { kind: "Name", value: "data" },
                 },
               },
             ],
             selectionSet: {
-              kind: 'SelectionSet',
+              kind: "SelectionSet",
               selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'title' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'status' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'minBet' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'maxBet' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'timeToStart' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'winnerId' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                { kind: "Field", name: { kind: "Name", value: "minBet" } },
+                { kind: "Field", name: { kind: "Name", value: "maxBet" } },
+                { kind: "Field", name: { kind: "Name", value: "timeToStart" } },
+                { kind: "Field", name: { kind: "Name", value: "winnerId" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
                 {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'participants' },
+                  kind: "Field",
+                  name: { kind: "Name", value: "participants" },
                   selectionSet: {
-                    kind: 'SelectionSet',
+                    kind: "SelectionSet",
                     selections: [
-                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
                       {
-                        kind: 'Field',
-                        name: { kind: 'Name', value: 'user' },
+                        kind: "Field",
+                        name: { kind: "Name", value: "user" },
                         selectionSet: {
-                          kind: 'SelectionSet',
+                          kind: "SelectionSet",
                           selections: [
                             {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'id' },
+                              kind: "Field",
+                              name: { kind: "Name", value: "id" },
                             },
                             {
-                              kind: 'Field',
-                              name: { kind: 'Name', value: 'username' },
+                              kind: "Field",
+                              name: { kind: "Name", value: "username" },
                             },
                           ],
                         },
@@ -1003,54 +1074,113 @@ export const JoinToLobbyDocument = {
     },
   ],
 } as unknown as DocumentNode<JoinToLobbyMutation, JoinToLobbyMutationVariables>;
-export const IntegrateTonWalletToUserDocument = {
-  kind: 'Document',
+export const ProfileDocument = {
+  kind: "Document",
   definitions: [
     {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'IntegrateTonWalletToUser' },
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "Profile" },
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "profile" },
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "tgId" } },
+                { kind: "Field", name: { kind: "Name", value: "username" } },
+                { kind: "Field", name: { kind: "Name", value: "lastName" } },
+                { kind: "Field", name: { kind: "Name", value: "firstName" } },
+                { kind: "Field", name: { kind: "Name", value: "tonAddress" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "referralCode" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "referredBy" } },
+                { kind: "Field", name: { kind: "Name", value: "balance" } },
+                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "wonGames" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "withdrawnGifts" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                    ],
+                  },
+                },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ProfileQuery, ProfileQueryVariables>;
+export const IntegrateTonWalletToUserDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "IntegrateTonWalletToUser" },
       variableDefinitions: [
         {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'data' } },
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "data" } },
           type: {
-            kind: 'NonNullType',
+            kind: "NonNullType",
             type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'IntegrateTonWalletToUserInput' },
+              kind: "NamedType",
+              name: { kind: "Name", value: "IntegrateTonWalletToUserInput" },
             },
           },
         },
       ],
       selectionSet: {
-        kind: 'SelectionSet',
+        kind: "SelectionSet",
         selections: [
           {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'integrateTonWalletToUser' },
+            kind: "Field",
+            name: { kind: "Name", value: "integrateTonWalletToUser" },
             arguments: [
               {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'data' },
+                kind: "Argument",
+                name: { kind: "Name", value: "data" },
                 value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'data' },
+                  kind: "Variable",
+                  name: { kind: "Name", value: "data" },
                 },
               },
             ],
             selectionSet: {
-              kind: 'SelectionSet',
+              kind: "SelectionSet",
               selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'tgId' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'username' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'firstName' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'lastName' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'tonAddress' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'balance' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "tgId" } },
+                { kind: "Field", name: { kind: "Name", value: "username" } },
+                { kind: "Field", name: { kind: "Name", value: "firstName" } },
+                { kind: "Field", name: { kind: "Name", value: "lastName" } },
+                { kind: "Field", name: { kind: "Name", value: "tonAddress" } },
+                { kind: "Field", name: { kind: "Name", value: "balance" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
               ],
             },
           },
@@ -1063,54 +1193,54 @@ export const IntegrateTonWalletToUserDocument = {
   IntegrateTonWalletToUserMutationVariables
 >;
 export const CreateTransactionDocument = {
-  kind: 'Document',
+  kind: "Document",
   definitions: [
     {
-      kind: 'OperationDefinition',
-      operation: 'mutation',
-      name: { kind: 'Name', value: 'CreateTransaction' },
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "CreateTransaction" },
       variableDefinitions: [
         {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'data' } },
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "data" } },
           type: {
-            kind: 'NonNullType',
+            kind: "NonNullType",
             type: {
-              kind: 'NamedType',
-              name: { kind: 'Name', value: 'CreateTransactionInput' },
+              kind: "NamedType",
+              name: { kind: "Name", value: "CreateTransactionInput" },
             },
           },
         },
       ],
       selectionSet: {
-        kind: 'SelectionSet',
+        kind: "SelectionSet",
         selections: [
           {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'createTransaction' },
+            kind: "Field",
+            name: { kind: "Name", value: "createTransaction" },
             arguments: [
               {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'data' },
+                kind: "Argument",
+                name: { kind: "Name", value: "data" },
                 value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'data' },
+                  kind: "Variable",
+                  name: { kind: "Name", value: "data" },
                 },
               },
             ],
             selectionSet: {
-              kind: 'SelectionSet',
+              kind: "SelectionSet",
               selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'to' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'from' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'hash' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'type' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'status' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'amount' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "to" } },
+                { kind: "Field", name: { kind: "Name", value: "from" } },
+                { kind: "Field", name: { kind: "Name", value: "hash" } },
+                { kind: "Field", name: { kind: "Name", value: "type" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                { kind: "Field", name: { kind: "Name", value: "amount" } },
+                { kind: "Field", name: { kind: "Name", value: "userId" } },
+                { kind: "Field", name: { kind: "Name", value: "createdAt" } },
+                { kind: "Field", name: { kind: "Name", value: "updatedAt" } },
               ],
             },
           },
@@ -1123,69 +1253,69 @@ export const CreateTransactionDocument = {
   CreateTransactionMutationVariables
 >;
 export const GetUserDocument = {
-  kind: 'Document',
+  kind: "Document",
   definitions: [
     {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'GetUser' },
+      kind: "OperationDefinition",
+      operation: "query",
+      name: { kind: "Name", value: "GetUser" },
       variableDefinitions: [
         {
-          kind: 'VariableDefinition',
-          variable: { kind: 'Variable', name: { kind: 'Name', value: 'id' } },
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "id" } },
           type: {
-            kind: 'NonNullType',
-            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+            kind: "NonNullType",
+            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
           },
         },
       ],
       selectionSet: {
-        kind: 'SelectionSet',
+        kind: "SelectionSet",
         selections: [
           {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'user' },
+            kind: "Field",
+            name: { kind: "Name", value: "user" },
             arguments: [
               {
-                kind: 'Argument',
-                name: { kind: 'Name', value: 'id' },
+                kind: "Argument",
+                name: { kind: "Name", value: "id" },
                 value: {
-                  kind: 'Variable',
-                  name: { kind: 'Name', value: 'id' },
+                  kind: "Variable",
+                  name: { kind: "Name", value: "id" },
                 },
               },
             ],
             selectionSet: {
-              kind: 'SelectionSet',
+              kind: "SelectionSet",
               selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'username' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'lastName' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'tonAddress' } },
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "username" } },
+                { kind: "Field", name: { kind: "Name", value: "displayName" } },
+                { kind: "Field", name: { kind: "Name", value: "lastName" } },
+                { kind: "Field", name: { kind: "Name", value: "tonAddress" } },
                 {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'gifts' },
+                  kind: "Field",
+                  name: { kind: "Name", value: "gifts" },
                   selectionSet: {
-                    kind: 'SelectionSet',
+                    kind: "SelectionSet",
                     selections: [
-                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'title' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'slug' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'price' } },
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "title" } },
+                      { kind: "Field", name: { kind: "Name", value: "slug" } },
+                      { kind: "Field", name: { kind: "Name", value: "price" } },
                     ],
                   },
                 },
                 {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'withdrawnGifts' },
+                  kind: "Field",
+                  name: { kind: "Name", value: "withdrawnGifts" },
                   selectionSet: {
-                    kind: 'SelectionSet',
+                    kind: "SelectionSet",
                     selections: [
-                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'slug' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'title' } },
-                      { kind: 'Field', name: { kind: 'Name', value: 'price' } },
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "slug" } },
+                      { kind: "Field", name: { kind: "Name", value: "title" } },
+                      { kind: "Field", name: { kind: "Name", value: "price" } },
                     ],
                   },
                 },
@@ -1197,62 +1327,3 @@ export const GetUserDocument = {
     },
   ],
 } as unknown as DocumentNode<GetUserQuery, GetUserQueryVariables>;
-export const ProfileDocument = {
-  kind: 'Document',
-  definitions: [
-    {
-      kind: 'OperationDefinition',
-      operation: 'query',
-      name: { kind: 'Name', value: 'Profile' },
-      selectionSet: {
-        kind: 'SelectionSet',
-        selections: [
-          {
-            kind: 'Field',
-            name: { kind: 'Name', value: 'profile' },
-            selectionSet: {
-              kind: 'SelectionSet',
-              selections: [
-                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'tgId' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'username' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'lastName' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'firstName' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'tonAddress' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'referralCode' },
-                },
-                { kind: 'Field', name: { kind: 'Name', value: 'referredBy' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'balance' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'wonGames' },
-                  selectionSet: {
-                    kind: 'SelectionSet',
-                    selections: [
-                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                    ],
-                  },
-                },
-                {
-                  kind: 'Field',
-                  name: { kind: 'Name', value: 'withdrawnGifts' },
-                  selectionSet: {
-                    kind: 'SelectionSet',
-                    selections: [
-                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
-                    ],
-                  },
-                },
-                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
-                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
-              ],
-            },
-          },
-        ],
-      },
-    },
-  ],
-} as unknown as DocumentNode<ProfileQuery, ProfileQueryVariables>;
