@@ -1,6 +1,6 @@
-import { GiftBorderCard } from '@/entities/gift';
-import { ProfileInformation } from '@/entities/user';
-import { useProfileContext } from '@/features/profile-user';
+import { GiftBorderCard } from "@/entities/gift";
+import { useProfileContext } from "@/entities/profile";
+import { ProfileInformation } from "@/entities/user";
 
 export const Profile = () => {
   const { profile } = useProfileContext();
@@ -33,7 +33,8 @@ export const Profile = () => {
               />
               <button
                 type="button"
-                className="cursor-pointer bg-white rounded-2.5 min-h-8.5 px-4 text-blue font-medium text-xs">
+                className="cursor-pointer bg-white rounded-2.5 min-h-8.5 px-4 text-blue font-medium text-xs"
+              >
                 Скопировать
               </button>
             </div>

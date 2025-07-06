@@ -1,14 +1,14 @@
-import clsx from "clsx";
+import clsx from 'clsx';
 import Lottie, {
   type LottieComponentProps,
   type LottieRefCurrentProps,
-} from "lottie-react";
-import { useRef, useState } from "react";
+} from 'lottie-react';
+import { useRef, useState } from 'react';
 
 type TouchableLottieProps = {
   animation: unknown;
   className?: string;
-} & Omit<LottieComponentProps, "animationData">;
+} & Omit<LottieComponentProps, 'animationData'>;
 
 export const TouchableLottie = (props: TouchableLottieProps) => {
   const { animation, className, ...restProps } = props;
@@ -32,7 +32,7 @@ export const TouchableLottie = (props: TouchableLottieProps) => {
       lottieRef={lottieRef}
       onClick={handleClick}
       animationData={animation}
-      className={clsx("lottie-wrapper", className)}
+      className={clsx('lottie-wrapper', className)}
       {...restProps}
     />
   );

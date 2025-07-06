@@ -1,9 +1,9 @@
-import { graphql } from '@/shared/api/graphql';
-import { useQuery } from '@apollo/client';
+import { graphql } from "@/shared/api/graphql";
+import { useQuery } from "@apollo/client";
 import type {
   GetLobbyQuery,
   GetLobbyQueryVariables,
-} from '@/shared/api/graphql/graphql';
+} from "@/shared/api/graphql/graphql";
 
 export const GET_LOBBY = graphql(`
   query GetLobby($id: Int!) {
@@ -22,12 +22,14 @@ export const GET_LOBBY = graphql(`
         userId
         amount
         user {
+          image
           username
         }
         gifts {
           id
-          price
           slug
+          price
+          blocked
         }
       }
     }

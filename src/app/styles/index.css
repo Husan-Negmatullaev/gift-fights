@@ -34,6 +34,8 @@
     --color-dark-blue-950: #273c56;
     --color-dark-blue-1000: #2d353f;
     --color-dark-blue-1050: #193751;
+    --color-dark-blue-1100: #0e5368;
+    --color-dark-blue-1150: #172535;
 
     --color-blue: #0098ea;
     --color-blue-50: #2d83ec;
@@ -51,6 +53,8 @@
     --color-black: #000000;
 
     --color-green: #00fb36;
+
+    --color-dark: #14191f;
 
     --color-red: #fb0000;
     --color-red-50: #ff1a1a;

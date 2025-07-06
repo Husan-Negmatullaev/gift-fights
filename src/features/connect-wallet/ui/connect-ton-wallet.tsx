@@ -1,48 +1,29 @@
 import {
-  useIntegrateTonWalletToUser,
+  useConnectTon,
   useTonConnect,
-  useTonConnectStatus,
-} from '@/entities/ton';
-import { Icons } from '@/shared/ui/icons/icons';
+  useIntegrateTonWalletToUser,
+} from "@/entities/ton";
+import { Icons } from "@/shared/ui/icons/icons";
 
 export const ConnectTonWallet = () => {
   const { integrateWallet } = useIntegrateTonWalletToUser();
 
-  const { connect, disconnect, connected, account, getShortAddress } =
-    useTonConnect();
+  const { connected, account, getShortAddress } = useTonConnect();
 
-  const handleConnectWallet = async () => {
-    try {
-      await connect();
-    } catch (err) {
-      console.error('Ошибка при интеграции кошелька:', err);
-    }
-  };
-
-  const handleDisconnectWallet = async () => {
-    try {
-      await disconnect();
-    } catch (err) {
-      console.error('Ошибка при отключении кошелька:', err);
-    }
-  };
-
-  useTonConnectStatus(
-    async (account) => {
-      await integrateWallet(account.address);
+  const { onConnect, onDisconnect } = useConnectTon({
+    async onSuccess(account) {
+      integrateWallet(account.address);
     },
-    () => {
-      disconnect();
-    },
-  );
+  });
 
   return (
     <>
       {!connected && (
         <button
           type="button"
-          onClick={handleConnectWallet}
-          className="flex items-center bg-blue text-white rounded-full px-2.5 min-h-9 cursor-pointer hover:bg-blue-600 transition-colors">
+          onClick={onConnect}
+          className="flex items-center bg-blue text-white rounded-full px-2.5 min-h-9 cursor-pointer hover:bg-blue-600 transition-colors"
+        >
           <Icons name="ton" width={20} height={20} />
 
           <span className="font-medium text-xs/4">Connect Wallet</span>
@@ -52,8 +33,9 @@ export const ConnectTonWallet = () => {
       {connected && account?.address && (
         <button
           type="button"
-          onClick={handleDisconnectWallet}
-          className="flex items-center gap-1 bg-dark-blue-1050 text-white rounded-full px-2.5 min-h-9 cursor-pointer hover:bg-blue-600 transition-colors">
+          onClick={onDisconnect}
+          className="flex items-center gap-1 bg-dark-blue-1050 text-white rounded-full px-2.5 min-h-9 cursor-pointer hover:bg-blue-600 transition-colors"
+        >
           <Icons name="cross" width={16} height={16} />
 
           <span className="font-medium text-xs/4">

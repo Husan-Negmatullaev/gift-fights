@@ -1,13 +1,27 @@
-import { graphql } from '@/shared/api/graphql';
-import { useQuery } from '@apollo/client';
+import { graphql } from "@/shared/api/graphql";
+import { useQuery } from "@apollo/client";
 import type {
   GetGiftsQuery,
   GetGiftsQueryVariables,
-} from '@/shared/api/graphql/graphql';
+} from "@/shared/api/graphql/graphql";
 
 const GET_GIFTS = graphql(`
-  query GetGifts($take: Int!, $skip: Int!, $userId: String, $blocked: Boolean) {
-    gifts(take: $take, skip: $skip, userId: $userId, blocked: $blocked) {
+  query GetGifts(
+    $take: Int!
+    $skip: Int!
+    $userId: String
+    $min: Float
+    $max: Float
+    $blocked: Boolean
+  ) {
+    gifts(
+      take: $take
+      skip: $skip
+      userId: $userId
+      min: $min
+      max: $max
+      blocked: $blocked
+    ) {
       id
       slug
       msgId
@@ -25,13 +39,20 @@ const GET_GIFTS = graphql(`
   }
 `);
 
-export const useGetGifts = (take: number, skip: number, userId?: string) => {
+export const useGetGifts = (
+  take: number,
+  skip: number,
+  userId?: string,
+  min?: number,
+  max?: number,
+  blocked?: boolean,
+) => {
   const { data, loading, error, refetch } = useQuery<
     GetGiftsQuery,
     GetGiftsQueryVariables
   >(GET_GIFTS, {
-    variables: { take, skip, userId },
-    fetchPolicy: 'network-only',
+    variables: { take, skip, userId, min, max, blocked },
+    fetchPolicy: "network-only",
   });
 
   return {
