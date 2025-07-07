@@ -1,4 +1,4 @@
-import { GiftBorderCard } from '@/entities/gift';
+// import { GiftBorderCard } from "@/entities/gift";
 
 export const YourGifts = () => {
   return (
@@ -7,7 +7,7 @@ export const YourGifts = () => {
       <ul className="peer grid gap-3 grid-cols-2">
         {Array.from({ length: 4 }).map((_item, index) => (
           <li key={index}>
-            <GiftBorderCard size="lg" />
+            {/* <GiftBorderCard size="lg" slug={""} title={""} price={0} /> */}
           </li>
         ))}
       </ul>

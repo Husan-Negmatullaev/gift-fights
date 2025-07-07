@@ -11,6 +11,7 @@ interface ImportMetaEnv {
   readonly VITE_DOMAIN: string;
   readonly VITE_FRONTEND: string;
   readonly VITE_WS_DOMAIN: string;
+  readonly VITE_WALLET_ADDRESS: string;
 }
 
 interface ImportMeta {

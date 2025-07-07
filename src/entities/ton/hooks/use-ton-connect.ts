@@ -1,6 +1,6 @@
-import { useTonConnectUI } from "@tonconnect/ui-react";
-import { useState } from "react";
-import { useTonConnectStatus } from "./use-ton-connect-status";
+import { useTonConnectUI } from '@tonconnect/ui-react';
+import { useState } from 'react';
+import { useTonConnectStatus } from './use-ton-connect-status';
 
 export const useTonConnect = () => {
   const [tonConnectUI] = useTonConnectUI();
@@ -15,7 +15,7 @@ export const useTonConnect = () => {
 
       tonConnectUI.openModal();
     } catch (error) {
-      console.error("Ошибка при подключении кошелька:", error);
+      console.error('Ошибка при подключении кошелька:', error);
       throw error;
     }
   };

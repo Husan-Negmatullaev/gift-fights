@@ -1,6 +1,6 @@
-import { useProfileContext } from "@/entities/profile";
-import { Icons } from "@/shared/ui/icons/icons";
-import { useState, useEffect } from "react";
+import { useProfileContext } from '@/entities/profile';
+import { Icons } from '@/shared/ui/icons/icons';
+import { useState, useEffect } from 'react';
 
 type LoadUserProfileProps = {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ export const LoadUserProfile = (props: LoadUserProfileProps) => {
   const [progress, setProgress] = useState(0);
   const { isFirstLoadingTime } = useProfileContext();
   const isDataLoaded = isFirstLoadingTime;
-  const [loadingText, setLoadingText] = useState("Инициализация...");
+  const [loadingText, setLoadingText] = useState('Инициализация...');
   const [_isComplete, setIsComplete] = useState(false);
   const [_currentStageIndex, setCurrentStageIndex] = useState(0);
   const [isShowLoading, setIsShowLoading] = useState(false);
@@ -22,7 +22,7 @@ export const LoadUserProfile = (props: LoadUserProfileProps) => {
     if (isDataLoaded) {
       // If data is loaded, complete the loading immediately
       setProgress(100);
-      setLoadingText("Готово!");
+      setLoadingText('Готово!');
       setIsComplete(true);
 
       // Hide loading screen after 200ms as requested
@@ -66,7 +66,7 @@ export const LoadUserProfile = (props: LoadUserProfileProps) => {
       // If we've gone through all stages but data still not loaded,
       // stay at the last stage with some progress animation
       if (!isDataLoaded) {
-        setLoadingText("Ожидание данных...");
+        setLoadingText('Ожидание данных...');
         // Keep progress between current progress and 95% while waiting
         const waitingAnimation = setInterval(() => {
           if (isDataLoaded) {
@@ -119,8 +119,7 @@ export const LoadUserProfile = (props: LoadUserProfileProps) => {
           <div className="relative w-76 h-7 bg-dark-blue-1150 rounded-four border border-white shadow-[0px_0px_3.75px_#1ac9ff,inset_0px_0px_6.19px_#1ac9ff] overflow-hidden">
             <div
               style={{ width: `${progress}%` }}
-              className="h-full bg-gradient-to-r bg-white rounded-[3.57px] transition-all duration-200 ease-out relative"
-            >
+              className="h-full bg-gradient-to-r bg-white rounded-[3.57px] transition-all duration-200 ease-out relative">
               {/* <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
 
               <div className="absolute inset-0 bg-[#1ac9ff] opacity-50 blur-sm rounded-[3.57px]"></div>
@@ -148,12 +147,12 @@ export const LoadUserProfile = (props: LoadUserProfileProps) => {
 };
 
 const loadingStages = [
-  { text: "Инициализация..." },
-  { text: "Подключение к серверу..." },
-  { text: "Загрузка данных пользователя..." },
-  { text: "Синхронизация профиля..." },
-  { text: "Загрузка игровых данных..." },
-  { text: "Проверка обновлений..." },
-  { text: "Финализация..." },
-  { text: "Готово!" },
+  { text: 'Инициализация...' },
+  { text: 'Подключение к серверу...' },
+  { text: 'Загрузка данных пользователя...' },
+  { text: 'Синхронизация профиля...' },
+  { text: 'Загрузка игровых данных...' },
+  { text: 'Проверка обновлений...' },
+  { text: 'Финализация...' },
+  { text: 'Готово!' },
 ];

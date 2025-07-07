@@ -2,34 +2,44 @@ import { useState, useEffect } from "react";
 import { Avatar } from "@/shared/ui/avatar/avatar";
 import clsx from "clsx";
 import type { GetLobbyQuery } from "@/shared/api/graphql/graphql";
-import { useUserJoinedToLobbySocket } from "../hooks/use-user-joined-to-lobby-subscription";
 import { Icons } from "@/shared/ui/icons/icons";
+import { useLobbyCountdownSubscription } from "../hooks/use-lobby-countdown-subscription";
+import { useUserJoinedToLobbySocket } from "../hooks/use-user-joined-to-lobby-subscription";
+import { useLobbyProcessSubscription } from "../hooks/use-lobby-process-subscription";
+import { useLobbyWinnerSubscription } from "../hooks/use-lobby-winner-subscription";
 
 type SpinCarouselProps = {
   gifts: string[];
   onSelected(): void;
   lobby: GetLobbyQuery["lobby"];
-  participants: GetLobbyQuery["lobby"]["participants"];
+  // participants: GetLobbyQuery['lobby']['participants'];
 };
 
 export const SpinCarousel = (props: SpinCarouselProps) => {
-  const { onSelected, lobby, participants } = props;
+  const { onSelected, lobby } = props;
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [gameTimer, setGameTimer] = useState(5);
-  const [countdown, setCountdown] = useState(lobby.timeToStart);
+  const [countdown, setCountdown] = useState<number | null>(null);
   const [selectedSegment, setSelectedSegment] = useState<number | null>(null);
   const [gamePhase, setGamePhase] = useState<
     "waiting" | "spinning" | "finished" | "celebrating"
   >("waiting");
   const [isHighlighting, setIsHighlighting] = useState(false);
 
+  const participants = lobby.participants;
+
   const hasEnoughPlayers = participants.length >= 2;
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
 
-    if (gamePhase === "waiting" && countdown > 0 && hasEnoughPlayers) {
+    if (
+      gamePhase === "waiting" &&
+      countdown !== null &&
+      countdown > 0 &&
+      hasEnoughPlayers
+    ) {
       timer = setTimeout(() => setCountdown(countdown - 1), 1000);
     } else if (gamePhase === "waiting" && countdown === 0 && hasEnoughPlayers) {
       handleAutoSpin();
@@ -83,7 +93,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   // const handleManualSpin = () => {
   //   if (isSpinning || gamePhase !== 'waiting' || !hasEnoughPlayers) return;
   //   handleAutoSpin();
-  //   joinToLobby(lobby.id);
+  //   // joinToLobby(lobby.id);
   // };
 
   const getPhaseText = () => {
@@ -93,7 +103,9 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
 
     switch (gamePhase) {
       case "waiting":
-        return countdown > 0 ? `${countdown} сек` : "Starting...";
+        return countdown !== null && countdown > 0
+          ? `${countdown} сек`
+          : "Ожидание...";
       case "spinning":
         return `${gameTimer} сек`;
       case "celebrating":
@@ -107,7 +119,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
             "#2D353F"
           : "Game Over";
       default:
-        return `${countdown} сек`;
+        return countdown !== null ? `${countdown} сек` : "Ожидание...";
     }
   };
 
@@ -154,14 +166,63 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
     return {};
   };
 
-  // const handleToggleModal = () => {
-  //   setIsOpenModal((prev) => !prev);
-  // };
-
   useUserJoinedToLobbySocket(lobby.id, (payload) => {
     console.log("Кто-то присоединился к лобби!", payload);
-    alert("Кто-то присоединился к лобби!");
   });
+
+  useLobbyCountdownSubscription(lobby.id, (payload) => {
+    console.log("Обратный отсчет начался!", payload);
+  });
+
+  useLobbyProcessSubscription(lobby.id, (payload) => {
+    console.log("Начался процесс поиска победителя!", payload);
+  });
+
+  useLobbyWinnerSubscription(lobby.id, (payload) => {
+    console.log("Победитель найден!", payload);
+  });
+
+  // Подписываемся на все события лобби
+  // useLobbyNotifications(lobby.id, {
+  //   onUserJoined: (payload) => {
+  //     console.log('Кто-то присоединился к лобби!', payload);
+  //     // Можно обновить список участников или показать уведомление
+  //   },
+
+  //   onCountdown: (payload) => {
+  //     console.log('Обратный отсчет начался!', payload);
+  //     // Запускаем обратный отсчет с начальным значением из лобби
+  //     setCountdown(lobby.timeToStart);
+  //     setGamePhase('waiting');
+  //   },
+
+  //   onProcess: (payload) => {
+  //     console.log('Начался процесс поиска победителя!', payload);
+  //     // Автоматически запускаем спиннер
+  //     handleAutoSpin();
+  //   },
+
+  //   onWinner: (payload) => {
+  //     console.log('Победитель найден!', payload);
+  //     // Можно показать результат или обновить UI
+  //     // Здесь можно добавить логику для отображения победителя
+  //     // например, найти индекс победителя в списке участников
+  //     const winnerIndex = participants.findIndex(
+  //       (participant) => participant.userId === Number(payload.winnerId),
+  //     );
+  //     if (winnerIndex !== -1) {
+  //       setSelectedSegment(winnerIndex);
+  //       setGamePhase('celebrating');
+  //       setIsHighlighting(true);
+
+  //       // Через некоторое время переходим в состояние finished
+  //       setTimeout(() => {
+  //         setGamePhase('finished');
+  //         setIsHighlighting(false);
+  //       }, 2000);
+  //     }
+  //   },
+  // });
 
   return (
     <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -188,19 +249,25 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
               }}
             >
               {/* Segment Lines */}
-              {participants.map((_participant, index) => (
-                <div
-                  key={index}
-                  className="shadow-[inset_0px_0px_10px_0px_--alpha(var(--color-blue-100)_/_50%),inset_0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)] absolute w-0.5 h-40 top-0 left-1/2 transform -translate-x-1/2 origin-bottom"
-                  style={{
-                    transform: `translateX(-50%) rotate(${index * 45}deg)`,
-                  }}
-                />
-              ))}
+              {participants.map((_participant, index) => {
+                const segmentAngle = 360 / participants.length;
+                return (
+                  <div
+                    key={index}
+                    className="shadow-[inset_0px_0px_10px_0px_--alpha(var(--color-blue-100)_/_50%),inset_0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)] absolute w-0.5 h-40 top-0 left-1/2 transform -translate-x-1/2 origin-bottom"
+                    style={{
+                      transform: `translateX(-50%) rotate(${
+                        // index * segmentAngle + segmentAngle / 2
+                        index * segmentAngle + segmentAngle
+                      }deg)`,
+                    }}
+                  />
+                );
+              })}
 
               {/* Icons - Properly Centered in Each Segment */}
               {participants.map((participant, index, list) => {
-                const segmentAngle = 360 / list.length; // 360 / 8 segments
+                const segmentAngle = 360 / list.length;
                 const angleInRadians =
                   (index * segmentAngle + segmentAngle / 2) * (Math.PI / 180);
                 const radius = 115; // Distance from center
@@ -260,43 +327,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
             className="drop-shadow-[0px_0px_6.3px] drop-shadow-blue-100 absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-7"
           />
         </div>
-
-        {/* Winner Display */}
-        {/* {selectedSegment !== null && gamePhase === 'finished' && (
-          <div className="text-center p-6 bg-slate-800/50 rounded-lg border border-cyan-400/30 shadow-lg shadow-cyan-500/25">
-            <div className="flex items-center justify-center space-x-3 mb-2">
-              <div className="w-8 h-8 bg-slate-700 rounded-full flex items-center justify-center border border-cyan-400/50">
-                {segments[selectedSegment].icon}
-              </div>
-              <p className="text-xl font-bold text-cyan-400">
-                {segments[selectedSegment].value}
-              </p>
-            </div>
-            <p className="text-sm text-slate-400">Congratulations! You won!</p>
-          </div>
-        )} */}
       </div>
-
-      {/* <Modal open={isOpenModal} onClose={handleToggleModal}>
-        <p className="text-lg font-medium mb-7.5 text-center mt-2 mx-2">
-          Вы хотите сделать ставку ? После подтверждения ее нельзя будет
-          отменить !
-        </p>
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <button
-            type="button"
-            onClick={handleToggleModal}
-            className="cursor-pointer min-h-10.5 grid place-content-center border border-white rounded-lg">
-            Не буду ставить
-          </button>
-          <button
-            type="button"
-            onClick={handleManualSpin}
-            className="cursor-pointer min-h-10.5 grid place-content-center bg-blue rounded-lg">
-            Сделать ставку
-          </button>
-        </div>
-      </Modal> */}
     </div>
   );
 };

@@ -21,14 +21,15 @@ export const PlaySpin = () => {
   const { profile } = useProfileContext();
   const { joinToLobby } = useJoinToLobby();
   const { lobby, refetch } = useGetLobby(lobbyParamId);
-  const { gifts } = useGetGifts(
-    15,
-    0,
-    profile.tgId,
-    lobby?.minBet || 0,
-    lobby?.maxBet || 0,
-    true,
-  );
+  const { gifts } = useGetGifts({
+    take: 25,
+    skip: 0,
+    min: lobby?.minBet,
+    max: lobby?.maxBet,
+    blocked: false,
+    // userId: profile?.id,
+    // true,
+  });
 
   const [giftsId, setGiftsId] = useState<string[]>([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -69,8 +70,6 @@ export const PlaySpin = () => {
   //   [gifts],
   // );
 
-  console.log("lobby", lobby);
-
   return (
     <div className="py-2.5 px-6">
       <header className="flex justify-between items-center mb-3">
@@ -83,7 +82,6 @@ export const PlaySpin = () => {
           <SpinCarousel
             lobby={lobby}
             gifts={giftsId}
-            participants={lobby.participants}
             onSelected={handleSelectSpinResult}
           />
         )}
@@ -129,19 +127,21 @@ export const PlaySpin = () => {
 
       <Tabs tabs={tabs} listClassName="mb-3" tabsRef={tabsRef}>
         <div className="grid grid-cols-2 gap-3">
-          {gifts.map((gift) => (
-            <GiftBorderCardVariantThree
-              size={"lg"}
-              key={gift.id}
-              slug={gift.slug}
-              price={gift.price}
-              title={gift.title}
-              active={giftsId.includes(gift.id)}
-              onClick={() =>
-                handleSelectGift(gift.id, giftsId.includes(gift.id))
-              }
-            />
-          ))}
+          {gifts?.map((gift) =>
+            !gift.blocked ? (
+              <GiftBorderCardVariantThree
+                size={"lg"}
+                key={gift.id}
+                slug={gift.slug}
+                price={gift.price}
+                title={gift.title}
+                active={giftsId.includes(gift.id)}
+                onClick={() =>
+                  handleSelectGift(gift.id, giftsId.includes(gift.id))
+                }
+              />
+            ) : null,
+          )}
         </div>
         <div className="grid gap-2">
           {lobby?.participants.map((participant, _index, list) => (

@@ -1,9 +1,9 @@
-import { graphql } from "@/shared/api/graphql";
-import { useQuery } from "@apollo/client";
+import { graphql } from '@/shared/api/graphql';
+import { useQuery } from '@apollo/client';
 import type {
   GetGiftsQuery,
   GetGiftsQueryVariables,
-} from "@/shared/api/graphql/graphql";
+} from '@/shared/api/graphql/graphql';
 
 const GET_GIFTS = graphql(`
   query GetGifts(
@@ -39,20 +39,13 @@ const GET_GIFTS = graphql(`
   }
 `);
 
-export const useGetGifts = (
-  take: number,
-  skip: number,
-  userId?: string,
-  min?: number,
-  max?: number,
-  blocked?: boolean,
-) => {
+export const useGetGifts = (args: GetGiftsQueryVariables) => {
   const { data, loading, error, refetch } = useQuery<
     GetGiftsQuery,
     GetGiftsQueryVariables
   >(GET_GIFTS, {
-    variables: { take, skip, userId, min, max, blocked },
-    fetchPolicy: "network-only",
+    variables: args,
+    // fetchPolicy: "network-only",
   });
 
   return {

@@ -7,6 +7,7 @@ const PROFILE = graphql(`
     profile {
       id
       tgId
+      image
       username
       lastName
       firstName
@@ -15,19 +16,15 @@ const PROFILE = graphql(`
       referredBy
       balance
       displayName
-      # gifts
-      # referrer
-      # referrals
-      # transactions
-      # participation
-      wonGames {
-        id
-      }
+      winRate
+      wins
+      losses
       withdrawnGifts {
         id
+        slug
+        price
+        title
       }
-      createdAt
-      updatedAt
     }
   }
 `);
