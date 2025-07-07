@@ -1,27 +1,34 @@
-import { GiftCheckboxCard } from '@/entities/gift';
-import { ProfileInformation } from '@/entities/user';
-import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
-import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
-import { Modal } from '@/shared/ui/modal/modal';
-import { useState } from 'react';
-import { useForm, type SubmitHandler } from 'react-hook-form';
-import Gift from '@/shared/assets/lottie/berrybox.json';
+import { GiftCheckboxCard, useGetGifts } from "@/entities/gift";
+import { ProfileInformation } from "@/entities/user";
+import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
+import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
+import { Modal } from "@/shared/ui/modal/modal";
+import { useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import Gift from "@/shared/assets/lottie/berrybox.json";
+import { useProfileContext } from "@/entities/profile";
 
 interface IFormInput {
-  gifts: number[];
+  gifts: string[];
 }
 
-const mockGifts = [
-  { id: '1', name: 'Plush Pepe', value: 10 },
-  { id: '2', name: 'Plush Pepe', value: 10 },
-  { id: '3', name: 'Plush Pepe', value: 10 },
-  { id: '4', name: 'Plush Pepe', value: 10 },
-];
+// const mockGifts = [
+//   { id: '1', name: 'Plush Pepe', value: 10 },
+//   { id: '2', name: 'Plush Pepe', value: 10 },
+//   { id: '3', name: 'Plush Pepe', value: 10 },
+//   { id: '4', name: 'Plush Pepe', value: 10 },
+// ];
 
 export const Inventory = () => {
+  const { profile } = useProfileContext();
+  const { gifts } = useGetGifts({
+    take: 25,
+    skip: 0,
+  });
   const [open, setOpen] = useState(false);
   const {
     register,
+    getValues,
     handleSubmit,
     formState: { isDirty },
   } = useForm<IFormInput>({
@@ -32,25 +39,35 @@ export const Inventory = () => {
 
   const handleToggleModal = () => setOpen((prev) => !prev);
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = () => {
     handleToggleModal();
   };
 
   return (
     <div className="pb-16">
       <div className="mb-6">
-        <ProfileInformation />
+        <ProfileInformation profile={profile} />
       </div>
 
       <div className="grid grid-cols-2 px-6 pb-6 gap-x-2.5 gap-y-2">
         <h5 className="col-span-2 font-thin text-tiny/2.5">Ваши Gift's:</h5>
 
-        {mockGifts.map((gift) => (
+        {gifts.map((gift) => (
           <GiftCheckboxCard
             size="lg"
             key={gift.id}
-            checkbox={register('gifts', { required: true })}
+            slug={gift.slug}
+            title={gift.title}
+            price={gift.price}
+            blocked={gift.blocked}
+            checkbox={register("gifts", {
+              required: true,
+              disabled: gift.blocked,
+              // onChange: (e) => {
+              //   setValue('gifts', [...getValues('gifts'), gift.id]);
+              //   // console.log(e);
+              // },
+            })}
           />
         ))}
       </div>
@@ -75,18 +92,12 @@ export const Inventory = () => {
         </div>
 
         <div className="grid gap-2 justify-center grid-flow-dense auto-rows-[92px] grid-cols-[repeat(3,_92px)] mb-17">
-          {Array.from({ length: 6 }).map((_, index) => (
-            <div key={index} className="relative pb-[69%]">
+          {getValues("gifts").map((gift) => (
+            <div key={gift} className="relative pb-[69%]">
               <TouchableLottie
                 animation={Gift}
                 className="absolute inset-0 size-full object-cover"
               />
-              {/* <img
-                alt="gift"
-                key={index}
-                className="rounded-lg"
-                src="/assets/images/gifts/gift.webp"
-              /> */}
             </div>
           ))}
         </div>

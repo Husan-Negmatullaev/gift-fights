@@ -1,0 +1,480 @@
+# Indicates exactly one field must be supplied and this field must not be `null`.
+directive @oneOf on INPUT_OBJECT
+
+type Gift {
+  # UUID v7
+  id: String!
+
+  # Title
+  title: String!
+
+  # Slug
+  slug: String!
+
+  # Model
+  model: String!
+
+  # Symbol
+  symbol: String!
+
+  # Background
+  background: String!
+
+  # Blocked
+  blocked: Boolean!
+
+  # Price
+  price: Float!
+
+  # Symbol permille
+  symbolPermille: Int!
+
+  # Rarity permille
+  rarityPermille: Int!
+
+  # Background permille
+  backgroundPermille: Int!
+
+  # Message ID from external service
+  msgId: Int!
+
+  # External service ID
+  externalId: String!
+
+  # User telegram ID
+  userId: String!
+
+  # Owner
+  user: User!
+
+  # Created Date
+  createdAt: DateTime!
+
+  # Updated Date
+  updatedAt: DateTime!
+}
+
+# A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+scalar DateTime
+
+type Participant {
+  # ID
+  id: Int!
+
+  # Amount
+  amount: Int!
+
+  # User ID
+  userId: Int!
+
+  # Lobby ID
+  lobbyId: Int!
+
+  # User
+  user: User!
+
+  # Lobby
+  lobby: Lobby!
+
+  # Gifts
+  gifts: [Gift!]!
+
+  # Created Date
+  createdAt: DateTime!
+
+  # Updated Date
+  updatedAt: DateTime!
+}
+
+type Lobby {
+  # ID
+  id: Int!
+
+  # Title
+  title: String!
+
+  # Status of lobby
+  status: LobbyStatus!
+
+  # Minimal Bet
+  minBet: Float
+
+  # Maximal Bet
+  maxBet: Float
+
+  # Time to start
+  timeToStart: Int!
+
+  # Winner ID
+  winnerId: Int
+
+  # Winner
+  winner: User
+
+  # Participants List
+  participants: [Participant!]!
+
+  # Created Date
+  createdAt: DateTime!
+
+  # Updated Date
+  updatedAt: DateTime!
+}
+
+enum LobbyStatus {
+  WaitingForPlayers
+  Countdown
+  InProcess
+  Completed
+}
+
+type Transaction {
+  # UUID v7
+  id: String!
+
+  # Source wallet
+  to: String!
+
+  # Destination wallet
+  from: String!
+
+  # Hash of transaction
+  hash: String!
+
+  # Type of transaction
+  type: TransactionType!
+
+  # Type of transaction
+  status: TransactionStatus!
+
+  # Amount
+  amount: Float!
+
+  # User ID
+  userId: Int!
+
+  # Owner
+  user: User!
+
+  # Created Date
+  createdAt: DateTime!
+
+  # Updated Date
+  updatedAt: DateTime!
+}
+
+enum TransactionType {
+  wallet_top_up
+  wallet_withdrawal
+}
+
+enum TransactionStatus {
+  Draft
+  Pending
+  Confirmed
+  Failed
+}
+
+type User {
+  # ID
+  id: Int!
+
+  # Telegram ID
+  tgId: String!
+
+  # Telegram User Name
+  username: String!
+
+  # Last Name
+  lastName: String!
+
+  # First Name
+  firstName: String!
+
+  # Ton wallet address
+  tonAddress: String
+
+  # Avatar
+  image: String
+
+  # Referral code
+  referralCode: String!
+
+  # Referred by
+  referredBy: String
+
+  # Balance
+  balance: Float!
+
+  # Display Name
+  displayName: String!
+
+  # Referrer
+  referrer: User
+
+  # User's gifts
+  gifts: [Gift!]!
+
+  # Referral users
+  referrals: [User!]!
+
+  # User's won lobbies
+  wonGames: [Lobby!]!
+
+  # User's transactions
+  transactions: [Transaction!]!
+
+  # User's participated lobbies
+  participation: [Participant!]!
+
+  # Won games count
+  wins: Int
+
+  # Lost games count
+  losses: Int
+
+  # Win rate
+  winRate: Float
+
+  # Created Date
+  createdAt: DateTime!
+
+  # Updated Date
+  updatedAt: DateTime!
+  withdrawnGifts: [WithdrawnGift!]!
+}
+
+type WithdrawnGift {
+  # UUID v7
+  id: String!
+
+  # Title
+  title: String!
+
+  # Slug
+  slug: String!
+
+  # Model
+  model: String!
+
+  # Symbol
+  symbol: String!
+
+  # Background
+  background: String!
+
+  # Price
+  price: Float!
+
+  # Symbol permille
+  symbolPermille: Int!
+
+  # Rarity permille
+  rarityPermille: Int!
+
+  # Background permille
+  backgroundPermille: Int!
+
+  # Message ID from external service
+  msgId: Int!
+
+  # External service ID
+  externalId: String!
+
+  # User telegram ID
+  userId: String!
+
+  # Owner
+  user: User!
+
+  # Created Date
+  createdAt: DateTime!
+
+  # Updated Date
+  updatedAt: DateTime!
+
+  # Transaction ID
+  transactionId: String!
+
+  # Transaction
+  transaction: Transaction!
+}
+
+type LeaderboardRow {
+  # User ID
+  userId: Int!
+
+  # Score
+  score: Int
+
+  # Rank
+  rank: Int
+
+  # User
+  user: User!
+}
+
+type Query {
+  users(
+    # Take
+    take: Int!
+
+    # Skip
+    skip: Int!
+  ): [User!]!
+  user(id: Int!): User!
+  profile: User!
+  gifts(
+    # Take
+    take: Int!
+
+    # Skip
+    skip: Int!
+
+    # Min price
+    min: Float
+
+    # Max price
+    max: Float
+
+    # User telegram ID
+    userId: String
+
+    # Blocked
+    blocked: Boolean
+  ): [Gift!]!
+  rewards: [Gift!]!
+  gift(id: String!): Gift!
+  lobbies(
+    # Take
+    take: Int!
+
+    # Skip
+    skip: Int!
+
+    # Lobby's statuses
+    status: [LobbyStatus!]
+  ): [Lobby!]!
+  lobby(id: Int!): Lobby!
+  participant(id: Int!): Participant!
+  transactions(
+    # Take
+    take: Int!
+
+    # Skip
+    skip: Int!
+  ): [Transaction!]!
+  transaction(id: Int!): Transaction!
+  withdrawnGifts(
+    # Take
+    take: Int!
+
+    # Skip
+    skip: Int!
+  ): [WithdrawnGift!]!
+  withdrawnGift(id: Int!): WithdrawnGift!
+  leaderboard(
+    # Start with 0
+    start: Int!
+    end: Int! = 9
+  ): [LeaderboardRow!]!
+  myScore: LeaderboardRow!
+}
+
+type Mutation {
+  integrateTonWalletToUser(data: IntegrateTonWalletToUserInput!): User!
+  createGift(data: CreateGiftInput!): Gift!
+  withdrawGifts(data: WithdrawGiftInput!): [Gift!]!
+  createLobby(data: CreateLobbyInput!): Lobby!
+  joinToLobby(data: JoinToLobbyInput!): Lobby!
+  createTransaction(data: CreateTransactionInput!): Transaction!
+  confirmCreationTransaction(
+    data: ConfirmCreationTransactionInput!
+  ): Transaction!
+}
+
+input IntegrateTonWalletToUserInput {
+  # Ton Address
+  address: String!
+}
+
+input CreateGiftInput {
+  # Title
+  title: String!
+
+  # Slug
+  slug: String!
+
+  # Model
+  model: String!
+
+  # Symbol
+  symbol: String!
+
+  # Background
+  background: String!
+
+  # Price
+  price: Float!
+
+  # Symbol permille
+  symbolPermille: Int!
+
+  # Rarity permille
+  rarityPermille: Int!
+
+  # Background permille
+  backgroundPermille: Int!
+
+  # Message ID from external service
+  msgId: Int!
+
+  # External service ID
+  externalId: String!
+}
+
+input WithdrawGiftInput {
+  # Transaction UUIDs v7
+  transactionId: String!
+
+  # Gifts UUIDs v7
+  giftsIds: [String!]!
+}
+
+input CreateLobbyInput {
+  # title
+  title: String!
+
+  # Minimal Bet
+  minBet: Float
+
+  # Maximal Bet
+  maxBet: Float
+
+  # Time to start in sec
+  timeToStart: Int
+}
+
+input JoinToLobbyInput {
+  # Lobby ID
+  lobbyId: Int!
+
+  # Gifts UUIDs v7
+  giftsIds: [String!]!
+}
+
+input CreateTransactionInput {
+  # Type of transaction
+  type: TransactionType!
+
+  # Amount
+  amount: Float!
+}
+
+input ConfirmCreationTransactionInput {
+  # UUID v7
+  id: String!
+
+  # BOC
+  boc: String!
+}

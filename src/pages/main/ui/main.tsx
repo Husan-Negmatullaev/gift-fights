@@ -1,15 +1,15 @@
-import { lobbyImagesByBets, useGetLobbies } from '@/entities/lobby';
-import { LobbyStatus } from '@/shared/api/graphql/graphql';
-import { Link } from 'react-router';
+import { lobbyImagesByBets, useGetLobbies } from "@/entities/lobby";
+import { LobbyStatus } from "@/shared/api/graphql/graphql";
+import { Link } from "react-router";
 
 function getLobbyBetKey(
   minBet: number | null,
   maxBet: number | null,
-): Record<'background' | 'image', string> {
+): Record<"background" | "image", string> {
   if (minBet === null && maxBet === null) {
     return {
-      image: '/assets/images/main/infinite-cube.webp',
-      background: '/assets/images/play/octopus.webp',
+      image: "/assets/images/main/infinite-cube.webp",
+      background: "/assets/images/play/octopus.webp",
     };
   }
 
@@ -17,7 +17,11 @@ function getLobbyBetKey(
 }
 
 export const Main = () => {
-  const { lobbies } = useGetLobbies(15, 0, LobbyStatus.WaitingForPlayers);
+  const { lobbies } = useGetLobbies(15, 0, [
+    LobbyStatus.Countdown,
+    LobbyStatus.InProcess,
+    LobbyStatus.WaitingForPlayers,
+  ]);
 
   return (
     <div className="py-8 px-6 grid gap-9 content-start">

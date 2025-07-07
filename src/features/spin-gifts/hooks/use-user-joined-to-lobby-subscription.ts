@@ -1,13 +1,20 @@
 import { socket } from '@/shared/api/socket-io/config-socket-io';
 import { useEffect } from 'react';
 
+interface UserJoinedPayload {
+  eventType: string;
+  payload: {
+    lobbyId: number;
+  };
+}
+
 export const useUserJoinedToLobbySocket = (
   lobbyId: number,
-  onJoin: (payload: any) => void,
+  onJoin: (payload: UserJoinedPayload) => void,
 ) => {
   useEffect(() => {
-    const handler = (payload: any) => {
-      if (payload.lobbyId === lobbyId) {
+    const handler = (payload: UserJoinedPayload) => {
+      if (payload.payload.lobbyId === lobbyId) {
         onJoin(payload);
       }
     };

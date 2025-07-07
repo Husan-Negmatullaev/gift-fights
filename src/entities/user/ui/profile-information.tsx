@@ -1,13 +1,20 @@
+import type { ProfileQuery } from '@/shared/api/graphql/graphql';
 import { Avatar } from '@/shared/ui/avatar/avatar';
 
-export const ProfileInformation = () => {
+type ProfileInformationProps = {
+  profile: ProfileQuery['profile'];
+};
+
+export const ProfileInformation = (props: ProfileInformationProps) => {
+  const { profile } = props;
+
   return (
     <article className="overflow-hidden relative bg-linear-180 from-blue-50 to-blue-100 text-white">
       <div className="grid gap-2 place-items-center relative p-4">
-        <Avatar url="/assets/images/avatar.webp" className="size-24" />
+        {profile.image && <Avatar url={profile.image} className="size-24" />}
 
-        <h1 className="text-xl/6 font-medium">{'<nickname>'}</h1>
-        <p>{'<username>'}</p>
+        <h1 className="text-xl/6 font-medium">{profile.displayName}</h1>
+        <p>{profile.username}</p>
       </div>
       <img
         alt="telegrams"

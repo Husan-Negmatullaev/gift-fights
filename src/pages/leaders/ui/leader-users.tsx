@@ -3,28 +3,61 @@ import { Avatar } from "@/shared/ui/avatar/avatar";
 import { Icons } from "@/shared/ui/icons/icons";
 import Cap from "@/shared/assets/lottie/cap.json";
 import Froggy from "@/shared/assets/lottie/kissed-froggy.json";
+import type {
+  GetLeaderboardQuery,
+  MyScoreQuery,
+} from "@/shared/api/graphql/graphql";
 
-export const LeaderUsers = () => {
-  const battleLeaders = [
+type LeaderUsersProps = {
+  myScore: MyScoreQuery["myScore"];
+  leaderboards: GetLeaderboardQuery["leaderboard"];
+};
+
+export const LeaderUsers = (props: LeaderUsersProps) => {
+  const { myScore } = props;
+
+  const leaders: Record<
+    number,
     {
-      left: 0,
+      leaderboard: { username: string; image: string };
+      position: { top: string; left: number };
+      animation: unknown;
+    }
+  > = {
+    1: {
+      leaderboard: {
+        username: "username",
+        image: "/assets/images/leaders/avatar.webp",
+      },
       animation: Cap,
-      username: "<username>",
-      position: { top: "45px" },
+      position: {
+        top: "45px",
+        left: 0,
+      },
     },
-    {
-      left: 50,
+    2: {
+      leaderboard: {
+        username: "username",
+        image: "/assets/images/leaders/avatar.webp",
+      },
       animation: Cap,
-      username: "<username>",
-      position: { top: "0px" },
+      position: {
+        top: "0px",
+        left: 50,
+      },
     },
-    {
-      left: 100,
-      image: Cap,
-      animation: "<username>",
-      position: { top: "40px" },
+    3: {
+      leaderboard: {
+        username: "username",
+        image: "/assets/images/leaders/avatar.webp",
+      },
+      animation: Froggy,
+      position: {
+        top: "40px",
+        left: 100,
+      },
     },
-  ];
+  };
 
   return (
     <div className="bg-linear-360 from-blue-50 from-0% to-blue-100 to-100% py-4 px-6 rounded-b-3xl">
@@ -32,27 +65,27 @@ export const LeaderUsers = () => {
         Лидеры битв
       </h1>
       <div className="min-h-50 max-w-89 mx-auto relative mb-4">
-        {battleLeaders.map((leader, index) => {
-          const animation = index < 2 ? Cap : Froggy;
-
+        {Object.entries(leaders).map(([index, leader]) => {
+          // const animation = index < 2 ? Cap : Froggy;
+          // const leaderOptions = leadersObjects[index];
           return (
             <div
               key={index}
               className="absolute"
               style={{
-                left: `${leader.left}%`,
-                transform: `translateX(-${leader.left}%)`,
+                left: `${leader.position.left}%`,
+                transform: `translateX(-${leader.position.left}%)`,
                 top: leader.position.top,
               }}
             >
               <div style={{ width: 93, height: 80 }}>
                 <AppLottie
-                  animation={animation}
+                  animation={leader.animation}
                   style={{
                     width: 93 * 1.8,
                     height: 80 * 1.8,
                     left: -40,
-                    top: -15,
+                    top: -25,
                   }}
                   className="absolute inset-0 object-cover"
                 />
@@ -61,11 +94,11 @@ export const LeaderUsers = () => {
               <div className="grid place-items-center -mt-1 relative">
                 <Avatar
                   className="size-10.5 -mb-1.5 relative"
-                  url="/assets/images/leaders/avatar.webp"
+                  url={leader.leaderboard.image}
                 />
 
                 <div className=" text-tiny font-thin flex items-center bg-gray-50/30 border border-white/30 shadow-[0px_4px_4px_0px_--alpha(var(--color-black)_/_7%)] min-h-5.5 px-3 text-center rounded-full">
-                  {`<username>`}
+                  {leader.leaderboard.username}
                 </div>
               </div>
             </div>
@@ -77,12 +110,12 @@ export const LeaderUsers = () => {
         <h6 className="text-eight font-medium px-2 mb-1">Твой ранг</h6>
         <div className="flex items-center justify-between bg-dark-blue-150 rounded-lg px-3 min-h-13">
           <div className="flex items-center gap-2">
-            <span>#1324</span>
-            <span>{`<Вы>`}</span>
+            <span>#{myScore.rank}</span>
+            <span>{myScore.user.username}</span>
           </div>
 
           <div className="text-sm font-medium flex items-center">
-            <span>2 000</span>
+            <span>{myScore.score}</span>
             <Icons name="ton" width={22} height={22} />
           </div>
         </div>
