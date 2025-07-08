@@ -5,7 +5,7 @@ import { Tabs, type TabsImperativeRef } from "@/shared/ui/tabs/tabs";
 import { useParams } from "react-router";
 import Gift from "@/shared/assets/lottie/berrybox.json";
 import { useGetLobby, useJoinToLobby } from "@/entities/lobby";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Modal } from "@/shared/ui/modal/modal";
 import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
 import clsx from "clsx";
@@ -20,8 +20,8 @@ export const PlaySpin = () => {
 
   const { profile } = useProfileContext();
   const { joinToLobby } = useJoinToLobby();
-  const { lobby, refetch } = useGetLobby(lobbyParamId);
-  const { gifts } = useGetGifts({
+  const { lobby, refetch: refetchLobby } = useGetLobby(lobbyParamId);
+  const { gifts, refetch: refetchGifts } = useGetGifts({
     take: 25,
     skip: 0,
     min: lobby?.minBet,
@@ -30,6 +30,8 @@ export const PlaySpin = () => {
     // userId: profile?.id,
     // true,
   });
+
+  console.log("gifts", gifts);
 
   const [giftsId, setGiftsId] = useState<string[]>([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -54,7 +56,8 @@ export const PlaySpin = () => {
   const handleJoinToLobby = () => {
     joinToLobby(lobbyParamId, giftsId).then(() => {
       tabsRef.current?.onForceTab(1);
-      refetch();
+      refetchLobby();
+      refetchGifts();
       handleToggleModal();
     });
   };
@@ -65,10 +68,10 @@ export const PlaySpin = () => {
 
   const isAlreadyBetting = Boolean(currentUserBetting);
 
-  // const filteredBlockedGifts = useMemo(
-  //   () => gifts.filter((gift) => gift.blocked),
-  //   [gifts],
-  // );
+  const filteredBlockedGifts = useMemo(
+    () => gifts.filter((gift) => gift.blocked === false),
+    [gifts],
+  );
 
   return (
     <div className="py-2.5 px-6">
@@ -83,6 +86,11 @@ export const PlaySpin = () => {
             lobby={lobby}
             gifts={giftsId}
             onSelected={handleSelectSpinResult}
+            onRefetchLobby={() => refetchLobby()}
+            onRefreshAfterJoining={() => {
+              refetchLobby();
+              refetchGifts();
+            }}
           />
         )}
       </div>
@@ -127,21 +135,19 @@ export const PlaySpin = () => {
 
       <Tabs tabs={tabs} listClassName="mb-3" tabsRef={tabsRef}>
         <div className="grid grid-cols-2 gap-3">
-          {gifts?.map((gift) =>
-            !gift.blocked ? (
-              <GiftBorderCardVariantThree
-                size={"lg"}
-                key={gift.id}
-                slug={gift.slug}
-                price={gift.price}
-                title={gift.title}
-                active={giftsId.includes(gift.id)}
-                onClick={() =>
-                  handleSelectGift(gift.id, giftsId.includes(gift.id))
-                }
-              />
-            ) : null,
-          )}
+          {filteredBlockedGifts?.map((gift) => (
+            <GiftBorderCardVariantThree
+              size={"lg"}
+              key={gift.id}
+              slug={gift.slug}
+              price={gift.price}
+              title={gift.title}
+              active={giftsId.includes(gift.id)}
+              onClick={() =>
+                handleSelectGift(gift.id, giftsId.includes(gift.id))
+              }
+            />
+          ))}
         </div>
         <div className="grid gap-2">
           {lobby?.participants.map((participant, _index, list) => (

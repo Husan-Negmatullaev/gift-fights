@@ -1,6 +1,6 @@
-import { GiftBorderCard, useGetWithdrawnGifts } from '@/entities/gift';
-import { useProfileContext } from '@/entities/profile';
-import { ProfileInformation } from '@/entities/user';
+import { GiftBorderCard, useGetWithdrawnGifts } from "@/entities/gift";
+import { useProfileContext } from "@/entities/profile";
+import { ProfileInformation } from "@/entities/user";
 
 export const Profile = () => {
   const { profile } = useProfileContext();
@@ -33,7 +33,8 @@ export const Profile = () => {
               />
               <button
                 type="button"
-                className="cursor-pointer bg-white rounded-2.5 min-h-8.5 px-4 text-blue font-medium text-xs">
+                className="cursor-pointer bg-white rounded-2.5 min-h-8.5 px-4 text-blue font-medium text-xs"
+              >
                 Скопировать
               </button>
             </div>
@@ -63,7 +64,7 @@ export const Profile = () => {
             <div className="bg-dark-blue-50 px-2.5 py-2 rounded-xl">
               <dt className="font-thin text-tiny/2.5 mb-1">%</dt>
               <dd className="text-center text-green text-lg font-medium">
-                {profile.winRate}%
+                {profile.winRate ? Number(profile.winRate.toFixed(2)) : 0}%
               </dd>
             </div>
           </dl>

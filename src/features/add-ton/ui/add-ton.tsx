@@ -3,7 +3,7 @@ import {
   useConnectTon,
   useTonConnect,
   useIntegrateTonWalletToUser,
-  useMakeTransaction,
+  useCreateTransaction,
 } from "@/entities/ton";
 import { TransactionType } from "@/shared/api/graphql/graphql";
 import { Icons } from "@/shared/ui/icons/icons";
@@ -13,7 +13,7 @@ export const AddTon = () => {
   const { integrateWallet } = useIntegrateTonWalletToUser();
   const { profile } = useProfileContext();
   const [tonConnectUI] = useTonConnectUI();
-  const { makeTransaction: createTransaction } = useMakeTransaction();
+  const { makeTransaction: createTransaction } = useCreateTransaction();
 
   const { connected, connect } = useTonConnect();
   const { onConnect } = useConnectTon({

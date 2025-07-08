@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Avatar } from "@/shared/ui/avatar/avatar";
 import clsx from "clsx";
-import type { GetLobbyQuery } from "@/shared/api/graphql/graphql";
+import { LobbyStatus, type GetLobbyQuery } from "@/shared/api/graphql/graphql";
 import { Icons } from "@/shared/ui/icons/icons";
 import { useLobbyCountdownSubscription } from "../hooks/use-lobby-countdown-subscription";
 import { useUserJoinedToLobbySocket } from "../hooks/use-user-joined-to-lobby-subscription";
@@ -11,57 +11,31 @@ import { useLobbyWinnerSubscription } from "../hooks/use-lobby-winner-subscripti
 type SpinCarouselProps = {
   gifts: string[];
   onSelected(): void;
+  onRefetchLobby(): void;
   lobby: GetLobbyQuery["lobby"];
-  // participants: GetLobbyQuery['lobby']['participants'];
+  onRefreshAfterJoining(): void;
 };
 
 export const SpinCarousel = (props: SpinCarouselProps) => {
-  const { onSelected, lobby } = props;
+  const { onSelected, lobby, onRefreshAfterJoining, onRefetchLobby } = props;
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [gameTimer, setGameTimer] = useState(5);
-  const [countdown, setCountdown] = useState<number | null>(null);
+  console.log("lobby.timeToStart", lobby.timeToStart);
+  const [countdown, setCountdown] = useState<number>(lobby.timeToStart);
   const [selectedSegment, setSelectedSegment] = useState<number | null>(null);
-  const [gamePhase, setGamePhase] = useState<
-    "waiting" | "spinning" | "finished" | "celebrating"
-  >("waiting");
+  const [gamePhase, setGamePhase] = useState<LobbyStatus>(lobby.status);
   const [isHighlighting, setIsHighlighting] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
 
   const participants = lobby.participants;
 
   const hasEnoughPlayers = participants.length >= 2;
 
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
+  const handleAutoSpin = useCallback(() => {
+    // if (!hasEnoughPlayers) return;
 
-    if (
-      gamePhase === "waiting" &&
-      countdown !== null &&
-      countdown > 0 &&
-      hasEnoughPlayers
-    ) {
-      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-    } else if (gamePhase === "waiting" && countdown === 0 && hasEnoughPlayers) {
-      handleAutoSpin();
-    }
-
-    return () => clearTimeout(timer);
-  }, [countdown, gamePhase, hasEnoughPlayers]);
-
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
-
-    if (gamePhase === "spinning" && gameTimer > 0) {
-      timer = setTimeout(() => setGameTimer(gameTimer - 1), 1000);
-    }
-
-    return () => clearTimeout(timer);
-  }, [gameTimer, gamePhase]);
-
-  const handleAutoSpin = () => {
-    if (!hasEnoughPlayers) return;
-
-    setGamePhase("spinning");
+    setGamePhase(LobbyStatus.InProcess);
     setIsSpinning(true);
     setGameTimer(5);
 
@@ -78,63 +52,94 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
       setSelectedSegment(selectedIndex);
 
       // Start celebration phase with highlighting
-      setGamePhase("celebrating");
+      setGamePhase(LobbyStatus.Completed);
       setIsHighlighting(true);
 
       // After 800ms, move to finished state
       setTimeout(() => {
         onSelected();
-        setGamePhase("finished");
+        // setGamePhase(LobbyStatus.Completed);
         setIsHighlighting(false);
       }, 800);
     }, 5000);
-  };
+  }, [onSelected, participants.length, rotation]);
 
-  // const handleManualSpin = () => {
-  //   if (isSpinning || gamePhase !== 'waiting' || !hasEnoughPlayers) return;
-  //   handleAutoSpin();
-  //   // joinToLobby(lobby.id);
-  // };
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+
+    if (gamePhase === LobbyStatus.Countdown && countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (
+      gamePhase === LobbyStatus.Countdown &&
+      countdown === 0 &&
+      hasEnoughPlayers
+    ) {
+      handleAutoSpin();
+    }
+
+    return () => clearTimeout(timer);
+  }, [countdown, gamePhase, handleAutoSpin, hasEnoughPlayers]);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+
+    if (gamePhase === LobbyStatus.InProcess && gameTimer > 0) {
+      timer = setTimeout(() => setGameTimer(gameTimer - 1), 1000);
+    }
+
+    return () => clearTimeout(timer);
+  }, [gameTimer, gamePhase]);
+
+  const handleManualSpin = () => {
+    if (
+      isSpinning ||
+      gamePhase !== LobbyStatus.WaitingForPlayers
+      // !hasEnoughPlayers
+    )
+      return console.log("VAGINA");
+    console.log("PENIS");
+
+    onRefetchLobby();
+    handleAutoSpin();
+  };
 
   const getPhaseText = () => {
     if (!hasEnoughPlayers) {
-      return "Нужно 2+ \n игроков";
+      return "Need 2+ players";
     }
 
     switch (gamePhase) {
-      case "waiting":
-        return countdown !== null && countdown > 0
-          ? `${countdown} сек`
-          : "Ожидание...";
-      case "spinning":
+      case LobbyStatus.WaitingForPlayers:
+        return "Ready to start";
+      case LobbyStatus.Countdown:
+        return `${countdown} сек`;
+      case LobbyStatus.InProcess:
         return `${gameTimer} сек`;
-      case "celebrating":
+      case LobbyStatus.Completed:
         return selectedSegment !== null
-          ? // ? participants[selectedSegment].value
-            "#2D353F"
-          : "Winner!";
-      case "finished":
-        return selectedSegment !== null
-          ? // ? participants[selectedSegment].value
+          ? // ? segments[selectedSegment].value
             "#2D353F"
           : "Game Over";
       default:
-        return countdown !== null ? `${countdown} сек` : "Ожидание...";
+        return "Ready to start";
     }
   };
 
   const getPhaseLabel = () => {
+    console.log("hasEnoughPlayers", hasEnoughPlayers);
+
     if (!hasEnoughPlayers) {
       return "Waiting:";
     }
 
     switch (gamePhase) {
-      case "waiting":
+      case LobbyStatus.WaitingForPlayers:
         return "Начало через:";
-      case "spinning":
+      case LobbyStatus.Countdown:
+        return "Начало через:";
+      case LobbyStatus.InProcess:
         return "Игра:";
-      case "celebrating":
-      case "finished":
+      case LobbyStatus.Completed:
         return "Победитель:";
       default:
         return "Начало через:";
@@ -143,7 +148,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
 
   const getWinnerIconStyle = (segmentIndex: number) => {
     const isWinner = selectedSegment === segmentIndex;
-    const isCelebrating = gamePhase === "celebrating" && isHighlighting;
+    const isCelebrating = gamePhase === LobbyStatus.Completed && isHighlighting;
 
     if (isWinner && isCelebrating) {
       return {
@@ -154,7 +159,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
         transform: "translate(-50%, -50%) scale(1.3)",
         animation: "pulse 0.5s ease-in-out infinite alternate",
       };
-    } else if (isWinner && gamePhase === "finished") {
+    } else if (isWinner && gamePhase === LobbyStatus.Completed) {
       return {
         background: "linear-gradient(45deg, #ffd700, #ffed4e)",
         borderColor: "#ffd700",
@@ -168,18 +173,29 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
 
   useUserJoinedToLobbySocket(lobby.id, (payload) => {
     console.log("Кто-то присоединился к лобби!", payload);
+    onRefreshAfterJoining();
   });
 
   useLobbyCountdownSubscription(lobby.id, (payload) => {
     console.log("Обратный отсчет начался!", payload);
+    if (gameStarted) return;
+    setGamePhase(LobbyStatus.Countdown);
+    // setIsSpinning(true);
+    onRefetchLobby();
+    setGameStarted(true);
+    setGamePhase(LobbyStatus.Countdown);
+    setCountdown(30);
   });
 
   useLobbyProcessSubscription(lobby.id, (payload) => {
+    setGamePhase(LobbyStatus.InProcess);
+    handleManualSpin();
     console.log("Начался процесс поиска победителя!", payload);
   });
 
   useLobbyWinnerSubscription(lobby.id, (payload) => {
     console.log("Победитель найден!", payload);
+    setGamePhase(LobbyStatus.Completed);
   });
 
   // Подписываемся на все события лобби
@@ -235,7 +251,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
                 hasEnoughPlayers
                   ? "shadow-[inset_0px_0px_10px_0px_--alpha(var(--color-blue-100)_/_50%),inset_0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)]"
                   : "shadow-[inset_0px_0px_10px_0px_--alpha(var(--color-red-100)_/_50%),inset_0px_0px_4px_0px_--alpha(var(--color-white)_/_25%)]",
-                gamePhase === "celebrating"
+                gamePhase === LobbyStatus.Completed
                   ? "transition-transform duration-300 ease-out"
                   : "",
                 "size-full rounded-full relative overflow-hidden transition-transform duration-[5000ms] ease-out ",
@@ -301,7 +317,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
 
             <div
               className={clsx(
-                gamePhase === "celebrating"
+                gamePhase === LobbyStatus.Completed
                   ? "scale-110 border-yellow-400/70 shadow-yellow-500/30"
                   : "",
                 "absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-dark-blue-950 rounded-full flex flex-col items-center justify-center border-15 border-dark-blue box-content",
