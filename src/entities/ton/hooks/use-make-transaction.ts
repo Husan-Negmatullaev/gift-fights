@@ -22,7 +22,7 @@ const CREATE_TRANSACTION = graphql(`
   }
 `);
 
-export const useMakeTransaction = () => {
+export const useCreateTransaction = () => {
   const [mutate, { data, loading, error }] = useMutation<
     CreateTransactionMutation,
     CreateTransactionMutationVariables

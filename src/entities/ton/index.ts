@@ -6,4 +6,4 @@ export { TonConnectProvider } from "./ui/ton-connect-provider";
 
 export { useConnectTon } from "./hooks/use-connect-ton";
 
-export { useMakeTransaction } from "./hooks/use-make-transaction";
+export { useCreateTransaction } from "./hooks/use-make-transaction";

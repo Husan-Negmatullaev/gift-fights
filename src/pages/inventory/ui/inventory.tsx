@@ -3,7 +3,7 @@ import { ProfileInformation } from "@/entities/user";
 import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
 import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
 import { Modal } from "@/shared/ui/modal/modal";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import Gift from "@/shared/assets/lottie/berrybox.json";
 import { useProfileContext } from "@/entities/profile";
@@ -11,13 +11,6 @@ import { useProfileContext } from "@/entities/profile";
 interface IFormInput {
   gifts: string[];
 }
-
-// const mockGifts = [
-//   { id: '1', name: 'Plush Pepe', value: 10 },
-//   { id: '2', name: 'Plush Pepe', value: 10 },
-//   { id: '3', name: 'Plush Pepe', value: 10 },
-//   { id: '4', name: 'Plush Pepe', value: 10 },
-// ];
 
 export const Inventory = () => {
   const { profile } = useProfileContext();
@@ -43,6 +36,11 @@ export const Inventory = () => {
     handleToggleModal();
   };
 
+  const filteredBlockedGifts = useMemo(
+    () => gifts.filter((gift) => gift.blocked === false),
+    [gifts],
+  );
+
   return (
     <div className="pb-16">
       <div className="mb-6">
@@ -52,14 +50,14 @@ export const Inventory = () => {
       <div className="grid grid-cols-2 px-6 pb-6 gap-x-2.5 gap-y-2">
         <h5 className="col-span-2 font-thin text-tiny/2.5">Ваши Gift's:</h5>
 
-        {gifts.map((gift) => (
+        {filteredBlockedGifts.map((gift) => (
           <GiftCheckboxCard
             size="lg"
             key={gift.id}
             slug={gift.slug}
             title={gift.title}
             price={gift.price}
-            blocked={gift.blocked}
+            // blocked={gift.blocked}
             checkbox={register("gifts", {
               required: true,
               disabled: gift.blocked,
