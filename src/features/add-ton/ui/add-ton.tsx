@@ -4,6 +4,7 @@ import {
   useTonConnect,
   useIntegrateTonWalletToUser,
   useCreateTransaction,
+  useConfirmTransaction,
 } from "@/entities/ton";
 import { TransactionType } from "@/shared/api/graphql/graphql";
 import { Icons } from "@/shared/ui/icons/icons";
@@ -13,6 +14,7 @@ export const AddTon = () => {
   const { integrateWallet } = useIntegrateTonWalletToUser();
   const { profile } = useProfileContext();
   const [tonConnectUI] = useTonConnectUI();
+  const { confirmTransaction } = useConfirmTransaction();
   const { makeTransaction: createTransaction } = useCreateTransaction();
 
   const { connected, connect } = useTonConnect();
@@ -32,7 +34,7 @@ export const AddTon = () => {
   };
 
   const makeTransaction = async () => {
-    const amount = 1;
+    const amount = 0.1;
     const data = await createTransaction({
       type: TransactionType.WalletTopUp,
       amount,
@@ -43,15 +45,13 @@ export const AddTon = () => {
       return;
     }
 
-    console.log("hash", data.data?.createTransaction.hash);
-
     tonConnectUI
       .sendTransaction({
         validUntil: Math.floor(Date.now() / 1000) + 360,
 
         messages: [
           {
-            payload: data.data?.createTransaction.hash,
+            payload: data.data?.createTransaction.base64Hash as string,
             address: import.meta.env.VITE_WALLET_ADDRESS,
             amount: String(amount * 10 ** 9),
           },
@@ -62,15 +62,21 @@ export const AddTon = () => {
         // if (res.boc) {
         //   resolve(true);
         // }
+        //
+
+        console.log(res, res.boc);
+
+        confirmTransaction({
+          boc: res.boc,
+          id: data.data?.createTransaction.id as string,
+        })
+          .then((success) => console.log("success", success))
+          .catch((error) => console.error("error", error));
       })
       .catch((err) => {
         console.log("Err", err);
         // reject(false);
       });
-
-    // return new Promise((resolve, reject) => {
-
-    // });
   };
 
   return (

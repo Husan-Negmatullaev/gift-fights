@@ -20,65 +20,89 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   const { onSelected, lobby, onRefreshAfterJoining, onRefetchLobby } = props;
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
-  const [gameTimer, setGameTimer] = useState(5);
-  console.log("lobby.timeToStart", lobby.timeToStart);
+  const [gameTimer, setGameTimer] = useState(15);
   const [countdown, setCountdown] = useState<number>(lobby.timeToStart);
   const [selectedSegment, setSelectedSegment] = useState<number | null>(null);
   const [gamePhase, setGamePhase] = useState<LobbyStatus>(lobby.status);
   const [isHighlighting, setIsHighlighting] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
 
+  // console.log('lobby.timeToStart', lobby.timeToStart);
+  // console.log('countdown', countdown);
+
   const participants = lobby.participants;
 
   const hasEnoughPlayers = participants.length >= 2;
 
-  const handleAutoSpin = useCallback(() => {
-    // if (!hasEnoughPlayers) return;
+  const handleAutoSpin = useCallback(
+    (winnerId: string) => {
+      // if (!hasEnoughPlayers) return;
+      console.log("handleAutoSpin", winnerId);
+      console.log(
+        "handleAutoSpin",
+        participants.map((participant) => participant.userId),
+      );
+      setGamePhase(LobbyStatus.InProcess);
+      setIsSpinning(true);
+      setGameTimer(5);
 
-    setGamePhase(LobbyStatus.InProcess);
-    setIsSpinning(true);
-    setGameTimer(5);
+      const spins = 5 + Math.random() * 5;
+      const finalRotation = rotation + spins * 360 + Math.random() * 360;
+      setRotation(finalRotation);
 
-    const spins = 5 + Math.random() * 5;
-    const finalRotation = rotation + spins * 360 + Math.random() * 360;
-    setRotation(finalRotation);
-
-    setTimeout(() => {
-      setIsSpinning(false);
-
-      const segmentAngle = 360 / participants.length;
-      const normalizedRotation = (360 - (finalRotation % 360)) % 360;
-      const selectedIndex = Math.floor(normalizedRotation / segmentAngle);
-      setSelectedSegment(selectedIndex);
-
-      // Start celebration phase with highlighting
-      setGamePhase(LobbyStatus.Completed);
-      setIsHighlighting(true);
-
-      // After 800ms, move to finished state
       setTimeout(() => {
-        onSelected();
-        // setGamePhase(LobbyStatus.Completed);
-        setIsHighlighting(false);
-      }, 800);
-    }, 5000);
-  }, [onSelected, participants.length, rotation]);
+        setIsSpinning(false);
+
+        // const currentSegmentAngle = 360 / participants.length;
+        // const normalizedRotation = (360 - (finalRotation % 360)) % 360;
+
+        // Find winner by userId, fallback to random selection if not found
+        const selectedIndex = participants.findIndex(
+          (participant) => participant.userId === Number(winnerId),
+        );
+
+        // const segmentAngle = 360 / participants.length;
+        // const normalizedRotation = (360 - (finalRotation % 360)) % 360;
+        // // const selectedIndex = Math.floor(normalizedRotation / segmentAngle);
+        // const selectedIndex = participants.findIndex(
+        //   (participant) => participant.userId === Number(winnerId),
+        // );
+        console.log("selectedIndex", selectedIndex);
+        setSelectedSegment(selectedIndex);
+
+        // Start celebration phase with highlighting
+        setGamePhase(LobbyStatus.Completed);
+        setIsHighlighting(true);
+
+        // After 800ms, move to finished state
+        setTimeout(() => {
+          onSelected();
+          // setGamePhase(LobbyStatus.Completed);
+          setIsHighlighting(false);
+        }, 800);
+      }, 5000);
+    },
+    [onSelected, participants, rotation],
+  );
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
 
     if (gamePhase === LobbyStatus.Countdown && countdown > 0) {
       timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-    } else if (
-      gamePhase === LobbyStatus.Countdown &&
-      countdown === 0 &&
-      hasEnoughPlayers
-    ) {
-      handleAutoSpin();
+    } else if (gamePhase === LobbyStatus.Countdown && countdown === 0) {
+      // For demo purposes, simulate a winner ID - in real usage you'd get this from your backend
+      // const demoWinnerId =
+      //   participants.length > 0
+      //     ? participants[
+      //         Math.floor(Math.random() * participants.length)
+      //       ].userId.toString()
+      //     : Math.floor(Math.random() * participants.length).toString();
+      // handleAutoSpin(demoWinnerId);
     }
 
     return () => clearTimeout(timer);
-  }, [countdown, gamePhase, handleAutoSpin, hasEnoughPlayers]);
+  }, [countdown, gamePhase, participants, handleAutoSpin]);
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -90,18 +114,18 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
     return () => clearTimeout(timer);
   }, [gameTimer, gamePhase]);
 
-  const handleManualSpin = () => {
-    if (
-      isSpinning ||
-      gamePhase !== LobbyStatus.WaitingForPlayers
-      // !hasEnoughPlayers
-    )
-      return console.log("VAGINA");
-    console.log("PENIS");
+  // const handleManualSpin = () => {
+  //   if (
+  //     isSpinning ||
+  //     gamePhase !== LobbyStatus.WaitingForPlayers
+  //     // !hasEnoughPlayers
+  //   )
+  //     return console.log('VAGINA');
+  //   console.log('PENIS');
 
-    onRefetchLobby();
-    handleAutoSpin();
-  };
+  //   onRefetchLobby();
+  //   // handleAutoSpin();
+  // };
 
   const getPhaseText = () => {
     if (!hasEnoughPlayers) {
@@ -118,7 +142,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
       case LobbyStatus.Completed:
         return selectedSegment !== null
           ? // ? segments[selectedSegment].value
-            "#2D353F"
+            participants[selectedSegment].user.username
           : "Game Over";
       default:
         return "Ready to start";
@@ -126,7 +150,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   };
 
   const getPhaseLabel = () => {
-    console.log("hasEnoughPlayers", hasEnoughPlayers);
+    // console.log('hasEnoughPlayers', hasEnoughPlayers);
 
     if (!hasEnoughPlayers) {
       return "Waiting:";
@@ -184,18 +208,34 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
     onRefetchLobby();
     setGameStarted(true);
     setGamePhase(LobbyStatus.Countdown);
-    setCountdown(30);
+    setCountdown(lobby.timeToStart);
   });
 
-  useLobbyProcessSubscription(lobby.id, (payload) => {
-    setGamePhase(LobbyStatus.InProcess);
-    handleManualSpin();
-    console.log("Начался процесс поиска победителя!", payload);
+  useLobbyProcessSubscription(lobby.id, (_payload) => {
+    // setGamePhase(LobbyStatus.InProcess);
+    // handleManualSpin();
+    // console.log("Начался процесс поиска победителя!", payload);
   });
 
   useLobbyWinnerSubscription(lobby.id, (payload) => {
-    console.log("Победитель найден!", payload);
-    setGamePhase(LobbyStatus.Completed);
+    // console.log("Победитель найден!", payload);
+    // setGamePhase(LobbyStatus.InProcess);
+    // handleManualSpin();
+
+    // console.log("useLobbyWinnerSubscription", payload);
+
+    // handleAutoSpin(payload.payload.winnerId);
+    // setTimeout(() => {
+    //   // setGamePhase(LobbyStatus.Completed);
+    // }, 10);
+
+    // const demoWinnerId =
+    //   participants.length > 0
+    //     ? participants[
+    //         Math.floor(Math.random() * participants.length)
+    //       ].userId.toString()
+    //     : Math.floor(Math.random() * participants.length).toString();
+    handleAutoSpin(payload.payload.winnerId);
   });
 
   // Подписываемся на все события лобби

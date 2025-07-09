@@ -141,6 +141,9 @@ type Transaction {
   # Hash of transaction
   hash: String!
 
+  # Hash of transaction
+  base64Hash: String
+
   # Type of transaction
   type: TransactionType!
 
@@ -244,6 +247,20 @@ type User {
   withdrawnGifts: [WithdrawnGift!]!
 }
 
+type LeaderboardRow {
+  # User ID
+  userId: Int!
+
+  # Score
+  score: Float
+
+  # Rank
+  rank: Int
+
+  # User
+  user: User!
+}
+
 type WithdrawnGift {
   # UUID v7
   id: String!
@@ -298,20 +315,6 @@ type WithdrawnGift {
 
   # Transaction
   transaction: Transaction!
-}
-
-type LeaderboardRow {
-  # User ID
-  userId: Int!
-
-  # Score
-  score: Int
-
-  # Rank
-  rank: Int
-
-  # User
-  user: User!
 }
 
 type Query {

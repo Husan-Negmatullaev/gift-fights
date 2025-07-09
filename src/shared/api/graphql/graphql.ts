@@ -27,90 +27,145 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean };
   Int: { input: number; output: number };
   Float: { input: number; output: number };
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: any; output: any };
 };
 
 export type ConfirmCreationTransactionInput = {
+  /** BOC */
   boc: Scalars["String"]["input"];
+  /** UUID v7 */
   id: Scalars["String"]["input"];
 };
 
 export type CreateGiftInput = {
+  /** Background */
   background: Scalars["String"]["input"];
+  /** Background permille */
   backgroundPermille: Scalars["Int"]["input"];
+  /** External service ID */
   externalId: Scalars["String"]["input"];
+  /** Model */
   model: Scalars["String"]["input"];
+  /** Message ID from external service */
   msgId: Scalars["Int"]["input"];
+  /** Price */
   price: Scalars["Float"]["input"];
+  /** Rarity permille */
   rarityPermille: Scalars["Int"]["input"];
+  /** Slug */
   slug: Scalars["String"]["input"];
+  /** Symbol */
   symbol: Scalars["String"]["input"];
+  /** Symbol permille */
   symbolPermille: Scalars["Int"]["input"];
+  /** Title */
   title: Scalars["String"]["input"];
 };
 
 export type CreateLobbyInput = {
+  /** Maximal Bet */
   maxBet?: InputMaybe<Scalars["Float"]["input"]>;
+  /** Minimal Bet */
   minBet?: InputMaybe<Scalars["Float"]["input"]>;
+  /** Time to start in sec */
   timeToStart?: InputMaybe<Scalars["Int"]["input"]>;
+  /** title */
   title: Scalars["String"]["input"];
 };
 
 export type CreateTransactionInput = {
+  /** Amount */
   amount: Scalars["Float"]["input"];
+  /** Type of transaction */
   type: TransactionType;
 };
 
 export type Gift = {
   __typename?: "Gift";
+  /** Background */
   background: Scalars["String"]["output"];
+  /** Background permille */
   backgroundPermille: Scalars["Int"]["output"];
+  /** Blocked */
   blocked: Scalars["Boolean"]["output"];
+  /** Created Date */
   createdAt: Scalars["DateTime"]["output"];
+  /** External service ID */
   externalId: Scalars["String"]["output"];
+  /** UUID v7 */
   id: Scalars["String"]["output"];
+  /** Model */
   model: Scalars["String"]["output"];
+  /** Message ID from external service */
   msgId: Scalars["Int"]["output"];
+  /** Price */
   price: Scalars["Float"]["output"];
+  /** Rarity permille */
   rarityPermille: Scalars["Int"]["output"];
+  /** Slug */
   slug: Scalars["String"]["output"];
+  /** Symbol */
   symbol: Scalars["String"]["output"];
+  /** Symbol permille */
   symbolPermille: Scalars["Int"]["output"];
+  /** Title */
   title: Scalars["String"]["output"];
+  /** Updated Date */
   updatedAt: Scalars["DateTime"]["output"];
+  /** Owner */
   user: User;
+  /** User telegram ID */
   userId: Scalars["String"]["output"];
 };
 
 export type IntegrateTonWalletToUserInput = {
+  /** Ton Address */
   address: Scalars["String"]["input"];
 };
 
 export type JoinToLobbyInput = {
+  /** Gifts UUIDs v7 */
   giftsIds: Array<Scalars["String"]["input"]>;
+  /** Lobby ID */
   lobbyId: Scalars["Int"]["input"];
 };
 
 export type LeaderboardRow = {
   __typename?: "LeaderboardRow";
+  /** Rank */
   rank?: Maybe<Scalars["Int"]["output"]>;
-  score?: Maybe<Scalars["Int"]["output"]>;
+  /** Score */
+  score?: Maybe<Scalars["Float"]["output"]>;
+  /** User */
   user: User;
+  /** User ID */
   userId: Scalars["Int"]["output"];
 };
 
 export type Lobby = {
   __typename?: "Lobby";
+  /** Created Date */
   createdAt: Scalars["DateTime"]["output"];
+  /** ID */
   id: Scalars["Int"]["output"];
+  /** Maximal Bet */
   maxBet?: Maybe<Scalars["Float"]["output"]>;
+  /** Minimal Bet */
   minBet?: Maybe<Scalars["Float"]["output"]>;
+  /** Participants List */
   participants: Array<Participant>;
+  /** Status of lobby */
   status: LobbyStatus;
+  /** Time to start */
   timeToStart: Scalars["Int"]["output"];
+  /** Title */
   title: Scalars["String"]["output"];
+  /** Updated Date */
   updatedAt: Scalars["DateTime"]["output"];
+  /** Winner */
   winner?: Maybe<User>;
+  /** Winner ID */
   winnerId?: Maybe<Scalars["Int"]["output"]>;
 };
 
@@ -162,14 +217,23 @@ export type MutationWithdrawGiftsArgs = {
 
 export type Participant = {
   __typename?: "Participant";
+  /** Amount */
   amount: Scalars["Int"]["output"];
+  /** Created Date */
   createdAt: Scalars["DateTime"]["output"];
+  /** Gifts */
   gifts: Array<Gift>;
+  /** ID */
   id: Scalars["Int"]["output"];
+  /** Lobby */
   lobby: Lobby;
+  /** Lobby ID */
   lobbyId: Scalars["Int"]["output"];
+  /** Updated Date */
   updatedAt: Scalars["DateTime"]["output"];
+  /** User */
   user: User;
+  /** User ID */
   userId: Scalars["Int"]["output"];
 };
 
@@ -253,16 +317,29 @@ export type QueryWithdrawnGiftsArgs = {
 
 export type Transaction = {
   __typename?: "Transaction";
+  /** Amount */
   amount: Scalars["Float"]["output"];
+  /** Hash of transaction */
+  base64Hash?: Maybe<Scalars["String"]["output"]>;
+  /** Created Date */
   createdAt: Scalars["DateTime"]["output"];
+  /** Destination wallet */
   from: Scalars["String"]["output"];
+  /** Hash of transaction */
   hash: Scalars["String"]["output"];
+  /** UUID v7 */
   id: Scalars["String"]["output"];
+  /** Type of transaction */
   status: TransactionStatus;
+  /** Source wallet */
   to: Scalars["String"]["output"];
+  /** Type of transaction */
   type: TransactionType;
+  /** Updated Date */
   updatedAt: Scalars["DateTime"]["output"];
+  /** Owner */
   user: User;
+  /** User ID */
   userId: Scalars["Int"]["output"];
 };
 
@@ -274,61 +351,104 @@ export enum TransactionStatus {
 }
 
 export enum TransactionType {
+  Commission = "commission",
   WalletTopUp = "wallet_top_up",
   WalletWithdrawal = "wallet_withdrawal",
 }
 
 export type User = {
   __typename?: "User";
+  /** Balance */
   balance: Scalars["Float"]["output"];
+  /** Created Date */
   createdAt: Scalars["DateTime"]["output"];
+  /** Display Name */
   displayName: Scalars["String"]["output"];
+  /** First Name */
   firstName: Scalars["String"]["output"];
+  /** User's gifts */
   gifts: Array<Gift>;
+  /** ID */
   id: Scalars["Int"]["output"];
+  /** Avatar */
   image?: Maybe<Scalars["String"]["output"]>;
+  /** Last Name */
   lastName: Scalars["String"]["output"];
+  /** Lost games count */
   losses?: Maybe<Scalars["Int"]["output"]>;
+  /** User's participated lobbies */
   participation: Array<Participant>;
+  /** Referral code */
   referralCode: Scalars["String"]["output"];
+  /** Referral users */
   referrals: Array<User>;
+  /** Referred by */
   referredBy?: Maybe<Scalars["String"]["output"]>;
+  /** Referrer */
   referrer?: Maybe<User>;
+  /** Telegram ID */
   tgId: Scalars["String"]["output"];
+  /** Ton wallet address */
   tonAddress?: Maybe<Scalars["String"]["output"]>;
+  /** User's transactions */
   transactions: Array<Transaction>;
+  /** Updated Date */
   updatedAt: Scalars["DateTime"]["output"];
+  /** Telegram User Name */
   username: Scalars["String"]["output"];
+  /** Win rate */
   winRate?: Maybe<Scalars["Float"]["output"]>;
+  /** Won games count */
   wins?: Maybe<Scalars["Int"]["output"]>;
   withdrawnGifts: Array<WithdrawnGift>;
+  /** User's won lobbies */
   wonGames: Array<Lobby>;
 };
 
 export type WithdrawGiftInput = {
+  /** Gifts UUIDs v7 */
   giftsIds: Array<Scalars["String"]["input"]>;
+  /** Transaction UUIDs v7 */
   transactionId: Scalars["String"]["input"];
 };
 
 export type WithdrawnGift = {
   __typename?: "WithdrawnGift";
+  /** Background */
   background: Scalars["String"]["output"];
+  /** Background permille */
   backgroundPermille: Scalars["Int"]["output"];
+  /** Created Date */
   createdAt: Scalars["DateTime"]["output"];
+  /** External service ID */
   externalId: Scalars["String"]["output"];
+  /** UUID v7 */
   id: Scalars["String"]["output"];
+  /** Model */
   model: Scalars["String"]["output"];
+  /** Message ID from external service */
   msgId: Scalars["Int"]["output"];
+  /** Price */
   price: Scalars["Float"]["output"];
+  /** Rarity permille */
   rarityPermille: Scalars["Int"]["output"];
+  /** Slug */
   slug: Scalars["String"]["output"];
+  /** Symbol */
   symbol: Scalars["String"]["output"];
+  /** Symbol permille */
   symbolPermille: Scalars["Int"]["output"];
+  /** Title */
   title: Scalars["String"]["output"];
+  /** Transaction */
   transaction: Transaction;
+  /** Transaction ID */
   transactionId: Scalars["String"]["output"];
+  /** Updated Date */
   updatedAt: Scalars["DateTime"]["output"];
+  /** Owner */
   user: User;
+  /** User telegram ID */
   userId: Scalars["String"]["output"];
 };
 
@@ -373,6 +493,21 @@ export type WithdrawnGiftsQuery = {
     id: string;
     slug: string;
     title: string;
+    price: number;
+  }>;
+};
+
+export type WithdrawGiftsMutationVariables = Exact<{
+  data: WithdrawGiftInput;
+}>;
+
+export type WithdrawGiftsMutation = {
+  __typename?: "Mutation";
+  withdrawGifts: Array<{
+    __typename?: "Gift";
+    id: string;
+    title: string;
+    slug: string;
     price: number;
   }>;
 };
@@ -529,6 +664,26 @@ export type ProfileQuery = {
   };
 };
 
+export type CreateConfirmTransactionMutationVariables = Exact<{
+  data: ConfirmCreationTransactionInput;
+}>;
+
+export type CreateConfirmTransactionMutation = {
+  __typename?: "Mutation";
+  confirmCreationTransaction: {
+    __typename?: "Transaction";
+    id: string;
+    to: string;
+    hash: string;
+    type: TransactionType;
+    from: string;
+    status: TransactionStatus;
+    amount: number;
+    userId: number;
+    base64Hash?: string | null;
+  };
+};
+
 export type IntegrateTonWalletToUserMutationVariables = Exact<{
   data: IntegrateTonWalletToUserInput;
 }>;
@@ -565,6 +720,7 @@ export type CreateTransactionMutation = {
     status: TransactionStatus;
     amount: number;
     userId: number;
+    base64Hash?: string | null;
   };
 };
 
@@ -802,6 +958,60 @@ export const WithdrawnGiftsDocument = {
     },
   ],
 } as unknown as DocumentNode<WithdrawnGiftsQuery, WithdrawnGiftsQueryVariables>;
+export const WithdrawGiftsDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "WithdrawGifts" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "data" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "WithdrawGiftInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "withdrawGifts" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "data" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "data" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "title" } },
+                { kind: "Field", name: { kind: "Name", value: "slug" } },
+                { kind: "Field", name: { kind: "Name", value: "price" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  WithdrawGiftsMutation,
+  WithdrawGiftsMutationVariables
+>;
 export const GetLeaderboardDocument = {
   kind: "Document",
   definitions: [
@@ -1306,6 +1516,65 @@ export const ProfileDocument = {
     },
   ],
 } as unknown as DocumentNode<ProfileQuery, ProfileQueryVariables>;
+export const CreateConfirmTransactionDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "CreateConfirmTransaction" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "data" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "ConfirmCreationTransactionInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "confirmCreationTransaction" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "data" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "data" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                { kind: "Field", name: { kind: "Name", value: "id" } },
+                { kind: "Field", name: { kind: "Name", value: "to" } },
+                { kind: "Field", name: { kind: "Name", value: "hash" } },
+                { kind: "Field", name: { kind: "Name", value: "type" } },
+                { kind: "Field", name: { kind: "Name", value: "from" } },
+                { kind: "Field", name: { kind: "Name", value: "status" } },
+                { kind: "Field", name: { kind: "Name", value: "amount" } },
+                { kind: "Field", name: { kind: "Name", value: "userId" } },
+                { kind: "Field", name: { kind: "Name", value: "base64Hash" } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<
+  CreateConfirmTransactionMutation,
+  CreateConfirmTransactionMutationVariables
+>;
 export const IntegrateTonWalletToUserDocument = {
   kind: "Document",
   definitions: [
@@ -1412,6 +1681,7 @@ export const CreateTransactionDocument = {
                 { kind: "Field", name: { kind: "Name", value: "status" } },
                 { kind: "Field", name: { kind: "Name", value: "amount" } },
                 { kind: "Field", name: { kind: "Name", value: "userId" } },
+                { kind: "Field", name: { kind: "Name", value: "base64Hash" } },
               ],
             },
           },

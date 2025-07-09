@@ -16,6 +16,7 @@ import type { TypedDocumentNode as DocumentNode } from "@graphql-typed-document-
 type Documents = {
   "\n  query GetGifts(\n    $take: Int!\n    $skip: Int!\n    $userId: String\n    $min: Float\n    $max: Float\n    $blocked: Boolean\n  ) {\n    gifts(\n      take: $take\n      skip: $skip\n      userId: $userId\n      min: $min\n      max: $max\n      blocked: $blocked\n    ) {\n      id\n      slug\n      msgId\n      title\n      model\n      price\n      symbol\n      userId\n      blocked\n      externalId\n      symbolPermille\n      rarityPermille\n      backgroundPermille\n    }\n  }\n": typeof types.GetGiftsDocument;
   "\n  query WithdrawnGifts($take: Int!, $skip: Int!) {\n    withdrawnGifts(take: $take, skip: $skip) {\n      id\n      slug\n      title\n      price\n    }\n  }\n": typeof types.WithdrawnGiftsDocument;
+  "\n  mutation WithdrawGifts($data: WithdrawGiftInput!) {\n    withdrawGifts(data: $data) {\n      id\n      title\n      slug\n      price\n    }\n  }\n": typeof types.WithdrawGiftsDocument;
   "\n  query GetLeaderboard($start: Int!, $end: Int!) {\n    leaderboard(start: $start, end: $end) {\n      userId\n      score\n      rank\n      user {\n        image\n        username\n      }\n    }\n  }\n": typeof types.GetLeaderboardDocument;
   "\n  query MyScore {\n    myScore {\n      userId\n      score\n      rank\n      user {\n        username\n      }\n    }\n  }\n": typeof types.MyScoreDocument;
   "\n  query GetRewards {\n    rewards {\n      id\n      slug\n      title\n      user {\n        image\n        displayName\n      }\n    }\n  }\n": typeof types.GetRewardsDocument;
@@ -23,8 +24,9 @@ type Documents = {
   "\n  query GetLobby($id: Int!) {\n    lobby(id: $id) {\n      id\n      title\n      status\n      minBet\n      maxBet\n      timeToStart\n      winnerId\n      createdAt\n      updatedAt\n      participants {\n        id\n        userId\n        amount\n        user {\n          image\n          username\n        }\n        gifts {\n          id\n          slug\n          price\n          blocked\n        }\n      }\n    }\n  }\n": typeof types.GetLobbyDocument;
   "\n  mutation JoinToLobby($data: JoinToLobbyInput!) {\n    joinToLobby(data: $data) {\n      id\n      title\n      status\n      minBet\n      maxBet\n      timeToStart\n      winnerId\n      createdAt\n      updatedAt\n      participants {\n        id\n        user {\n          id\n          username\n        }\n      }\n    }\n  }\n": typeof types.JoinToLobbyDocument;
   "\n  query Profile {\n    profile {\n      id\n      tgId\n      image\n      username\n      lastName\n      firstName\n      tonAddress\n      referralCode\n      referredBy\n      balance\n      displayName\n      winRate\n      wins\n      losses\n      withdrawnGifts {\n        id\n        slug\n        price\n        title\n      }\n    }\n  }\n": typeof types.ProfileDocument;
+  "\n  mutation CreateConfirmTransaction($data: ConfirmCreationTransactionInput!) {\n    confirmCreationTransaction(data: $data) {\n      id\n      to\n      hash\n      type\n      from\n      status\n      amount\n      userId\n      base64Hash\n    }\n  }\n": typeof types.CreateConfirmTransactionDocument;
   "\n  mutation IntegrateTonWalletToUser($data: IntegrateTonWalletToUserInput!) {\n    integrateTonWalletToUser(data: $data) {\n      id\n      tgId\n      username\n      firstName\n      lastName\n      tonAddress\n      balance\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.IntegrateTonWalletToUserDocument;
-  "\n  mutation CreateTransaction($data: CreateTransactionInput!) {\n    createTransaction(data: $data) {\n      id\n      to\n      hash\n      type\n      from\n      status\n      amount\n      userId\n    }\n  }\n": typeof types.CreateTransactionDocument;
+  "\n  mutation CreateTransaction($data: CreateTransactionInput!) {\n    createTransaction(data: $data) {\n      id\n      to\n      hash\n      type\n      from\n      status\n      amount\n      userId\n      base64Hash\n    }\n  }\n": typeof types.CreateTransactionDocument;
   "\n  query GetUser($id: Int!) {\n    user(id: $id) {\n      id\n      username\n      displayName\n      lastName\n      tonAddress\n      gifts {\n        id\n        title\n        slug\n        price\n      }\n      withdrawnGifts {\n        id\n        slug\n        title\n        price\n      }\n    }\n  }\n": typeof types.GetUserDocument;
 };
 const documents: Documents = {
@@ -32,6 +34,8 @@ const documents: Documents = {
     types.GetGiftsDocument,
   "\n  query WithdrawnGifts($take: Int!, $skip: Int!) {\n    withdrawnGifts(take: $take, skip: $skip) {\n      id\n      slug\n      title\n      price\n    }\n  }\n":
     types.WithdrawnGiftsDocument,
+  "\n  mutation WithdrawGifts($data: WithdrawGiftInput!) {\n    withdrawGifts(data: $data) {\n      id\n      title\n      slug\n      price\n    }\n  }\n":
+    types.WithdrawGiftsDocument,
   "\n  query GetLeaderboard($start: Int!, $end: Int!) {\n    leaderboard(start: $start, end: $end) {\n      userId\n      score\n      rank\n      user {\n        image\n        username\n      }\n    }\n  }\n":
     types.GetLeaderboardDocument,
   "\n  query MyScore {\n    myScore {\n      userId\n      score\n      rank\n      user {\n        username\n      }\n    }\n  }\n":
@@ -46,9 +50,11 @@ const documents: Documents = {
     types.JoinToLobbyDocument,
   "\n  query Profile {\n    profile {\n      id\n      tgId\n      image\n      username\n      lastName\n      firstName\n      tonAddress\n      referralCode\n      referredBy\n      balance\n      displayName\n      winRate\n      wins\n      losses\n      withdrawnGifts {\n        id\n        slug\n        price\n        title\n      }\n    }\n  }\n":
     types.ProfileDocument,
+  "\n  mutation CreateConfirmTransaction($data: ConfirmCreationTransactionInput!) {\n    confirmCreationTransaction(data: $data) {\n      id\n      to\n      hash\n      type\n      from\n      status\n      amount\n      userId\n      base64Hash\n    }\n  }\n":
+    types.CreateConfirmTransactionDocument,
   "\n  mutation IntegrateTonWalletToUser($data: IntegrateTonWalletToUserInput!) {\n    integrateTonWalletToUser(data: $data) {\n      id\n      tgId\n      username\n      firstName\n      lastName\n      tonAddress\n      balance\n      createdAt\n      updatedAt\n    }\n  }\n":
     types.IntegrateTonWalletToUserDocument,
-  "\n  mutation CreateTransaction($data: CreateTransactionInput!) {\n    createTransaction(data: $data) {\n      id\n      to\n      hash\n      type\n      from\n      status\n      amount\n      userId\n    }\n  }\n":
+  "\n  mutation CreateTransaction($data: CreateTransactionInput!) {\n    createTransaction(data: $data) {\n      id\n      to\n      hash\n      type\n      from\n      status\n      amount\n      userId\n      base64Hash\n    }\n  }\n":
     types.CreateTransactionDocument,
   "\n  query GetUser($id: Int!) {\n    user(id: $id) {\n      id\n      username\n      displayName\n      lastName\n      tonAddress\n      gifts {\n        id\n        title\n        slug\n        price\n      }\n      withdrawnGifts {\n        id\n        slug\n        title\n        price\n      }\n    }\n  }\n":
     types.GetUserDocument,
@@ -80,6 +86,12 @@ export function graphql(
 export function graphql(
   source: "\n  query WithdrawnGifts($take: Int!, $skip: Int!) {\n    withdrawnGifts(take: $take, skip: $skip) {\n      id\n      slug\n      title\n      price\n    }\n  }\n",
 ): (typeof documents)["\n  query WithdrawnGifts($take: Int!, $skip: Int!) {\n    withdrawnGifts(take: $take, skip: $skip) {\n      id\n      slug\n      title\n      price\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
+  source: "\n  mutation WithdrawGifts($data: WithdrawGiftInput!) {\n    withdrawGifts(data: $data) {\n      id\n      title\n      slug\n      price\n    }\n  }\n",
+): (typeof documents)["\n  mutation WithdrawGifts($data: WithdrawGiftInput!) {\n    withdrawGifts(data: $data) {\n      id\n      title\n      slug\n      price\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -126,14 +138,20 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
+  source: "\n  mutation CreateConfirmTransaction($data: ConfirmCreationTransactionInput!) {\n    confirmCreationTransaction(data: $data) {\n      id\n      to\n      hash\n      type\n      from\n      status\n      amount\n      userId\n      base64Hash\n    }\n  }\n",
+): (typeof documents)["\n  mutation CreateConfirmTransaction($data: ConfirmCreationTransactionInput!) {\n    confirmCreationTransaction(data: $data) {\n      id\n      to\n      hash\n      type\n      from\n      status\n      amount\n      userId\n      base64Hash\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(
   source: "\n  mutation IntegrateTonWalletToUser($data: IntegrateTonWalletToUserInput!) {\n    integrateTonWalletToUser(data: $data) {\n      id\n      tgId\n      username\n      firstName\n      lastName\n      tonAddress\n      balance\n      createdAt\n      updatedAt\n    }\n  }\n",
 ): (typeof documents)["\n  mutation IntegrateTonWalletToUser($data: IntegrateTonWalletToUserInput!) {\n    integrateTonWalletToUser(data: $data) {\n      id\n      tgId\n      username\n      firstName\n      lastName\n      tonAddress\n      balance\n      createdAt\n      updatedAt\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: "\n  mutation CreateTransaction($data: CreateTransactionInput!) {\n    createTransaction(data: $data) {\n      id\n      to\n      hash\n      type\n      from\n      status\n      amount\n      userId\n    }\n  }\n",
-): (typeof documents)["\n  mutation CreateTransaction($data: CreateTransactionInput!) {\n    createTransaction(data: $data) {\n      id\n      to\n      hash\n      type\n      from\n      status\n      amount\n      userId\n    }\n  }\n"];
+  source: "\n  mutation CreateTransaction($data: CreateTransactionInput!) {\n    createTransaction(data: $data) {\n      id\n      to\n      hash\n      type\n      from\n      status\n      amount\n      userId\n      base64Hash\n    }\n  }\n",
+): (typeof documents)["\n  mutation CreateTransaction($data: CreateTransactionInput!) {\n    createTransaction(data: $data) {\n      id\n      to\n      hash\n      type\n      from\n      status\n      amount\n      userId\n      base64Hash\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

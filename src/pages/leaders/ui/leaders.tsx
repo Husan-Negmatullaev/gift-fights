@@ -3,15 +3,13 @@ import { LeaderUsers } from "./leader-users";
 import {
   useGetLeaderboard,
   useGetMySquare,
-  useGetRewards,
+  // useGetRewards,
 } from "@/entities/leaderboards";
 
 export const Leaders = () => {
   const { data: myScore } = useGetMySquare();
   const { data } = useGetLeaderboard(0, 100);
-  const { data: rewards } = useGetRewards();
-
-  console.log(rewards);
+  // const { data: rewards } = useGetRewards();
 
   const leaderboards =
     data?.leaderboard && data?.leaderboard.length > 0 ? data?.leaderboard : [];

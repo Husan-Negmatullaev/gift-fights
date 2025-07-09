@@ -1,45 +1,128 @@
-import { GiftCheckboxCard, useGetGifts } from "@/entities/gift";
+import {
+  GiftCheckboxCard,
+  useGetGifts,
+  useWithdrawGifts,
+} from "@/entities/gift";
 import { ProfileInformation } from "@/entities/user";
 import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
 import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
 import { Modal } from "@/shared/ui/modal/modal";
 import { useMemo, useState } from "react";
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Gift from "@/shared/assets/lottie/berrybox.json";
 import { useProfileContext } from "@/entities/profile";
+import {
+  useConfirmTransaction,
+  useCreateTransaction,
+  useTonConnect,
+} from "@/entities/ton";
+import { TransactionType } from "@/shared/api/graphql/graphql";
+import { useTonConnectUI } from "@tonconnect/ui-react";
 
 interface IFormInput {
   gifts: string[];
+  transactionId: string | null;
 }
 
 export const Inventory = () => {
   const { profile } = useProfileContext();
-  const { gifts } = useGetGifts({
+  const { gifts, refetch } = useGetGifts({
     take: 25,
     skip: 0,
   });
   const [open, setOpen] = useState(false);
+  const [tonConnectUI] = useTonConnectUI();
+  const { withdrawGifts } = useWithdrawGifts();
+  const { makeTransaction } = useCreateTransaction();
+  const { confirmTransaction } = useConfirmTransaction();
   const {
     register,
+    setValue,
     getValues,
     handleSubmit,
     formState: { isDirty },
   } = useForm<IFormInput>({
     values: {
       gifts: [],
+      transactionId: null,
     },
   });
 
-  const handleToggleModal = () => setOpen((prev) => !prev);
+  const { connected, connect } = useTonConnect();
 
-  const onSubmit: SubmitHandler<IFormInput> = () => {
-    handleToggleModal();
-  };
+  const handleToggleModal = () => setOpen((prev) => !prev);
 
   const filteredBlockedGifts = useMemo(
     () => gifts.filter((gift) => gift.blocked === false),
     [gifts],
   );
+
+  const handleConfirm = async (form: IFormInput) => {
+    setValue("transactionId", null);
+    const selectedGifts = gifts.filter((gift) => form.gifts.includes(gift.id));
+
+    const totalAmount = selectedGifts.reduce(
+      (acc, gift) => acc + gift.price,
+      0,
+    );
+
+    const amountWithCommission = totalAmount * 0.01;
+
+    const data = await makeTransaction({
+      type: TransactionType.Commission,
+      amount: amountWithCommission,
+    });
+
+    if (!connected) {
+      await connect();
+      return;
+    }
+
+    tonConnectUI
+      .sendTransaction({
+        validUntil: Math.floor(Date.now() / 1000) + 360,
+
+        messages: [
+          {
+            payload: data.data?.createTransaction.base64Hash as string,
+            address: import.meta.env.VITE_WALLET_ADDRESS,
+            amount: String(amountWithCommission * 10 ** 9),
+          },
+        ],
+      })
+      .then((res) => {
+        confirmTransaction({
+          boc: res.boc,
+          id: data.data?.createTransaction.id as string,
+        })
+          .then(
+            (success) => (
+              console.log("success", success),
+              setValue(
+                "transactionId",
+                data.data?.createTransaction.id as string,
+              ),
+              handleToggleModal()
+            ),
+          )
+          .catch((error) => console.error("error", error));
+      })
+      .catch((err) => {
+        console.log("Err", err);
+        // reject(false);
+      });
+  };
+
+  const handleWithdrawGifts = (data: IFormInput) => {
+    console.log(data, getValues("transactionId"));
+    withdrawGifts({
+      giftsIds: data.gifts,
+      transactionId: getValues("transactionId")!,
+    }).then(() => {
+      handleToggleModal();
+      refetch();
+    });
+  };
 
   return (
     <div className="pb-16">
@@ -57,15 +140,15 @@ export const Inventory = () => {
             slug={gift.slug}
             title={gift.title}
             price={gift.price}
-            // blocked={gift.blocked}
-            checkbox={register("gifts", {
-              required: true,
-              disabled: gift.blocked,
-              // onChange: (e) => {
-              //   setValue('gifts', [...getValues('gifts'), gift.id]);
-              //   // console.log(e);
-              // },
-            })}
+            checkbox={{
+              value: gift.id,
+              ...register("gifts", {
+                required: true,
+                // onChange: (e) => {
+                //   setValue("gifts", [gift]);
+                // },?
+              }),
+            }}
           />
         ))}
       </div>
@@ -76,7 +159,8 @@ export const Inventory = () => {
           content="Вывести"
           className="w-full"
           disabled={!isDirty}
-          onClick={handleSubmit(onSubmit)}
+          onClick={handleSubmit(handleConfirm)}
+          // onClick={handleSubmit((penis) => penis.gifts)}
         />
       </div>
 
@@ -108,7 +192,7 @@ export const Inventory = () => {
             withShadow
             content="Вывести"
             className="w-full"
-            onClick={handleToggleModal}
+            onClick={handleSubmit(handleWithdrawGifts)}
           />
         </div>
       </Modal>

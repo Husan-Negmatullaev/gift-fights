@@ -18,6 +18,7 @@ const CREATE_TRANSACTION = graphql(`
       status
       amount
       userId
+      base64Hash
     }
   }
 `);
