@@ -196,7 +196,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   const segmentCount = participants.length;
 
   // Calculate segment angle dynamically
-  const segmentAngle = 360 / segmentCount;
+  // const segmentAngle = 360 / segmentCount;
 
   // Function to start the eternal spinning phase
   // const startEternalSpin = useCallback(() => {

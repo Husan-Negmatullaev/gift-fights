@@ -1,8 +1,6 @@
 import { AppLottie } from '@/shared/components/lottie/app-lottie';
 import { Avatar } from '@/shared/ui/avatar/avatar';
 import { Icons } from '@/shared/ui/icons/icons';
-import Cap from '@/shared/assets/lottie/cap.json';
-import Froggy from '@/shared/assets/lottie/kissed-froggy.json';
 import { useGetMySquare, useGetRewards } from '@/entities/leaderboards';
 import { Place, type GetLeaderboardQuery } from '@/shared/api/graphql/graphql';
 import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
@@ -11,30 +9,32 @@ type LeaderUsersProps = {
   leaders: GetLeaderboardQuery['leaderboard'];
 };
 
-function removeLottieBackground(lottieData: any) {
-  if (!lottieData.layers || !Array.isArray(lottieData.layers))
-    return lottieData;
+// function _removeLottieBackground(lottieData: any) {
+//   if (!lottieData.layers || !Array.isArray(lottieData.layers))
+//     return lottieData;
 
-  const isBackgroundLayer = (layer) => {
-    const name = (layer.nm || '').toLowerCase().trim();
-    return (
-      layer.ty === 1 || // solid color layer
-      name.includes('bg') ||
-      name.includes('background') ||
-      name === 'фон' ||
-      name === 'фон1' ||
-      name === 'фон2'
-    );
-  };
+//   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//   const isBackgroundLayer = (layer: any) => {
+//     const name = (layer.nm || '').toLowerCase().trim();
+//     return (
+//       layer.ty === 1 || // solid color layer
+//       name.includes('bg') ||
+//       name.includes('background') ||
+//       name === 'фон' ||
+//       name === 'фон1' ||
+//       name === 'фон2'
+//     );
+//   };
 
-  const filteredLayers = lottieData.layers.filter(
-    (layer) => !isBackgroundLayer(layer),
-  );
-  return {
-    ...lottieData,
-    layers: filteredLayers,
-  };
-}
+//   const filteredLayers = lottieData.layers.filter(
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//     (layer: any) => !isBackgroundLayer(layer),
+//   );
+//   return {
+//     ...lottieData,
+//     layers: filteredLayers,
+//   };
+// }
 
 export const LeaderUsers = (props: LeaderUsersProps) => {
   const { leaders } = props;
@@ -51,18 +51,17 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
         slug: string;
         place?: Place | null;
       } | null;
-      leaderboard: { username: string; image: string };
+      leaderboard: {
+        username: string;
+        __typename?: 'User';
+        image?: string | null;
+      } | null;
       position: { top: string; left: number };
-      animation: unknown;
     }
   > = {
     1: {
       reward: rewards?.find((reward) => reward.place === Place.First) ?? null,
-      leaderboard: {
-        username: 'username',
-        image: '/assets/images/leaders/avatar.webp',
-      },
-      animation: Cap,
+      leaderboard: leaders[0]?.user ?? null,
       position: {
         top: '45px',
         left: 0,
@@ -70,11 +69,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
     },
     2: {
       reward: rewards?.find((reward) => reward.place === Place.Second) ?? null,
-      leaderboard: {
-        username: 'username',
-        image: '/assets/images/leaders/avatar.webp',
-      },
-      animation: Cap,
+      leaderboard: leaders[2]?.user ?? null,
       position: {
         top: '0px',
         left: 50,
@@ -82,11 +77,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
     },
     3: {
       reward: rewards?.find((reward) => reward.place === Place.Third) ?? null,
-      leaderboard: {
-        username: 'username',
-        image: '/assets/images/leaders/avatar.webp',
-      },
-      animation: Froggy,
+      leaderboard: leaders[3]?.user ?? null,
       position: {
         top: '40px',
         left: 100,
@@ -129,11 +120,11 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
               <div className="grid place-items-center -mt-1 relative">
                 <Avatar
                   className="size-10.5 -mb-1.5 relative"
-                  url={leader.leaderboard.image}
+                  url={leader.leaderboard?.image ?? ''}
                 />
 
                 <div className=" text-tiny font-thin flex items-center bg-gray-50/30 border border-white/30 shadow-[0px_4px_4px_0px_--alpha(var(--color-black)_/_7%)] min-h-5.5 px-3 text-center rounded-full">
-                  {leader.leaderboard.username}
+                  {leader.leaderboard?.username ?? ''}
                 </div>
               </div>
             </div>

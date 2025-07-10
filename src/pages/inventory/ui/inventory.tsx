@@ -72,7 +72,7 @@ export const Inventory = () => {
     handleToggleModal();
   };
 
-  const handleWithdrawGifts = async (form: IFormInput) => {
+  const handleWithdrawGifts = async (_form: IFormInput) => {
     const data = await makeTransaction({
       type: TransactionType.Commission,
       amount: amountWithCommission,
@@ -104,7 +104,7 @@ export const Inventory = () => {
             (success) => (
               console.log('success', success),
               withdrawGifts({
-                giftsIds: form.gifts.map((gift) => gift.id),
+                giftsIds: selectedGifts.map((gift) => gift.id),
                 transactionId: data.data?.createTransaction.id as string,
               }).then(() => {
                 handleToggleModal();

@@ -1,5 +1,4 @@
 import { TelegramAvatar, useTelegram } from '@/entities/telegram';
-import { AddTon } from '@/features/add-ton';
 import { ConnectTonWallet } from '@/features/connect-wallet';
 import clsx from 'clsx';
 

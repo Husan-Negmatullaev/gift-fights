@@ -2,7 +2,7 @@ import { GiftBorderCardVariantThree, useGetGifts } from '@/entities/gift';
 import { SpinCarousel } from '@/features/spin-gifts';
 import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
 import { Tabs, type TabsImperativeRef } from '@/shared/ui/tabs/tabs';
-import { useNavigate, useParams } from 'react-router';
+import { useParams } from 'react-router';
 import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
 
 import { useGetLobby, useJoinToLobby } from '@/entities/lobby';
@@ -16,7 +16,7 @@ import type { GetLobbyQuery } from '@/shared/api/graphql/graphql';
 
 export const PlaySpin = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const lobbyParamId = Number(id);
   const { profile } = useProfileContext();
   const { joinToLobby } = useJoinToLobby();
@@ -36,7 +36,7 @@ export const PlaySpin = () => {
   const tabsRef = useRef<TabsImperativeRef | null>(null);
 
   const handleSelectSpinResult = (
-    participant: GetLobbyQuery['lobby']['participants'][number],
+    _participant: GetLobbyQuery['lobby']['participants'][number],
   ) => {
     // navigate(`/spin/${id}/result`, {
     //   replace: true,
