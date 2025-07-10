@@ -1,28 +1,19 @@
-import { Icons } from "@/shared/ui/icons/icons";
-import { LeaderUsers } from "./leader-users";
-import {
-  useGetLeaderboard,
-  useGetMySquare,
-  // useGetRewards,
-} from "@/entities/leaderboards";
+import { Icons } from '@/shared/ui/icons/icons';
+import { LeaderUsers } from './leader-users';
+import { useGetLeaderboard } from '@/entities/leaderboards';
 
 export const Leaders = () => {
-  const { data: myScore } = useGetMySquare();
   const { data } = useGetLeaderboard(0, 100);
-  // const { data: rewards } = useGetRewards();
 
-  const leaderboards =
-    data?.leaderboard && data?.leaderboard.length > 0 ? data?.leaderboard : [];
+  const leaderboards = data?.leaderboard ?? [];
 
   return (
-    <div className="grid gap-3">
-      {myScore && leaderboards && leaderboards.length > 0 && (
-        <LeaderUsers myScore={myScore} leaderboards={leaderboards} />
-      )}
+    <div className="grid grid-rows-[365px_1fr] gap-3 pb-10">
+      <LeaderUsers leaders={leaderboards} />
 
       <div className="px-6">
         <h6 className="text-eight font-medium px-2 mb-1">Глобальный рейтинг</h6>
-        <ul className="grid gap-2">
+        <ul className="grid gap-2 peer empty:mb-20">
           {leaderboards.map((leaderboard, index) => (
             <li className="group" key={index}>
               <div className="group-first:bg-blue bg-dark-blue-50 min-h-10.5 flex items-center gap-2 justify-between rounded-lg px-3">
@@ -39,6 +30,9 @@ export const Leaders = () => {
             </li>
           ))}
         </ul>
+        <div className="peer-empty:block hidden">
+          <p className="text-center font-medium text-lg">Нет данных</p>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 // import { ProfileUserContext } from '../config/profile-user-config-context';
-import { ProfileUserContext, useProfile } from "@/entities/profile";
-import { useEffect, useState, type ReactNode } from "react";
+import { ProfileUserContext, useProfile } from '@/entities/profile';
+import { useEffect, useState, type ReactNode } from 'react';
 // import { useProfile } from '../hooks/use-profile';
 
 type ProfileUserProviderProps = {

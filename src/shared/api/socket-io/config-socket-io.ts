@@ -12,9 +12,9 @@ export const socket: Socket = io(SOCKET_URL, {
 });
 
 socket.on('connect', () => {
-  console.log('Connected:', socket.id);
+  // console.log('Connected:', socket.id);
 });
 
-socket.on('connect_error', (err) => {
-  console.error('Connection error:', err.message);
+socket.on('connect_error', () => {
+  // console.error('Connection error:', err.message);
 });

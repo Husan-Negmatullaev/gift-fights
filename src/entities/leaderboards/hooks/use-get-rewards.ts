@@ -8,11 +8,7 @@ const GET_REWARDS = graphql(`
     rewards {
       id
       slug
-      title
-      user {
-        image
-        displayName
-      }
+      place
     }
   }
 `);

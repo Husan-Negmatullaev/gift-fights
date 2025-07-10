@@ -1,59 +1,94 @@
-import { AppLottie } from "@/shared/components/lottie/app-lottie";
-import { Avatar } from "@/shared/ui/avatar/avatar";
-import { Icons } from "@/shared/ui/icons/icons";
-import Cap from "@/shared/assets/lottie/cap.json";
-import Froggy from "@/shared/assets/lottie/kissed-froggy.json";
-import type {
-  GetLeaderboardQuery,
-  MyScoreQuery,
-} from "@/shared/api/graphql/graphql";
+import { AppLottie } from '@/shared/components/lottie/app-lottie';
+import { Avatar } from '@/shared/ui/avatar/avatar';
+import { Icons } from '@/shared/ui/icons/icons';
+import Cap from '@/shared/assets/lottie/cap.json';
+import Froggy from '@/shared/assets/lottie/kissed-froggy.json';
+import { useGetMySquare, useGetRewards } from '@/entities/leaderboards';
+import { Place, type GetLeaderboardQuery } from '@/shared/api/graphql/graphql';
+import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
 
 type LeaderUsersProps = {
-  myScore: MyScoreQuery["myScore"];
-  leaderboards: GetLeaderboardQuery["leaderboard"];
+  leaders: GetLeaderboardQuery['leaderboard'];
 };
 
-export const LeaderUsers = (props: LeaderUsersProps) => {
-  const { myScore } = props;
+function removeLottieBackground(lottieData: any) {
+  if (!lottieData.layers || !Array.isArray(lottieData.layers))
+    return lottieData;
 
-  const leaders: Record<
+  const isBackgroundLayer = (layer) => {
+    const name = (layer.nm || '').toLowerCase().trim();
+    return (
+      layer.ty === 1 || // solid color layer
+      name.includes('bg') ||
+      name.includes('background') ||
+      name === 'фон' ||
+      name === 'фон1' ||
+      name === 'фон2'
+    );
+  };
+
+  const filteredLayers = lottieData.layers.filter(
+    (layer) => !isBackgroundLayer(layer),
+  );
+  return {
+    ...lottieData,
+    layers: filteredLayers,
+  };
+}
+
+export const LeaderUsers = (props: LeaderUsersProps) => {
+  const { leaders } = props;
+
+  const { data: myScore } = useGetMySquare();
+  const { data: rewards } = useGetRewards();
+
+  const users: Record<
     number,
     {
+      reward: {
+        __typename?: 'Gift';
+        id: string;
+        slug: string;
+        place?: Place | null;
+      } | null;
       leaderboard: { username: string; image: string };
       position: { top: string; left: number };
       animation: unknown;
     }
   > = {
     1: {
+      reward: rewards?.find((reward) => reward.place === Place.First) ?? null,
       leaderboard: {
-        username: "username",
-        image: "/assets/images/leaders/avatar.webp",
+        username: 'username',
+        image: '/assets/images/leaders/avatar.webp',
       },
       animation: Cap,
       position: {
-        top: "45px",
+        top: '45px',
         left: 0,
       },
     },
     2: {
+      reward: rewards?.find((reward) => reward.place === Place.Second) ?? null,
       leaderboard: {
-        username: "username",
-        image: "/assets/images/leaders/avatar.webp",
+        username: 'username',
+        image: '/assets/images/leaders/avatar.webp',
       },
       animation: Cap,
       position: {
-        top: "0px",
+        top: '0px',
         left: 50,
       },
     },
     3: {
+      reward: rewards?.find((reward) => reward.place === Place.Third) ?? null,
       leaderboard: {
-        username: "username",
-        image: "/assets/images/leaders/avatar.webp",
+        username: 'username',
+        image: '/assets/images/leaders/avatar.webp',
       },
       animation: Froggy,
       position: {
-        top: "40px",
+        top: '40px',
         left: 100,
       },
     },
@@ -65,30 +100,30 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
         Лидеры битв
       </h1>
       <div className="min-h-50 max-w-89 mx-auto relative mb-4">
-        {Object.entries(leaders).map(([index, leader]) => {
-          // const animation = index < 2 ? Cap : Froggy;
-          // const leaderOptions = leadersObjects[index];
+        {Object.entries(users).map(([index, leader]) => {
           return (
             <div
               key={index}
               className="absolute"
               style={{
+                top: leader.position.top,
                 left: `${leader.position.left}%`,
                 transform: `translateX(-${leader.position.left}%)`,
-                top: leader.position.top,
-              }}
-            >
-              <div style={{ width: 93, height: 80 }}>
-                <AppLottie
-                  animation={leader.animation}
-                  style={{
-                    width: 93 * 1.8,
-                    height: 80 * 1.8,
-                    left: -40,
-                    top: -25,
+              }}>
+              <div className="h-20 w-20">
+                <LoadableLottie slug={leader.reward?.slug ?? ''}>
+                  {(animation, loading) => {
+                    return loading ? (
+                      <div className="size-full" />
+                    ) : (
+                      <AppLottie
+                        style={lottieSizes}
+                        animation={animation}
+                        className="absolute inset-0 object-cover"
+                      />
+                    );
                   }}
-                  className="absolute inset-0 object-cover"
-                />
+                </LoadableLottie>
               </div>
 
               <div className="grid place-items-center -mt-1 relative">
@@ -110,16 +145,23 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
         <h6 className="text-eight font-medium px-2 mb-1">Твой ранг</h6>
         <div className="flex items-center justify-between bg-dark-blue-150 rounded-lg px-3 min-h-13">
           <div className="flex items-center gap-2">
-            <span>#{myScore.rank}</span>
-            <span>{myScore.user.username}</span>
+            {myScore?.rank && <span>#{myScore?.rank}</span>}
+            <span>{myScore?.user.username}</span>
           </div>
 
           <div className="text-sm font-medium flex items-center">
-            <span>{myScore.score}</span>
+            <span>{myScore?.score ?? 0}</span>
             <Icons name="ton" width={22} height={22} />
           </div>
         </div>
       </div>
     </div>
   );
+};
+
+const lottieSizes = {
+  width: 93 * 1.8,
+  height: 80 * 1.8,
+  left: -40,
+  top: -25,
 };

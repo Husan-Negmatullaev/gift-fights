@@ -1,11 +1,14 @@
-import { GiftBorderCard, useGetWithdrawnGifts } from "@/entities/gift";
-import { useProfileContext } from "@/entities/profile";
-import { ProfileInformation } from "@/entities/user";
+import { GiftBorderCard, useGetWithdrawnGifts } from '@/entities/gift';
+import { useProfileContext } from '@/entities/profile';
+import { ProfileInformation } from '@/entities/user';
+import { useCopy } from '@/shared/hooks/use-copy';
+// import { shareURL } from '@telegram-apps/sdk-react';
 
 export const Profile = () => {
+  const { onCopy } = useCopy();
   const { profile } = useProfileContext();
 
-  const { data: withdrawnGifts } = useGetWithdrawnGifts(10, 0);
+  const { data: withdrawnGifts } = useGetWithdrawnGifts(15, 0);
 
   return (
     <section className="grid gap-5 pb-7.5">
@@ -34,7 +37,18 @@ export const Profile = () => {
               <button
                 type="button"
                 className="cursor-pointer bg-white rounded-2.5 min-h-8.5 px-4 text-blue font-medium text-xs"
-              >
+                onClick={
+                  () =>
+                    // shareURL(
+                    //   `https://t.me/gift_fights_bot/gift_fight?startapp=${profile.referralCode}`,
+                    // )
+                    onCopy(
+                      `https://t.me/gift_fights_bot/gift_fight?startapp=${profile.referralCode}`,
+                    )
+                  // onCopy(
+                  //   `https://t.me/local_testing_work_bot/husan_test?startapp=${profile.referralCode}`,
+                  // )
+                }>
                 Скопировать
               </button>
             </div>
@@ -73,16 +87,20 @@ export const Profile = () => {
         <div className="bg-dark-blue-50 px-2.5 py-2 rounded-xl">
           <h5 className="font-thin text-tiny/2.5 mb-1">Последние выводы:</h5>
 
-          <div className="grid grid-cols-4 gap-1">
+          <ul className="grid grid-cols-4 gap-1 peer">
             {withdrawnGifts.map((gift) => (
-              <GiftBorderCard
-                size="md"
-                key={gift.id}
-                slug={gift.slug}
-                title={gift.title}
-                price={gift.price}
-              />
+              <li key={gift.id}>
+                <GiftBorderCard
+                  size="md"
+                  slug={gift.slug}
+                  title={gift.title}
+                  price={gift.price}
+                />
+              </li>
             ))}
+          </ul>
+          <div className="peer-empty:block hidden">
+            <p className="text-center font-medium text-lg">Нет подарков</p>
           </div>
         </div>
       </div>

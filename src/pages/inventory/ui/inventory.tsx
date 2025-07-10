@@ -2,26 +2,25 @@ import {
   GiftCheckboxCard,
   useGetGifts,
   useWithdrawGifts,
-} from "@/entities/gift";
-import { ProfileInformation } from "@/entities/user";
-import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
-import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
-import { Modal } from "@/shared/ui/modal/modal";
-import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import Gift from "@/shared/assets/lottie/berrybox.json";
-import { useProfileContext } from "@/entities/profile";
+} from '@/entities/gift';
+import { ProfileInformation } from '@/entities/user';
+import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
+import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
+import { Modal } from '@/shared/ui/modal/modal';
+import { useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useProfileContext } from '@/entities/profile';
 import {
   useConfirmTransaction,
   useCreateTransaction,
   useTonConnect,
-} from "@/entities/ton";
-import { TransactionType } from "@/shared/api/graphql/graphql";
-import { useTonConnectUI } from "@tonconnect/ui-react";
+} from '@/entities/ton';
+import { TransactionType } from '@/shared/api/graphql/graphql';
+import { useTonConnectUI } from '@tonconnect/ui-react';
+import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
 
 interface IFormInput {
   gifts: string[];
-  transactionId: string | null;
 }
 
 export const Inventory = () => {
@@ -37,14 +36,12 @@ export const Inventory = () => {
   const { confirmTransaction } = useConfirmTransaction();
   const {
     register,
-    setValue,
     getValues,
     handleSubmit,
     formState: { isDirty },
   } = useForm<IFormInput>({
     values: {
       gifts: [],
-      transactionId: null,
     },
   });
 
@@ -57,17 +54,25 @@ export const Inventory = () => {
     [gifts],
   );
 
-  const handleConfirm = async (form: IFormInput) => {
-    setValue("transactionId", null);
-    const selectedGifts = gifts.filter((gift) => form.gifts.includes(gift.id));
+  const selectedGiftsIds = getValues('gifts');
 
-    const totalAmount = selectedGifts.reduce(
-      (acc, gift) => acc + gift.price,
-      0,
+  const selectedGifts = useMemo(() => {
+    return filteredBlockedGifts.filter((gift) =>
+      selectedGiftsIds.includes(gift.id),
     );
+  }, [selectedGiftsIds, filteredBlockedGifts]);
 
-    const amountWithCommission = totalAmount * 0.01;
+  const totalAmount = useMemo(() => {
+    return selectedGifts.reduce((acc, gift) => acc + gift.price, 0);
+  }, [selectedGifts]);
 
+  const amountWithCommission = totalAmount * 0.01;
+
+  const handleConfirm = () => {
+    handleToggleModal();
+  };
+
+  const handleWithdrawGifts = async (form: IFormInput) => {
     const data = await makeTransaction({
       type: TransactionType.Commission,
       amount: amountWithCommission,
@@ -97,31 +102,21 @@ export const Inventory = () => {
         })
           .then(
             (success) => (
-              console.log("success", success),
-              setValue(
-                "transactionId",
-                data.data?.createTransaction.id as string,
-              ),
-              handleToggleModal()
+              console.log('success', success),
+              withdrawGifts({
+                giftsIds: form.gifts.map((gift) => gift.id),
+                transactionId: data.data?.createTransaction.id as string,
+              }).then(() => {
+                handleToggleModal();
+                refetch();
+              })
             ),
           )
-          .catch((error) => console.error("error", error));
+          .catch((error) => console.error('error', error));
       })
       .catch((err) => {
-        console.log("Err", err);
-        // reject(false);
+        console.log('Err', err);
       });
-  };
-
-  const handleWithdrawGifts = (data: IFormInput) => {
-    console.log(data, getValues("transactionId"));
-    withdrawGifts({
-      giftsIds: data.gifts,
-      transactionId: getValues("transactionId")!,
-    }).then(() => {
-      handleToggleModal();
-      refetch();
-    });
   };
 
   return (
@@ -130,63 +125,88 @@ export const Inventory = () => {
         <ProfileInformation profile={profile} />
       </div>
 
-      <div className="grid grid-cols-2 px-6 pb-6 gap-x-2.5 gap-y-2">
-        <h5 className="col-span-2 font-thin text-tiny/2.5">Ваши Gift's:</h5>
+      <div className="px-6 pb-6">
+        <h5 className="font-thin text-tiny/2.5 mb-2">Ваши Gift's:</h5>
 
-        {filteredBlockedGifts.map((gift) => (
-          <GiftCheckboxCard
-            size="lg"
-            key={gift.id}
-            slug={gift.slug}
-            title={gift.title}
-            price={gift.price}
-            checkbox={{
-              value: gift.id,
-              ...register("gifts", {
-                required: true,
-                // onChange: (e) => {
-                //   setValue("gifts", [gift]);
-                // },?
-              }),
-            }}
+        <ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
+          {filteredBlockedGifts.map((gift) => (
+            <li key={gift.id}>
+              <GiftCheckboxCard
+                size="lg"
+                key={gift.id}
+                slug={gift.slug}
+                title={gift.title}
+                price={gift.price}
+                checkbox={{
+                  value: gift.id,
+                  ...register('gifts', {
+                    required: true,
+                  }),
+                }}
+              />
+            </li>
+          ))}
+        </ul>
+        <div className="peer-empty:block hidden">
+          <p className="text-center font-medium text-lg">
+            Вы можете отправить ваш гифт на аккаунт{' '}
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue underline"
+              href="https://t.me/gifts_fight_relayer">
+              @gifts_fight_relayer
+            </a>
+          </p>
+        </div>
+      </div>
+
+      {!open && (
+        <div className="fixed w-full bottom-safe-app-bottom left-1/2 -translate-x-1/2 px-6 pb-4.5">
+          <BottomButton
+            withShadow
+            content="Вывести"
+            className="w-full"
+            disabled={!isDirty}
+            onClick={handleSubmit(handleConfirm)}
+            // onClick={handleSubmit((penis) => penis.gifts)}
           />
-        ))}
-      </div>
-
-      <div className="fixed w-full bottom-safe-app-bottom left-1/2 -translate-x-1/2 px-6 pb-4.5">
-        <BottomButton
-          withShadow
-          content="Вывести"
-          className="w-full"
-          disabled={!isDirty}
-          onClick={handleSubmit(handleConfirm)}
-          // onClick={handleSubmit((penis) => penis.gifts)}
-        />
-      </div>
+        </div>
+      )}
 
       <Modal open={open} onClose={handleToggleModal}>
         <div className="mb-4 text-center">
           <h2 className="mb-2 font-medium text-lg/4.5">Вывод Gift’s</h2>
           <p className="mb-4 text-xs">Вы хотите вывести gift’s на сумму:</p>
           <span className="font-medium text-base text-blue-100">
-            34,154 TON
+            {totalAmount} TON
           </span>
         </div>
 
         <div className="grid gap-2 justify-center grid-flow-dense auto-rows-[92px] grid-cols-[repeat(3,_92px)] mb-17">
-          {getValues("gifts").map((gift) => (
-            <div key={gift} className="relative pb-[69%]">
-              <TouchableLottie
-                animation={Gift}
-                className="absolute inset-0 size-full object-cover"
-              />
-            </div>
-          ))}
+          {selectedGifts.map((gift) => {
+            console.log('gift', gift);
+            return (
+              <div
+                key={gift.id}
+                className="relative pb-[69%] rounded-lg overflow-hidden">
+                <LoadableLottie slug={gift.slug}>
+                  {(animationData) => (
+                    <TouchableLottie
+                      animation={animationData}
+                      className="absolute inset-0 size-full object-cover"
+                    />
+                  )}
+                </LoadableLottie>
+              </div>
+            );
+          })}
         </div>
 
         <div className="text-center">
           <p className="text-xs text-white/50 mb-4">
-            Комиссия будет составлять:
+            Комиссия будет составлять:{' '}
+            <span className="font-bold text-white">{amountWithCommission}</span>
           </p>
           <BottomButton
             withShadow

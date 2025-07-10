@@ -1,19 +1,19 @@
-import { Checkbox } from "@/shared/ui/checkbox/checkbox";
-import clsx from "clsx";
-import { GIFT_SIZES } from "../constants/gift-border-sizes-constants";
-import type { GiftSizesType } from "../model/types/gift-types";
-import { Icons } from "@/shared/ui/icons/icons";
-import { useEffect, useState, type ComponentPropsWithRef } from "react";
-import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
+import { Checkbox } from '@/shared/ui/checkbox/checkbox';
+import clsx from 'clsx';
+import { GIFT_SIZES } from '../constants/gift-border-sizes-constants';
+import type { GiftSizesType } from '../model/types/gift-types';
+import { Icons } from '@/shared/ui/icons/icons';
+import { useEffect, useState, type ComponentPropsWithRef } from 'react';
+import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
 
 type GiftCheckboxCardProps = {
   className?: string;
   size: GiftSizesType;
-  checkbox: ComponentPropsWithRef<"input">;
+  checkbox: ComponentPropsWithRef<'input'>;
+
   slug: string;
   title: string;
   price: number;
-  // blocked?: boolean;
 };
 
 export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
@@ -36,11 +36,10 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
         className={clsx(
           className,
           GIFT_SIZES[size].card,
-          "bg-dark-blue-50 text-white rounded-four has-checked:bg-dark-blue-650 transition-colors",
+          'bg-dark-blue-50 text-white rounded-four has-checked:bg-dark-blue-650 transition-colors',
           // blocked && 'opacity-50 grayscale cursor-not-allowed',
-        )}
-      >
-        <div className={clsx(GIFT_SIZES[size].image, "relative")}>
+        )}>
+        <div className={clsx(GIFT_SIZES[size].image, 'relative')}>
           <TouchableLottie animation={animationData} className="size-38.5" />
           <Checkbox
             variant="bordered"
@@ -58,9 +57,8 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
           className={clsx(
             GIFT_SIZES[size].title,
             GIFT_SIZES[size].header,
-            "flex items-center justify-between font-medium",
-          )}
-        >
+            'flex items-center justify-between font-medium',
+          )}>
           <h5>{title}</h5>
           {/* <p>#{slug}</p> */}
         </header>
@@ -69,10 +67,9 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
           // disabled={blocked}
           className={clsx(
             GIFT_SIZES[size].button,
-            "cursor-pointer font-medium flex items-center justify-center bg-blue w-full",
-            // blocked && "opacity-50 cursor-not-allowed bg-gray-500",
-          )}
-        >
+            'cursor-pointer font-medium flex items-center justify-center bg-blue w-full',
+            // blocked && 'opacity-50 cursor-not-allowed bg-gray-500',
+          )}>
           <Icons name="ton" className="size-5" />
           <span>{price}</span>
         </button>

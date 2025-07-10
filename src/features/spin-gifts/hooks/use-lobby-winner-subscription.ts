@@ -1,5 +1,5 @@
-import { socket } from "@/shared/api/socket-io/config-socket-io";
-import { useEffect } from "react";
+import { socket } from '@/shared/api/socket-io/config-socket-io';
+import { useEffect } from 'react';
 
 interface LobbyWinnerPayload {
   payload: {
@@ -15,15 +15,16 @@ export const useLobbyWinnerSubscription = (
 ) => {
   useEffect(() => {
     const handler = (payload: LobbyWinnerPayload) => {
+      console.log('payload', payload);
       if (payload.payload.lobbyId === lobbyId) {
         onWinner(payload);
       }
     };
 
-    socket.on("lobby-winner-found", handler);
+    socket.on('lobby-winner-found', handler);
 
     return () => {
-      socket.off("lobby-winner-found", handler);
+      socket.off('lobby-winner-found', handler);
     };
   }, [lobbyId, onWinner]);
 };
