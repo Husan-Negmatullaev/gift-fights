@@ -1,11 +1,20 @@
 import { Icons } from '@/shared/ui/icons/icons';
 import { LeaderUsers } from './leader-users';
 import { useGetLeaderboard } from '@/entities/leaderboards';
+import { LoadingSpinner } from '@/shared/components/loading-spinner/loading-spinner';
 
 export const Leaders = () => {
-  const { data } = useGetLeaderboard(0, 100);
+  const { data, loading } = useGetLeaderboard(0, 100);
 
   const leaderboards = data?.leaderboard ?? [];
+
+  if (loading) {
+    return (
+      <div className="grid place-content-center h-full">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-rows-[365px_1fr] gap-3 pb-10">

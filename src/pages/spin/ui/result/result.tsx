@@ -1,15 +1,25 @@
-import { GiftHeaderCard } from '@/entities/gift';
-import { UserCard } from '@/entities/user';
-import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
-import { clsx } from 'clsx';
+import { UserCard } from "@/entities/user";
+import type { GetLobbyQuery } from "@/shared/api/graphql/graphql";
+import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
+import { clsx } from "clsx";
+import { useLocation, useParams } from "react-router";
 
-const resultType: Record<'win' | 'lose', string> = {
-  win: 'bg-linear-360 from-blue-50 from-0% to-blue-100 to-100%',
-  lose: 'bg-linear-360 from-red-150 from-0% to-red-200 to-100%',
+const resultType: Record<"win" | "lose", string> = {
+  win: "bg-linear-360 from-blue-50 from-0% to-blue-100 to-100%",
+  lose: "bg-linear-360 from-red-150 from-0% to-red-200 to-100%",
 };
 
 export const Result = () => {
-  const resultStyles = resultType['win'];
+  const resultStyles = resultType["win"];
+  const navigation = useLocation();
+  const { winnerId } = useParams();
+  const winnerIdParam = Number(winnerId);
+
+  const lobby = navigation.state.lobby as GetLobbyQuery["lobby"];
+
+  const winnerParticipant = lobby.participants.find(
+    (participant) => participant.id === winnerIdParam,
+  );
 
   return (
     <div className="py-7 pb-25">
@@ -21,7 +31,7 @@ export const Result = () => {
         <div
           className={clsx(
             resultStyles,
-            'pointer-events-none absolute top-4 left-0 h-50 w-full border-y border-white',
+            "pointer-events-none absolute top-4 left-0 h-50 w-full border-y border-white",
           )}
         />
         <div className="relative grid gap-2 place-items-center">
@@ -33,20 +43,24 @@ export const Result = () => {
           <div
             className={clsx(
               resultStyles,
-              'font-semibold text-base/2 border border-white/30 min-h-9 rounded-xl grid place-content-center px-7',
-            )}>
-            54,32 TON
+              "font-semibold text-base/2 border border-white/30 min-h-9 rounded-xl grid place-content-center px-7",
+            )}
+          >
+            {winnerParticipant?.amount}
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-3 mx-6 gap-3">
+        {/* {lobby.participants.map((participant) => (
+          <GiftHeaderCard key={participant.id} url={participant.} />
+        ))} */}
+        {/* <GiftHeaderCard url="/assets/images/gifts/gift.webp" />
         <GiftHeaderCard url="/assets/images/gifts/gift.webp" />
         <GiftHeaderCard url="/assets/images/gifts/gift.webp" />
         <GiftHeaderCard url="/assets/images/gifts/gift.webp" />
         <GiftHeaderCard url="/assets/images/gifts/gift.webp" />
-        <GiftHeaderCard url="/assets/images/gifts/gift.webp" />
-        <GiftHeaderCard url="/assets/images/gifts/gift.webp" />
+        <GiftHeaderCard url="/assets/images/gifts/gift.webp" /> */}
       </div>
 
       <div className="fixed w-full bottom-safe-app-bottom left-1/2 -translate-x-1/2 px-6 pb-4.5">

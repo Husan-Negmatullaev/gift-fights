@@ -13,7 +13,7 @@ type SpinCarouselProps = {
   onRefetchLobby(): void;
   lobby: GetLobbyQuery['lobby'];
   onRefreshAfterJoining(): void;
-  onSelected(participant: GetLobbyQuery['lobby']['participants'][number]): void;
+  onSelected(winnerId: string): void;
 };
 
 export const SpinCarousel = (props: SpinCarouselProps) => {
@@ -32,99 +32,6 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   const participants = lobby.participants;
 
   const hasEnoughPlayers = participants.length >= 2;
-
-  // const handleAutoSpin = useCallback(
-  //   (winnerId: string) => {
-  //     // if (!hasEnoughPlayers) return;
-  //     console.log('handleAutoSpin', winnerId);
-  //     console.log(
-  //       'handleAutoSpin',
-  //       participants.map((participant) => participant.userId),
-  //     );
-  //     setGamePhase(LobbyStatus.InProcess);
-  //     setIsSpinning(true);
-  //     setGameTimer(5);
-
-  //     const spins = 5 + Math.random() * 5;
-  //     const finalRotation = rotation + spins * 360 + Math.random() * 360;
-  //     setRotation(finalRotation);
-
-  //     setTimeout(() => {
-  //       setIsSpinning(false);
-
-  //       // const currentSegmentAngle = 360 / participants.length;
-  //       // const normalizedRotation = (360 - (finalRotation % 360)) % 360;
-
-  //       // Find winner by userId, fallback to random selection if not found
-  //       const selectedIndex = participants.findIndex(
-  //         (participant) => participant.userId === Number(winnerId),
-  //       );
-
-  //       // const segmentAngle = 360 / participants.length;
-  //       // const normalizedRotation = (360 - (finalRotation % 360)) % 360;
-  //       // // const selectedIndex = Math.floor(normalizedRotation / segmentAngle);
-  //       // const selectedIndex = participants.findIndex(
-  //       //   (participant) => participant.userId === Number(winnerId),
-  //       // );
-  //       console.log('selectedIndex', selectedIndex);
-  //       setSelectedSegment(selectedIndex);
-
-  //       // Start celebration phase with highlighting
-  //       setGamePhase(LobbyStatus.Completed);
-  //       setIsHighlighting(true);
-
-  //       // After 800ms, move to finished state
-  //       setTimeout(() => {
-  //         onSelected(participants[selectedIndex]);
-  //         // setGamePhase(LobbyStatus.Completed);
-  //         setIsHighlighting(false);
-  //       }, 800);
-  //     }, 5000);
-  //   },
-  //   [onSelected, participants, rotation],
-  // );
-
-  // useEffect(() => {
-  //   let timer: ReturnType<typeof setTimeout>;
-
-  //   if (gamePhase === LobbyStatus.Countdown && countdown > 0) {
-  //     timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-  //   } else if (gamePhase === LobbyStatus.Countdown && countdown === 0) {
-  //     // For demo purposes, simulate a winner ID - in real usage you'd get this from your backend
-  //     // const demoWinnerId =
-  //     //   participants.length > 0
-  //     //     ? participants[
-  //     //         Math.floor(Math.random() * participants.length)
-  //     //       ].userId.toString()
-  //     //     : Math.floor(Math.random() * participants.length).toString();
-  //     // handleAutoSpin(demoWinnerId);
-  //   }
-
-  //   return () => clearTimeout(timer);
-  // }, [countdown, gamePhase, participants]);
-
-  // useEffect(() => {
-  //   let timer: ReturnType<typeof setTimeout>;
-
-  //   if (gamePhase === LobbyStatus.InProcess && gameTimer > 0) {
-  //     timer = setTimeout(() => setGameTimer(gameTimer - 1), 1000);
-  //   }
-
-  //   return () => clearTimeout(timer);
-  // }, [gameTimer, gamePhase]);
-
-  // const handleManualSpin = () => {
-  //   if (
-  //     isSpinning ||
-  //     gamePhase !== LobbyStatus.WaitingForPlayers
-  //     // !hasEnoughPlayers
-  //   )
-  //     return console.log('VAGINA');
-  //   console.log('PENIS');
-
-  //   onRefetchLobby();
-  //   // handleAutoSpin();
-  // };
 
   const getPhaseText = () => {
     if (!hasEnoughPlayers) {
@@ -263,7 +170,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
 
         // After 800ms, call onSelected and stop highlighting
         setTimeout(() => {
-          onSelected(participants[selectedIndex]);
+          onSelected(winnerId);
           setIsHighlighting(false);
         }, 800);
       }, 3000); // 3 seconds for the final deceleration animation

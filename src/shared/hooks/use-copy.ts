@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { useToast } from './use-toast';
 
 // Проверка на наличие Telegram WebApp API
 function isTelegramWebApp() {
@@ -16,26 +17,35 @@ function canVibrate() {
 
 export const useCopy = () => {
   const [copied, setCopied] = useState(false);
+  const { showSuccess, showError } = useToast();
 
-  const onCopy = useCallback(async (text: string) => {
-    try {
-      // Копируем в буфер обмена
-      await navigator.clipboard.writeText(text);
-      setCopied(true);
+  const onCopy = useCallback(
+    async (text: string) => {
+      try {
+        // Копируем в буфер обмена
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
 
-      // Вибрация через Telegram WebApp
-      if (isTelegramWebApp() && window.Telegram.WebApp.HapticFeedback) {
-        window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-      } else if (canVibrate()) {
-        // Fallback: обычная вибрация для браузера
-        window.navigator.vibrate(100);
+        // Показываем toast уведомление
+        showSuccess('Ссылка скопирована!');
+
+        // Вибрация через Telegram WebApp
+        if (isTelegramWebApp() && window.Telegram.WebApp.HapticFeedback) {
+          window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+        } else if (canVibrate()) {
+          // Fallback: обычная вибрация для браузера
+          window.navigator.vibrate(100);
+        }
+      } catch (error) {
+        setCopied(false);
+        showError('Ошибка при копировании');
+        console.error('Ошибка копирования:', error);
+      } finally {
+        setTimeout(() => setCopied(false), 1200);
       }
-    } catch (e) {
-      setCopied(false);
-    } finally {
-      setTimeout(() => setCopied(false), 1200);
-    }
-  }, []);
+    },
+    [showSuccess, showError],
+  );
 
   return { onCopy, copied };
 };

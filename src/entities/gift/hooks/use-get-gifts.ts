@@ -1,9 +1,9 @@
-import { graphql } from "@/shared/api/graphql";
-import { useQuery } from "@apollo/client";
+import { graphql } from '@/shared/api/graphql';
+import { useQuery } from '@apollo/client';
 import type {
   GetGiftsQuery,
   GetGiftsQueryVariables,
-} from "@/shared/api/graphql/graphql";
+} from '@/shared/api/graphql/graphql';
 
 const GET_GIFTS = graphql(`
   query GetGifts(
@@ -45,7 +45,7 @@ export const useGetGifts = (args: GetGiftsQueryVariables) => {
     GetGiftsQueryVariables
   >(GET_GIFTS, {
     variables: args,
-    fetchPolicy: "network-only",
+    // fetchPolicy: "network-only",
   });
 
   return {

@@ -18,6 +18,7 @@ import {
 import { TransactionType } from '@/shared/api/graphql/graphql';
 import { useTonConnectUI } from '@tonconnect/ui-react';
 import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
+import { LoadingSpinner } from '@/shared/components/loading-spinner/loading-spinner';
 
 interface IFormInput {
   gifts: string[];
@@ -25,7 +26,7 @@ interface IFormInput {
 
 export const Inventory = () => {
   const { profile } = useProfileContext();
-  const { gifts, refetch } = useGetGifts({
+  const { gifts, refetch, loading } = useGetGifts({
     take: 25,
     skip: 0,
   });
@@ -128,7 +129,9 @@ export const Inventory = () => {
       <div className="px-6 pb-6">
         <h5 className="font-thin text-tiny/2.5 mb-2">Ваши Gift's:</h5>
 
-        <ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
+        <ul
+          aria-busy={loading}
+          className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
           {filteredBlockedGifts.map((gift) => (
             <li key={gift.id}>
               <GiftCheckboxCard
@@ -147,7 +150,7 @@ export const Inventory = () => {
             </li>
           ))}
         </ul>
-        <div className="peer-empty:block hidden">
+        <div className="peer-empty:block peer-busy:hidden hidden">
           <p className="text-center font-medium text-lg">
             Вы можете отправить ваш гифт на аккаунт{' '}
             <a
@@ -159,6 +162,8 @@ export const Inventory = () => {
             </a>
           </p>
         </div>
+
+        {loading && <LoadingSpinner />}
       </div>
 
       {!open && (

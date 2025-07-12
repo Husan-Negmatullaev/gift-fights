@@ -1,64 +1,67 @@
 import { GiftBorderCard, useGetWithdrawnGifts } from '@/entities/gift';
 import { useProfileContext } from '@/entities/profile';
 import { ProfileInformation } from '@/entities/user';
+import { ReferralBalanceOutput } from '@/features/refferal-balance-output';
 import { useCopy } from '@/shared/hooks/use-copy';
+import { useEffect } from 'react';
 // import { shareURL } from '@telegram-apps/sdk-react';
 
 export const Profile = () => {
   const { onCopy } = useCopy();
-  const { profile } = useProfileContext();
+  const { profile, refetch } = useProfileContext();
 
   const { data: withdrawnGifts } = useGetWithdrawnGifts(15, 0);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   return (
     <section className="grid gap-5 pb-7.5">
       <ProfileInformation profile={profile} />
 
       <div className="px-6">
-        <article className="relative bg-linear-117 from-blue -from-37% to-dark-blue-50 to-78% rounded-xl rounded-tr-4.5xl text-white mb-6">
-          <div className="bg-linear-90 overflow-hidden relative from-blue-50 to-blue-100 p-4 rounded-xl rounded-tr-4.5xl">
-            <img
-              alt="octopus"
-              src="/assets/images/play/to-the-moon-rocket.webp"
-              className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
-            />
-            <h2 className="font-medium text-lg/5 max-w-50 mb-1.5">
-              Зарабатывайте на приглашениях !
-            </h2>
-            <p className="max-w-53 font-thin text-tiny/2.5/3 text-white/50 mb-5.5">
-              Получайте до 20% с выводов своих рефералов !
-            </p>
-            <div className="bg-dark-blue-50 flex items-center justify-between gap-4 relative rounded-2.5">
-              <input
-                readOnly
-                value={profile.referralCode}
-                className="px-3 font-medium text-xs w-full min-h-8.5"
+        <div className="flex flex-col gap-7.5">
+          <article className="relative bg-linear-117 from-blue -from-37% to-dark-blue-50 to-78% rounded-xl rounded-tr-4.5xl text-white">
+            <div className="bg-linear-90 overflow-hidden relative from-blue-50 to-blue-100 p-4 rounded-xl rounded-tr-4.5xl">
+              <img
+                alt="octopus"
+                src="/assets/images/play/to-the-moon-rocket.webp"
+                className="pointer-events-none absolute top-0 left-0 h-37.5 w-77"
               />
-              <button
-                type="button"
-                className="cursor-pointer bg-white rounded-2.5 min-h-8.5 px-4 text-blue font-medium text-xs"
-                onClick={
-                  () =>
-                    // shareURL(
-                    //   `https://t.me/gift_fights_bot/gift_fight?startapp=${profile.referralCode}`,
-                    // )
+              <h2 className="font-medium text-lg/5 max-w-50 mb-1.5">
+                Зарабатывайте на приглашениях !
+              </h2>
+              <p className="max-w-53 font-thin text-tiny/4 text-white/50 mb-5.5">
+                Получайте до 20% с выводов своих рефералов !
+              </p>
+              <div className="bg-dark-blue-50 flex items-center justify-between gap-4 relative rounded-2.5">
+                <input
+                  readOnly
+                  value={profile.referralCode}
+                  className="px-3 font-medium text-xs w-full min-h-8.5"
+                />
+                <button
+                  type="button"
+                  className="cursor-pointer bg-white rounded-2.5 min-h-8.5 px-4 text-blue font-medium text-xs basis-25 shrink-0"
+                  onClick={() =>
                     onCopy(
                       `https://t.me/gift_fights_bot/gift_fight?startapp=${profile.referralCode}`,
                     )
-                  // onCopy(
-                  //   `https://t.me/local_testing_work_bot/husan_test?startapp=${profile.referralCode}`,
-                  // )
-                }>
-                Скопировать
-              </button>
+                  }>
+                  Скопировать
+                </button>
+              </div>
             </div>
-          </div>
-          <img
-            alt="telegram cap"
-            className="pointer-events-none h-36.5 absolute -top-10 -right-7"
-            src="/assets/images/profile/twenty-percent-off.webp"
-          />
-        </article>
+            <img
+              alt="telegram cap"
+              className="pointer-events-none h-36.5 absolute -top-9 -right-7"
+              src="/assets/images/profile/twenty-percent-off.webp"
+            />
+          </article>
+
+          <ReferralBalanceOutput />
+        </div>
 
         <div className="mb-3">
           <h2 className="text-lg mb-2">Статистика</h2>

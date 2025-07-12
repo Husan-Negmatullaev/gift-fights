@@ -14,6 +14,7 @@ const PROFILE = graphql(`
       tonAddress
       referralCode
       referredBy
+      bonuses
       balance
       displayName
       winRate
