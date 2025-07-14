@@ -1,9 +1,9 @@
-import { GiftBorderCard, useGetWithdrawnGifts } from '@/entities/gift';
-import { useProfileContext } from '@/entities/profile';
-import { ProfileInformation } from '@/entities/user';
-import { ReferralBalanceOutput } from '@/features/refferal-balance-output';
-import { useCopy } from '@/shared/hooks/use-copy';
-import { useEffect } from 'react';
+import { GiftBorderCard, useGetWithdrawnGifts } from "@/entities/gift";
+import { useProfileContext } from "@/entities/profile";
+import { ProfileInformation } from "@/entities/user";
+import { ReferralBalanceOutput } from "@/features/refferal-balance-output";
+import { useCopy } from "@/shared/hooks/use-copy";
+import { useEffect } from "react";
 // import { shareURL } from '@telegram-apps/sdk-react';
 
 export const Profile = () => {
@@ -48,7 +48,8 @@ export const Profile = () => {
                     onCopy(
                       `https://t.me/gift_fights_bot/gift_fight?startapp=${profile.referralCode}`,
                     )
-                  }>
+                  }
+                >
                   Скопировать
                 </button>
               </div>
@@ -63,7 +64,7 @@ export const Profile = () => {
           <ReferralBalanceOutput />
         </div>
 
-        <div className="mb-3">
+        {/* <div className="mb-3">
           <h2 className="text-lg mb-2">Статистика</h2>
           <dl className="grid grid-cols-3 gap-3">
             <div className="bg-dark-blue-50 px-2.5 py-2 rounded-xl">
@@ -85,7 +86,7 @@ export const Profile = () => {
               </dd>
             </div>
           </dl>
-        </div>
+        </div> */}
 
         <div className="bg-dark-blue-50 px-2.5 py-2 rounded-xl">
           <h5 className="font-thin text-tiny/2.5 mb-1">Последние выводы:</h5>

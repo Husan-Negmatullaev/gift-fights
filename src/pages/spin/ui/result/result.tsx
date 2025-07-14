@@ -10,7 +10,6 @@ const resultType: Record<"win" | "lose", string> = {
 };
 
 export const Result = () => {
-  const resultStyles = resultType["win"];
   const navigation = useLocation();
   const { winnerId } = useParams();
   const winnerIdParam = Number(winnerId);
@@ -18,8 +17,12 @@ export const Result = () => {
   const lobby = navigation.state.lobby as GetLobbyQuery["lobby"];
 
   const winnerParticipant = lobby.participants.find(
-    (participant) => participant.id === winnerIdParam,
+    (participant) => participant.userId === winnerIdParam,
   );
+
+  const resultStyles = resultType["win"];
+
+  console.log(lobby, winnerIdParam);
 
   return (
     <div className="py-7 pb-25">

@@ -1,22 +1,23 @@
-import { GiftBorderCardVariantThree, useGetGifts } from "@/entities/gift";
-import { SpinCarousel } from "@/features/spin-gifts";
-import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
-import { Tabs, type TabsImperativeRef } from "@/shared/ui/tabs/tabs";
-import { useParams } from "react-router";
-import { LoadableLottie } from "@/shared/components/lottie/loadable-lottie";
-// import { useNavigate } from "react-router";
-import { useGetLobby, useJoinToLobby } from "@/entities/lobby";
-import { useMemo, useRef, useState } from "react";
-import { Modal } from "@/shared/ui/modal/modal";
-import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
-import clsx from "clsx";
-import { useProfileContext } from "@/entities/profile";
-import { SafeAvatar } from "@/shared/ui/avatar/safe-avatar";
-import { Icons } from "@/shared/ui/icons/icons";
+import { GiftBorderCardVariantThree, useGetGifts } from '@/entities/gift';
+// import { SpinCarousel } from '@/features/spin-gifts';
+import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
+import { Tabs, type TabsImperativeRef } from '@/shared/ui/tabs/tabs';
+import { useParams } from 'react-router';
+import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
+import { useNavigate } from 'react-router';
+import { useGetLobby, useJoinToLobby } from '@/entities/lobby';
+import { useMemo, useRef, useState } from 'react';
+import { Modal } from '@/shared/ui/modal/modal';
+import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
+import clsx from 'clsx';
+import { useProfileContext } from '@/entities/profile';
+import { SafeAvatar } from '@/shared/ui/avatar/safe-avatar';
+import { Icons } from '@/shared/ui/icons/icons';
+import { SpinWheel } from '@/features/spin-wheel';
 
 export const PlaySpin = () => {
   const { id } = useParams();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const lobbyParamId = Number(id);
   const { profile } = useProfileContext();
   const { joinToLobby, loading } = useJoinToLobby();
@@ -30,17 +31,19 @@ export const PlaySpin = () => {
   });
 
   const [giftsId, setGiftsId] = useState<string[]>([]);
-  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isOpenModal, setIsOspenModal] = useState(false);
   const tabsRef = useRef<TabsImperativeRef | null>(null);
 
-  const handleSelectSpinResult = (_winnerId: string) => {
-    // navigate(`/spin/${lobbyParamId}/${winnerId}/result`, {
-    //   replace: true,
-    //   state: {
-    //     lobby,
-    //   },
-    // });
+  const handleSelectSpinResult = (winnerId: string) => {
+    navigate(`/spin/${lobbyParamId}/result/${winnerId}`, {
+      replace: true,
+      state: {
+        lobby,
+      },
+    });
   };
+
+  console.log(handleSelectSpinResult);
 
   const handleSelectGift = (giftId: string, isActive: boolean) => {
     if (isActive) {
@@ -51,7 +54,7 @@ export const PlaySpin = () => {
   };
 
   const handleToggleModal = () => {
-    setIsOpenModal((prev) => !prev);
+    setIsOspenModal((prev) => !prev);
   };
 
   const handleJoinToLobby = () => {
@@ -74,27 +77,31 @@ export const PlaySpin = () => {
     [gifts],
   );
 
-  const winRate = useMemo(() => {
-    const totalAmount = lobby?.participants.reduce(
-      (acc, participant) => acc + participant.amount,
-      0,
-    );
+  const totalAmount = useMemo(
+    () =>
+      lobby?.participants.reduce(
+        (acc, participant) => acc + participant.amount,
+        0,
+      ),
+    [lobby?.participants],
+  );
 
-    if (totalAmount === 0 || totalAmount === undefined) return 0;
+  const winRate = useMemo(() => {
+    if (totalAmount === undefined) return 0;
 
     return ((currentUserBetting?.amount || 0) / totalAmount) * 100;
-  }, [lobby, currentUserBetting]);
+  }, [totalAmount, currentUserBetting?.amount]);
 
   return (
-    <div className={"py-2.5 px-6"}>
+    <div className={'py-2.5 px-6'}>
       <header className="flex justify-between items-center mb-3">
         <div className="basis-31.5 rounded-lg text-tiny/3 min-h-8 flex items-center justify-center gap-2 bg-dark-blue-150 text-blue-100">
-          На победу{" "}
+          На победу{' '}
           <span className="font-semibold"> {winRate.toFixed(0)}%</span>
         </div>
       </header>
       <div className="mb-7.5">
-        {lobby && (
+        {/* {lobby && (
           <SpinCarousel
             lobby={lobby}
             gifts={giftsId}
@@ -105,7 +112,35 @@ export const PlaySpin = () => {
               refetchGifts();
             }}
           />
-        )}
+        )} */}
+        <SpinWheel
+          segments={[
+            {
+              id: 1,
+              label: 'some',
+              stake: 10,
+              color: 14427686,
+              reward: '$20.00',
+              playerName: 'some',
+              startAngle: 0,
+              endAngle: 6.283185307179586,
+              angle: 6.283185307179586,
+              percentage: 100,
+            },
+            {
+              id: 2,
+              label: 'person',
+              stake: 10,
+              color: 14427686,
+              reward: '$20.00',
+              playerName: 'some',
+              startAngle: 0,
+              endAngle: 6.283185307179586,
+              angle: 6.283185307179586,
+              percentage: 100,
+            },
+          ]}
+        />
       </div>
 
       <div className="mb-5">
@@ -121,11 +156,10 @@ export const PlaySpin = () => {
         {isAlreadyBetting && (
           <div
             className={clsx(
-              "shadow-[0px_0px_19.6px_0px_--alpha(var(--color-blue-200)_/_50%)] px-5 py-2",
-              "min-h-13.5 rounded-2xl bg-linear-360 from-blue-50 from-0% to-blue-100 to-100 text-white grid items-center",
-              "disabled:bg-dark-blue-700 disabled:text-white/50 disabled:shadow-none disabled:bg-linear-[none]",
-            )}
-          >
+              'shadow-[0px_0px_19.6px_0px_--alpha(var(--color-blue-200)_/_50%)] px-5 py-2',
+              'min-h-13.5 rounded-2xl bg-linear-360 from-blue-50 from-0% to-blue-100 to-100 text-white grid items-center',
+              'disabled:bg-dark-blue-700 disabled:text-white/50 disabled:shadow-none disabled:bg-linear-[none]',
+            )}>
             <dl className="grid grid-flow-col content-center justify-between gap-1 text-white">
               <div className="text-left">
                 <dt className="font-thin mb-0.5 text-tiny/2.5">Ставка:</dt>
@@ -149,7 +183,7 @@ export const PlaySpin = () => {
         <div className="grid grid-cols-2 gap-3">
           {filteredBlockedGifts?.map((gift) => (
             <GiftBorderCardVariantThree
-              size={"lg"}
+              size={'lg'}
               key={gift.id}
               slug={gift.slug}
               price={gift.price}
@@ -177,7 +211,7 @@ export const PlaySpin = () => {
                   </div>
 
                   <div className="grid place-items-center bg-dark-blue-150 text-blue-100 rounded-lg min-h-6 basis-11.5 text-tiny font-semibold px-3">
-                    {(participant.amount / list.length) * 100}%
+                    {((participant.amount / list.length) * 100).toFixed(2)}%
                   </div>
                 </div>
               </div>
@@ -207,19 +241,17 @@ export const PlaySpin = () => {
           <button
             type="button"
             onClick={handleToggleModal}
-            className="cursor-pointer min-h-10.5 grid place-content-center border border-white rounded-lg"
-          >
+            className="cursor-pointer min-h-10.5 grid place-content-center border border-white rounded-lg">
             Не буду ставить
           </button>
           <button
             type="button"
             onClick={handleJoinToLobby}
-            className="cursor-pointer min-h-10.5 grid place-content-center bg-blue rounded-lg"
-          >
+            className="cursor-pointer min-h-10.5 grid place-content-center bg-blue rounded-lg">
             {loading ? (
               <Icons className="mx-auto animate-spin" name="loader" />
             ) : (
-              "Сделать ставку"
+              'Сделать ставку'
             )}
           </button>
         </div>
@@ -228,4 +260,4 @@ export const PlaySpin = () => {
   );
 };
 
-const tabs = ["Ваши Gift's", "Текущие ставки"];
+const tabs = ["Ваши Gift's", 'Текущие ставки'];

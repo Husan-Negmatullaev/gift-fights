@@ -2,23 +2,23 @@ import {
   GiftCheckboxCard,
   useGetGifts,
   useWithdrawGifts,
-} from '@/entities/gift';
-import { ProfileInformation } from '@/entities/user';
-import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
-import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
-import { Modal } from '@/shared/ui/modal/modal';
-import { useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useProfileContext } from '@/entities/profile';
+} from "@/entities/gift";
+import { ProfileInformation } from "@/entities/user";
+import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
+import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
+import { Modal } from "@/shared/ui/modal/modal";
+import { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useProfileContext } from "@/entities/profile";
 import {
   useConfirmTransaction,
   useCreateTransaction,
   useTonConnect,
-} from '@/entities/ton';
-import { TransactionType } from '@/shared/api/graphql/graphql';
-import { useTonConnectUI } from '@tonconnect/ui-react';
-import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
-import { LoadingSpinner } from '@/shared/components/loading-spinner/loading-spinner';
+} from "@/entities/ton";
+import { TransactionType } from "@/shared/api/graphql/graphql";
+import { useTonConnectUI } from "@tonconnect/ui-react";
+import { LoadableLottie } from "@/shared/components/lottie/loadable-lottie";
+import { LoadingSpinner } from "@/shared/components/loading-spinner/loading-spinner";
 
 interface IFormInput {
   gifts: string[];
@@ -26,10 +26,11 @@ interface IFormInput {
 
 export const Inventory = () => {
   const { profile } = useProfileContext();
-  const { gifts, refetch, loading } = useGetGifts({
+  const { gifts, refetch } = useGetGifts({
     take: 25,
     skip: 0,
   });
+  const loading = true;
   const [open, setOpen] = useState(false);
   const [tonConnectUI] = useTonConnectUI();
   const { withdrawGifts } = useWithdrawGifts();
@@ -55,7 +56,7 @@ export const Inventory = () => {
     [gifts],
   );
 
-  const selectedGiftsIds = getValues('gifts');
+  const selectedGiftsIds = getValues("gifts");
 
   const selectedGifts = useMemo(() => {
     return filteredBlockedGifts.filter((gift) =>
@@ -67,7 +68,7 @@ export const Inventory = () => {
     return selectedGifts.reduce((acc, gift) => acc + gift.price, 0);
   }, [selectedGifts]);
 
-  const amountWithCommission = totalAmount * 0.01;
+  const amountWithCommission = totalAmount * 0.05;
 
   const handleConfirm = () => {
     handleToggleModal();
@@ -103,7 +104,7 @@ export const Inventory = () => {
         })
           .then(
             (success) => (
-              console.log('success', success),
+              console.log("success", success),
               withdrawGifts({
                 giftsIds: selectedGifts.map((gift) => gift.id),
                 transactionId: data.data?.createTransaction.id as string,
@@ -113,10 +114,10 @@ export const Inventory = () => {
               })
             ),
           )
-          .catch((error) => console.error('error', error));
+          .catch((error) => console.error("error", error));
       })
       .catch((err) => {
-        console.log('Err', err);
+        console.log("Err", err);
       });
   };
 
@@ -129,9 +130,7 @@ export const Inventory = () => {
       <div className="px-6 pb-6">
         <h5 className="font-thin text-tiny/2.5 mb-2">Ваши Gift's:</h5>
 
-        <ul
-          aria-busy={loading}
-          className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
+        <ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
           {filteredBlockedGifts.map((gift) => (
             <li key={gift.id}>
               <GiftCheckboxCard
@@ -142,7 +141,7 @@ export const Inventory = () => {
                 price={gift.price}
                 checkbox={{
                   value: gift.id,
-                  ...register('gifts', {
+                  ...register("gifts", {
                     required: true,
                   }),
                 }}
@@ -150,20 +149,28 @@ export const Inventory = () => {
             </li>
           ))}
         </ul>
-        <div className="peer-empty:block peer-busy:hidden hidden">
+        <div
+          aria-busy={loading}
+          className="aria-busy:hidden peer-empty:block hidden"
+        >
           <p className="text-center font-medium text-lg">
-            Вы можете отправить ваш гифт на аккаунт{' '}
+            Вы можете отправить ваш гифт на аккаунт{" "}
             <a
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue underline"
-              href="https://t.me/gifts_fight_relayer">
+              href="https://t.me/gifts_fight_relayer"
+            >
               @gifts_fight_relayer
             </a>
           </p>
         </div>
 
-        {loading && <LoadingSpinner />}
+        {loading && (
+          <div className="mx-auto">
+            <LoadingSpinner />
+          </div>
+        )}
       </div>
 
       {!open && (
@@ -190,11 +197,11 @@ export const Inventory = () => {
 
         <div className="grid gap-2 justify-center grid-flow-dense auto-rows-[92px] grid-cols-[repeat(3,_92px)] mb-17">
           {selectedGifts.map((gift) => {
-            console.log('gift', gift);
             return (
               <div
                 key={gift.id}
-                className="relative pb-[69%] rounded-lg overflow-hidden">
+                className="relative pb-[69%] rounded-lg overflow-hidden"
+              >
                 <LoadableLottie slug={gift.slug}>
                   {(animationData) => (
                     <TouchableLottie
@@ -210,7 +217,7 @@ export const Inventory = () => {
 
         <div className="text-center">
           <p className="text-xs text-white/50 mb-4">
-            Комиссия будет составлять:{' '}
+            Комиссия будет составлять:{" "}
             <span className="font-bold text-white">{amountWithCommission}</span>
           </p>
           <BottomButton
