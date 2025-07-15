@@ -13,7 +13,7 @@ import clsx from 'clsx';
 import { useProfileContext } from '@/entities/profile';
 import { SafeAvatar } from '@/shared/ui/avatar/safe-avatar';
 import { Icons } from '@/shared/ui/icons/icons';
-import { SpinWheel } from '@/features/spin-wheel';
+import { SpinWheelContainer } from '@/features/spin-wheel';
 
 export const PlaySpin = () => {
   const { id } = useParams();
@@ -43,7 +43,7 @@ export const PlaySpin = () => {
     });
   };
 
-  console.log(handleSelectSpinResult);
+  // console.log(handleSelectSpinResult);
 
   const handleSelectGift = (giftId: string, isActive: boolean) => {
     if (isActive) {
@@ -101,46 +101,17 @@ export const PlaySpin = () => {
         </div>
       </header>
       <div className="mb-7.5">
-        {/* {lobby && (
-          <SpinCarousel
-            lobby={lobby}
-            gifts={giftsId}
+        {lobby && (
+          <SpinWheelContainer
             onSelected={handleSelectSpinResult}
             onRefetchLobby={() => refetchLobby()}
             onRefreshAfterJoining={() => {
               refetchLobby();
               refetchGifts();
             }}
+            lobby={lobby}
           />
-        )} */}
-        <SpinWheel
-          segments={[
-            {
-              id: 1,
-              label: 'some',
-              stake: 10,
-              color: 14427686,
-              reward: '$20.00',
-              playerName: 'some',
-              startAngle: 0,
-              endAngle: 6.283185307179586,
-              angle: 6.283185307179586,
-              percentage: 100,
-            },
-            {
-              id: 2,
-              label: 'person',
-              stake: 10,
-              color: 14427686,
-              reward: '$20.00',
-              playerName: 'some',
-              startAngle: 0,
-              endAngle: 6.283185307179586,
-              angle: 6.283185307179586,
-              percentage: 100,
-            },
-          ]}
-        />
+        )}
       </div>
 
       <div className="mb-5">

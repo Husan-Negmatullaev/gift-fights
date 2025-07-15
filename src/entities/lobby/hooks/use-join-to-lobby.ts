@@ -1,9 +1,9 @@
-import { useMutation } from "@apollo/client";
-import { JOIN_TO_LOBBY } from "../model/graphs-gql/join-to-lobby-gql";
+import { useMutation } from '@apollo/client';
+import { JOIN_TO_LOBBY } from '../model/graphs-gql/join-to-lobby-gql';
 import type {
   JoinToLobbyMutation,
   JoinToLobbyMutationVariables,
-} from "@/shared/api/graphql/graphql";
+} from '@/shared/api/graphql/graphql';
 
 export const useJoinToLobby = () => {
   const [mutate, { data, loading, error }] = useMutation<
@@ -12,8 +12,6 @@ export const useJoinToLobby = () => {
   >(JOIN_TO_LOBBY);
 
   const joinToLobby = (lobbyId: number, giftsIds: string[]) => {
-    console.log("PAYLOAD", lobbyId, giftsIds);
-
     return mutate({
       variables: {
         data: {
