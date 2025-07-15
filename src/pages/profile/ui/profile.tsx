@@ -4,13 +4,11 @@ import { ProfileInformation } from "@/entities/user";
 import { ReferralBalanceOutput } from "@/features/refferal-balance-output";
 import { useCopy } from "@/shared/hooks/use-copy";
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
 // import { shareURL } from '@telegram-apps/sdk-react';
 
 export const Profile = () => {
 	const { onCopy } = useCopy();
 	const { profile, refetch } = useProfileContext();
-	const navigate = useNavigate();
 	const { data: withdrawnGifts } = useGetWithdrawnGifts(15, 0);
 
 	// Mock lobby data for testing

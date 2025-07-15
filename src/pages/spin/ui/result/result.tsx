@@ -3,10 +3,10 @@ import Gift from "@/shared/assets/lottie/berrybox.json";
 import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
 import { Avatar } from "@/shared/ui/avatar/avatar";
 import { useLocation, useParams } from "react-router";
-const resultType: Record<"win" | "lose", string> = {
-	win: "bg-linear-360 from-blue-50 from-0% to-blue-100 to-100%",
-	lose: "bg-linear-360 from-red-150 from-0% to-red-200 to-100%",
-};
+// const resultType: Record<"win" | "lose", string> = {
+// 	win: "bg-linear-360 from-blue-50 from-0% to-blue-100 to-100%",
+// 	lose: "bg-linear-360 from-red-150 from-0% to-red-200 to-100%",
+// };
 
 export const Result = () => {
 	const navigation = useLocation();
@@ -19,7 +19,7 @@ export const Result = () => {
 	// 	(participant) => participant.userId === winnerIdParam,
 	// );
 
-	const resultStyles = resultType["win"];
+	// const resultStyles = resultType["win"];
 
 	console.log(lobby, winnerIdParam);
 
