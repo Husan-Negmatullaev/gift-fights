@@ -13,10 +13,12 @@ type GiftBorderCardProps = {
   slug: string;
   title: string;
   price: number;
+
+  className?: string;
 };
 
 export const GiftBorderCardVariantThree = (props: GiftBorderCardProps) => {
-  const { slug, title, price, size, active, onClick } = props;
+  const { slug, title, price, size, active, onClick, className } = props;
 
   const giftUrl = `https://nft.fragment.com/gift/${slug}.lottie.json`;
 
@@ -33,6 +35,7 @@ export const GiftBorderCardVariantThree = (props: GiftBorderCardProps) => {
     <button
       onClick={onClick}
       className={clsx(
+        className,
         GIFT_SIZES[size].card,
         active &&
           'border border-white shadow-[0px_0px_7.8px_0px_--alpha(var(--color-blue-100)_/_72%)] bg-dark-blue-850',
