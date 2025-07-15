@@ -1,10 +1,10 @@
 import { graphql } from "@/shared/api/graphql";
-import { useQuery } from "@apollo/client";
 import {
+  LobbyStatus,
   type GetLobbiesQuery,
   type GetLobbiesQueryVariables,
 } from "@/shared/api/graphql/graphql";
-import { LobbyStatus } from "@/shared/api/graphql/graphql";
+import { useQuery } from "@apollo/client";
 
 const GET_LOBBIES = graphql(`
   query GetLobbies($take: Int!, $skip: Int!, $status: [LobbyStatus!]) {
@@ -31,7 +31,8 @@ export const useGetLobbies = (
     GetLobbiesQueryVariables
   >(GET_LOBBIES, {
     variables: { take, skip, status: status },
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-first",
+    nextFetchPolicy: "cache-and-network",
   });
 
   return {

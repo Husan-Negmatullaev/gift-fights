@@ -82,18 +82,20 @@ export const PlaySpin = () => {
       lobby?.participants.reduce(
         (acc, participant) => acc + participant.amount,
         0,
-      ),
+      ) || 0,
     [lobby?.participants],
   );
 
   const winRate = useMemo(() => {
-    if (totalAmount === undefined) return 0;
-
+    if (totalAmount === 0) return 0;
     return ((currentUserBetting?.amount || 0) / totalAmount) * 100;
   }, [totalAmount, currentUserBetting?.amount]);
 
   return (
     <div className={'py-2.5 px-6'}>
+      <h1 className="mb-5 font-semibold text-2xl text-center">
+        {lobby?.title}
+      </h1>
       <header className="flex justify-between items-center mb-3">
         <div className="basis-31.5 rounded-lg text-tiny/3 min-h-8 flex items-center justify-center gap-2 bg-dark-blue-150 text-blue-100">
           На победу{' '}
@@ -151,55 +153,90 @@ export const PlaySpin = () => {
       </div>
 
       <Tabs tabs={tabs} listClassName="mb-3" tabsRef={tabsRef}>
-        <div className="grid grid-cols-2 gap-3">
-          {filteredBlockedGifts?.map((gift) => (
-            <GiftBorderCardVariantThree
-              size={'lg'}
-              key={gift.id}
-              slug={gift.slug}
-              price={gift.price}
-              title={gift.title}
-              active={giftsId.includes(gift.id)}
-              onClick={() =>
-                handleSelectGift(gift.id, giftsId.includes(gift.id))
-              }
-            />
-          ))}
+        <div>
+          <ul className="grid grid-cols-2 gap-3 peer">
+            {filteredBlockedGifts?.map((gift) => (
+              <li key={gift.id}>
+                <GiftBorderCardVariantThree
+                  size={'lg'}
+                  className="w-full"
+                  slug={gift.slug}
+                  price={gift.price}
+                  title={gift.title}
+                  active={giftsId.includes(gift.id)}
+                  onClick={() =>
+                    handleSelectGift(gift.id, giftsId.includes(gift.id))
+                  }
+                />
+              </li>
+            ))}
+          </ul>
+          <div className="peer-empty:block py-15 hidden">
+            <div className="text-center">
+              <p className="font-thin text-lg/5 text-white/70 mb-6">
+                У вас нет доступных gift’s для осуществления ставки
+              </p>
+
+              <p className="font-medium text-lg/5 text-white mb-2">
+                Отправьте свои Gift’s сюда, для пополнения
+              </p>
+
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-100 underline"
+                href="https://t.me/gifts_fight_relayer">
+                @gifts_fight_relayer
+              </a>
+            </div>
+          </div>
         </div>
-        <div className="grid gap-2">
-          {lobby?.participants.map((participant, _index, list) => (
-            <div key={participant.id} className="bg-dark-blue-900">
-              <div className="flex items-center px-4 p-2 gap-3 rounded-lg bg-dark-blue-50">
-                <SafeAvatar url={participant.user.image} className="size-8" />
-                <span className="text-xs flex-1">
-                  {participant.user.username}
-                </span>
+        <div>
+          <div className="grid gap-2 peer">
+            {lobby?.participants.map((participant, _index, list) => (
+              <div key={participant.id} className="bg-dark-blue-900">
+                <div className="flex items-center px-4 p-2 gap-3 rounded-lg bg-dark-blue-50">
+                  <SafeAvatar url={participant.user.image} className="size-8" />
+                  <span className="text-xs flex-1">
+                    {participant.user.username}
+                  </span>
 
-                <div className="flex items-center gap-1.5">
-                  <div className="grid place-content-center items-end gap-1 grid-flow-col bg-dark-blue-150 text-blue-100 rounded-lg min-h-6 basis-14 text-tiny/2.5 font-semibold px-2.5">
-                    {participant.amount}
-                    <span className="text-eight/2 font-normal">TON</span>
-                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className="grid place-content-center items-end gap-1 grid-flow-col bg-dark-blue-150 text-blue-100 rounded-lg min-h-6 basis-14 text-tiny/2.5 font-semibold px-2.5">
+                      {participant.amount}
+                      <span className="text-eight/2 font-normal">TON</span>
+                    </div>
 
-                  <div className="grid place-items-center bg-dark-blue-150 text-blue-100 rounded-lg min-h-6 basis-11.5 text-tiny font-semibold px-3">
-                    {((participant.amount / list.length) * 100).toFixed(2)}%
+                    <div className="grid place-items-center bg-dark-blue-150 text-blue-100 rounded-lg min-h-6 basis-11.5 text-tiny font-semibold px-3">
+                      {Math.min(
+                        (participant.amount / list.length) * 100,
+                        100,
+                      ).toFixed(2)}
+                      %
+                    </div>
                   </div>
                 </div>
+                <div className="grid grid-flow-row grid-cols-[repeat(auto-fill,minmax(60px,60px))] auto-rows-[60px] gap-1.5 p-1.5">
+                  {participant.gifts.map((gift) => (
+                    <LoadableLottie key={gift.id} slug={gift.slug}>
+                      {(animationData) => (
+                        <TouchableLottie
+                          animation={animationData}
+                          className="rounded-four overflow-hidden"
+                        />
+                      )}
+                    </LoadableLottie>
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-flow-row grid-cols-[repeat(auto-fill,minmax(60px,60px))] auto-rows-[60px] gap-1.5 p-1.5">
-                {participant.gifts.map((gift) => (
-                  <LoadableLottie key={gift.id} slug={gift.slug}>
-                    {(animationData) => (
-                      <TouchableLottie
-                        animation={animationData}
-                        className="rounded-four overflow-hidden"
-                      />
-                    )}
-                  </LoadableLottie>
-                ))}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+
+          <div className="peer-empty:block py-15 hidden text-center">
+            <p className="font-medium text-lg/5 text-white mb-2">
+              Ни одной ставки не сделано
+            </p>
+          </div>
         </div>
       </Tabs>
 

@@ -22,7 +22,22 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   const [isEternalSpinning, setIsEternalSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [gameTimer, setGameTimer] = useState(15);
-  const [countdown, setCountdown] = useState<number>(lobby.timeToStart);
+  // Функция для расчета актуального countdown на основе countdownExpiresAt
+  const calculateActualCountdown = useCallback(() => {
+    if (!lobby.countdownExpiresAt) {
+      return lobby.timeToStart;
+    }
+
+    const now = new Date().getTime();
+    const expiresAt = new Date(lobby.countdownExpiresAt).getTime();
+    const timeLeft = Math.max(0, Math.ceil((expiresAt - now) / 1000));
+
+    return timeLeft;
+  }, [lobby.countdownExpiresAt, lobby.timeToStart]);
+
+  const [countdown, setCountdown] = useState<number>(
+    calculateActualCountdown(),
+  );
   const [selectedSegment, setSelectedSegment] = useState<number | null>(null);
   const [gamePhase, setGamePhase] = useState<LobbyStatus>(lobby.status);
   const [isHighlighting, setIsHighlighting] = useState(false);
@@ -229,6 +244,12 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
     return () => clearTimeout(timer);
   }, [countdown, gamePhase, participants, segmentCount, handleAutoSpin]);
 
+  // Обновление countdown при изменении lobby.countdownExpiresAt
+  useEffect(() => {
+    const actualCountdown = calculateActualCountdown();
+    setCountdown(actualCountdown);
+  }, [lobby.countdownExpiresAt, calculateActualCountdown]);
+
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
 
@@ -248,7 +269,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
 
     setGameStarted(true);
     setGamePhase(LobbyStatus.Countdown);
-    setCountdown(lobby.timeToStart);
+    setCountdown(calculateActualCountdown());
   };
 
   useUserJoinedToLobbySocket(lobby.id, (payload) => {
@@ -264,7 +285,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
     onRefetchLobby();
     setGameStarted(true);
     setGamePhase(LobbyStatus.Countdown);
-    setCountdown(lobby.timeToStart);
+    setCountdown(calculateActualCountdown());
   });
 
   useLobbyProcessSubscription(lobby.id, () => {

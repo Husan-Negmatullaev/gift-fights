@@ -20,7 +20,6 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
   onRefetchLobby,
   onRefreshAfterJoining,
 }) => {
-  // console.log('🔌 SpinWheelContainer рендерится:', { lobby, onSelected });
   const {
     isSpinning,
     rotation,
@@ -53,11 +52,9 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
     );
 
     if (gameStarted) {
-      console.log('🔌 SpinWheelContainer: игра уже началась, пропускаем');
       return;
     }
 
-    console.log('🔌 SpinWheelContainer: начинаем обратный отсчет');
     updateGamePhase(LobbyStatus.Countdown);
     onRefetchLobby();
     setGameStarted(true);

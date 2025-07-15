@@ -2,27 +2,77 @@ import {
   GiftCheckboxCard,
   useGetGifts,
   useWithdrawGifts,
-} from "@/entities/gift";
-import { ProfileInformation } from "@/entities/user";
-import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
-import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
-import { Modal } from "@/shared/ui/modal/modal";
-import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useProfileContext } from "@/entities/profile";
+} from '@/entities/gift';
+import { useProfileContext } from '@/entities/profile';
 import {
   useConfirmTransaction,
   useCreateTransaction,
   useTonConnect,
-} from "@/entities/ton";
-import { TransactionType } from "@/shared/api/graphql/graphql";
-import { useTonConnectUI } from "@tonconnect/ui-react";
-import { LoadableLottie } from "@/shared/components/lottie/loadable-lottie";
-import { LoadingSpinner } from "@/shared/components/loading-spinner/loading-spinner";
+} from '@/entities/ton';
+import { ProfileInformation } from '@/entities/user';
+import { TransactionType } from '@/shared/api/graphql/graphql';
+import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
+import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
+import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
+import { Modal } from '@/shared/ui/modal/modal';
+import { useTonConnectUI } from '@tonconnect/ui-react';
+import { useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface IFormInput {
   gifts: string[];
 }
+
+// const mockGifts = [
+// 	{
+// 		id: "gift-1",
+// 		slug: "swisswatch-13036",
+// 		msgId: 1,
+// 		title: "Pepe Gift",
+// 		model: "pepe-model",
+// 		price: 10.5,
+// 		symbol: "PEPE",
+// 		userId: "user-1",
+// 		blocked: false,
+// 		externalId: "ext-1",
+// 		symbolPermille: 1000,
+// 		rarityPermille: 500,
+// 		backgroundPermille: 200,
+// 		status: "Withdrawing",
+// 	},
+// 	{
+// 		id: "gift-2",
+// 		slug: "swisswatch-13036",
+// 		msgId: 2,
+// 		title: "Froggy Gift",
+// 		model: "froggy-model",
+// 		price: 15.0,
+// 		symbol: "FROG",
+// 		userId: "user-1",
+// 		blocked: false,
+// 		externalId: "ext-2",
+// 		symbolPermille: 1200,
+// 		rarityPermille: 600,
+// 		backgroundPermille: 300,
+// 		status: "Available",
+// 	},
+// 	{
+// 		id: "gift-3",
+// 		slug: "swisswatch-13036",
+// 		msgId: 3,
+// 		title: "Cap Gift",
+// 		model: "cap-model",
+// 		price: 8.75,
+// 		symbol: "CAP",
+// 		userId: "user-1",
+// 		blocked: false,
+// 		externalId: "ext-3",
+// 		symbolPermille: 800,
+// 		rarityPermille: 400,
+// 		backgroundPermille: 150,
+// 		status: "Available",
+// 	},
+// ];
 
 export const Inventory = () => {
   const { profile } = useProfileContext();
@@ -52,11 +102,13 @@ export const Inventory = () => {
   const handleToggleModal = () => setOpen((prev) => !prev);
 
   const filteredBlockedGifts = useMemo(
+    // () => mockGifts.filter((gift) => gift.blocked === false),
+    // [mockGifts],
     () => gifts.filter((gift) => gift.blocked === false),
     [gifts],
   );
 
-  const selectedGiftsIds = getValues("gifts");
+  const selectedGiftsIds = getValues('gifts');
 
   const selectedGifts = useMemo(() => {
     return filteredBlockedGifts.filter((gift) =>
@@ -68,7 +120,7 @@ export const Inventory = () => {
     return selectedGifts.reduce((acc, gift) => acc + gift.price, 0);
   }, [selectedGifts]);
 
-  const amountWithCommission = totalAmount * 0.05;
+  const amountWithCommission = selectedGifts.length * 0.5;
 
   const handleConfirm = () => {
     handleToggleModal();
@@ -102,22 +154,19 @@ export const Inventory = () => {
           boc: res.boc,
           id: data.data?.createTransaction.id as string,
         })
-          .then(
-            (success) => (
-              console.log("success", success),
-              withdrawGifts({
-                giftsIds: selectedGifts.map((gift) => gift.id),
-                transactionId: data.data?.createTransaction.id as string,
-              }).then(() => {
-                handleToggleModal();
-                refetch();
-              })
-            ),
+          .then(() =>
+            withdrawGifts({
+              giftsIds: selectedGifts.map((gift) => gift.id),
+              transactionId: data.data?.createTransaction.id as string,
+            }).then(() => {
+              handleToggleModal();
+              refetch();
+            }),
           )
-          .catch((error) => console.error("error", error));
+          .catch((error) => console.error('error', error));
       })
       .catch((err) => {
-        console.log("Err", err);
+        console.log('Err', err);
       });
   };
 
@@ -132,6 +181,7 @@ export const Inventory = () => {
 
         <ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
           {filteredBlockedGifts.map((gift) => (
+            // {mockGifts.map((gift) => (
             <li key={gift.id}>
               <GiftCheckboxCard
                 size="lg"
@@ -139,9 +189,10 @@ export const Inventory = () => {
                 slug={gift.slug}
                 title={gift.title}
                 price={gift.price}
+                // status={gift.status}
                 checkbox={{
                   value: gift.id,
-                  ...register("gifts", {
+                  ...register('gifts', {
                     required: true,
                   }),
                 }}
@@ -151,26 +202,24 @@ export const Inventory = () => {
         </ul>
         <div
           aria-busy={loading}
-          className="aria-busy:hidden peer-empty:block hidden"
-        >
+          className="aria-busy:hidden peer-empty:block hidden">
           <p className="text-center font-medium text-lg">
-            Вы можете отправить ваш гифт на аккаунт{" "}
+            Вы можете отправить ваш гифт на аккаунт{' '}
             <a
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue underline"
-              href="https://t.me/gifts_fight_relayer"
-            >
+              className="text-blue-100 underline"
+              href="https://t.me/gifts_fight_relayer">
               @gifts_fight_relayer
             </a>
           </p>
         </div>
 
-        {loading && (
-          <div className="mx-auto">
-            <LoadingSpinner />
-          </div>
-        )}
+        {/* {loading && (
+					<div className="mx-auto">
+						<LoadingSpinner />
+					</div>
+				)} */}
       </div>
 
       {!open && (
@@ -200,8 +249,7 @@ export const Inventory = () => {
             return (
               <div
                 key={gift.id}
-                className="relative pb-[69%] rounded-lg overflow-hidden"
-              >
+                className="relative pb-[69%] rounded-lg overflow-hidden">
                 <LoadableLottie slug={gift.slug}>
                   {(animationData) => (
                     <TouchableLottie
@@ -217,7 +265,7 @@ export const Inventory = () => {
 
         <div className="text-center">
           <p className="text-xs text-white/50 mb-4">
-            Комиссия будет составлять:{" "}
+            Комиссия будет составлять:{' '}
             <span className="font-bold text-white">{amountWithCommission}</span>
           </p>
           <BottomButton

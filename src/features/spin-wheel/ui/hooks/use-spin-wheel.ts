@@ -38,12 +38,25 @@ interface SpinWheelProps {
 }
 
 export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
+  // Функция для расчета актуального countdown на основе countdownExpiresAt
+  const calculateActualCountdown = useCallback(() => {
+    if (!lobby.countdownExpiresAt) {
+      return lobby.timeToStart;
+    }
+
+    const now = new Date().getTime();
+    const expiresAt = new Date(lobby.countdownExpiresAt).getTime();
+    const timeLeft = Math.max(0, Math.ceil((expiresAt - now) / 1000));
+
+    return timeLeft;
+  }, [lobby.countdownExpiresAt, lobby.timeToStart]);
+
   const [state, setState] = useState<SpinWheelState>({
     isSpinning: false,
     isEternalSpinning: false,
     rotation: 0,
     gameTimer: 15,
-    countdown: lobby.timeToStart,
+    countdown: calculateActualCountdown(),
     selectedSegment: null,
     gamePhase: lobby.status,
     isHighlighting: false,
@@ -128,15 +141,6 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
           return 'Ready to start';
       }
     })();
-
-    console.log('🔌 useSpinWheel: getPhaseText:', {
-      phaseText,
-      gamePhase: state.gamePhase,
-      countdown: state.countdown,
-      gameTimer: state.gameTimer,
-      hasEnoughPlayers: state.hasEnoughPlayers,
-      isSearchingWinner: state.isSearchingWinner,
-    });
 
     return phaseText;
   }, [
@@ -255,13 +259,6 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
 
   const handleAutoSpin = useCallback(
     (winnerId: string) => {
-      console.log('🔌 handleAutoSpin вызван:', {
-        winnerId,
-        isEternalSpinning: state.isEternalSpinning,
-        isSpinning: state.isSpinning,
-        gamePhase: state.gamePhase,
-      });
-
       // Устанавливаем состояние поиска победителя
       setState((prev) => ({
         ...prev,
@@ -270,14 +267,11 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
 
       if (state.isEternalSpinning) {
         // Если уже вращается вечно, останавливаем и выбираем победителя
-        console.log('🔌 Останавливаем вечное вращение...');
         stopSpinAndSelectWinner(winnerId);
       } else if (state.isSpinning) {
         // Если уже идет финальная анимация, просто ждем
-        console.log('🔌 Колесо уже останавливается, ждем завершения...');
       } else {
         // Если не вращается, начинаем вечное вращение
-        console.log('🔌 Начинаем вечное вращение...');
         setState((prev) => ({
           ...prev,
           pendingWinnerId: winnerId,
@@ -301,9 +295,9 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
       ...prev,
       gameStarted: true,
       gamePhase: LobbyStatus.Countdown,
-      countdown: lobby.timeToStart,
+      countdown: calculateActualCountdown(),
     }));
-  }, [state.hasEnoughPlayers, state.gameStarted, lobby.timeToStart]);
+  }, [state.hasEnoughPlayers, state.gameStarted, calculateActualCountdown]);
 
   // Анимация вечного вращения
   useEffect(() => {
@@ -353,16 +347,9 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
 
   // Таймер обратного отсчета
   useEffect(() => {
-    console.log('🔌 useSpinWheel: таймер обратного отсчета:', {
-      gamePhase: state.gamePhase,
-      countdown: state.countdown,
-      gameStarted: state.gameStarted,
-    });
-
     let timer: ReturnType<typeof setTimeout>;
 
     if (state.gamePhase === LobbyStatus.Countdown && state.countdown > 0) {
-      console.log(`🔌 useSpinWheel: обратный отсчет - ${state.countdown} сек`);
       timer = setTimeout(() => {
         setState((prev) => ({
           ...prev,
@@ -373,7 +360,6 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
       state.gamePhase === LobbyStatus.Countdown &&
       state.countdown === 0
     ) {
-      console.log('🔌 useSpinWheel: обратный отсчет завершен, начинаем игру');
       const demoWinnerId =
         lobby.participants.length > 0
           ? lobby.participants[
@@ -414,24 +400,20 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
 
   // Обновление состояния при изменении лобби
   useEffect(() => {
-    console.log('🔌 useSpinWheel: обновление состояния лобби:', {
-      currentGamePhase: state.gamePhase,
-      lobbyStatus: lobby.status,
-      lobbyTimeToStart: lobby.timeToStart,
-      participantsLength: lobby.participants.length,
-    });
+    const actualCountdown = calculateActualCountdown();
 
     setState((prev) => ({
       ...prev,
-      countdown: lobby.timeToStart,
+      countdown: actualCountdown,
       gamePhase: lobby.status,
       hasEnoughPlayers: lobby.participants.length >= 2,
     }));
   }, [
+    lobby.countdownExpiresAt,
     lobby.timeToStart,
     lobby.status,
     lobby.participants.length,
-    state.gamePhase,
+    calculateActualCountdown,
   ]);
 
   return {
@@ -457,24 +439,12 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
 
     // Обновление состояния извне (для интеграции с socket.io)
     updateGamePhase: (phase: LobbyStatus) => {
-      console.log('🔌 useSpinWheel: updateGamePhase вызван:', {
-        newPhase: phase,
-        currentPhase: state.gamePhase,
-      });
       setState((prev) => ({ ...prev, gamePhase: phase }));
     },
     updateCountdown: (countdown: number) => {
-      console.log('🔌 useSpinWheel: updateCountdown вызван:', {
-        newCountdown: countdown,
-        currentCountdown: state.countdown,
-      });
       setState((prev) => ({ ...prev, countdown }));
     },
     setGameStarted: (started: boolean) => {
-      console.log('🔌 useSpinWheel: setGameStarted вызван:', {
-        newGameStarted: started,
-        currentGameStarted: state.gameStarted,
-      });
       setState((prev) => ({ ...prev, gameStarted: started }));
     },
   };

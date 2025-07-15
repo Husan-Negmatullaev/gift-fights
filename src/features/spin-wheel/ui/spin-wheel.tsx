@@ -3,6 +3,7 @@ import { Application } from '@pixi/react';
 import * as PIXI from 'pixi.js';
 import { AvatarSprite } from './avatar-sprite';
 import { type GetLobbyQuery } from '@/shared/api/graphql/graphql';
+import { Assets } from 'pixi.js';
 
 interface WheelSegment {
   id: number;
@@ -141,19 +142,6 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     g.endFill();
   }, []);
 
-  const drawArrow = useCallback((g: PIXI.Graphics) => {
-    g.clear();
-    g.beginFill(0xffd700);
-    g.lineStyle(2, 0x1f2937);
-
-    // Draw arrow pointing down to the wheel
-    g.moveTo(0, -15);
-    g.lineTo(-20, -40);
-    g.lineTo(20, -40);
-    g.lineTo(0, -15);
-    g.endFill();
-  }, []);
-
   return (
     <div className="flex flex-col items-center">
       <div style={{ position: 'relative', width: sizes, height: sizes + 20 }}>
@@ -161,15 +149,15 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
           antialias
           autoDensity
           width={sizes}
+          height={sizes + 40}
           backgroundAlpha={0}
-          height={sizes + 20}
           resolution={window.devicePixelRatio || 1}>
           {/* Wheel */}
           <pixiContainer
             width={changeSize}
             height={changeSize}
             x={changeSize / 2}
-            y={changeSize / 2 + 20}
+            y={changeSize / 2 + 35}
             ref={() => setChangeSize(() => 324)}>
             <pixiContainer rotation={internalRotation}>
               {/* Draw segments using WedgeIcon */}
@@ -245,8 +233,9 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
             </pixiContainer>
           </pixiContainer>
           {/* Arrow */}
-          <pixiContainer x={radius / 2 + 65} y={38}>
-            <pixiGraphics draw={drawArrow} />
+          <pixiContainer x={radius / 2 + 35} y={0}>
+            {/* <pixiGraphics draw={drawArrow} /> */}
+            <pixiSprite texture={Arrow} />
           </pixiContainer>
         </Application>
 
@@ -266,12 +255,12 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
               x={x}
               y={y}
               size={40}
+              stageWidth={sizes}
               rotation={rotatedAngle}
+              stageHeight={sizes + 20}
               backgroundColor={0x2d353f}
               url={segment.userImage || ''}
               playerName={segment.playerName}
-              stageWidth={sizes}
-              stageHeight={sizes + 20}
             />
           );
         })}
@@ -321,3 +310,5 @@ const WedgeIcon = ({
 
   return <pixiGraphics draw={draw} />;
 };
+
+const Arrow = await Assets.load('/assets/images/light-triangle.png');
