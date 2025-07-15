@@ -1,12 +1,16 @@
-import { initTelegram } from "@/entities/telegram";
-import { AppRouterProvider } from "./providers/router-provider/ui/app-router-provider";
-import "./styles/index.css";
-import ReactModal from "react-modal";
-import { useEffect } from "react";
-import { ApolloProvider } from "./providers/apolo-provider";
-import { TonConnectProvider } from "@/entities/ton";
-import { ProfileUserProvider } from "@/features/profile-user-provider";
-import { ToastProvider } from "./providers/toast-provider";
+import { initTelegram } from '@/entities/telegram';
+import { AppRouterProvider } from './providers/router-provider/ui/app-router-provider';
+import './styles/index.css';
+import ReactModal from 'react-modal';
+import { useEffect } from 'react';
+import { ApolloProvider } from './providers/apolo-provider';
+import { TonConnectProvider } from '@/entities/ton';
+import { ProfileUserProvider } from '@/features/profile-user-provider';
+import { ToastProvider } from './providers/toast-provider';
+import { extend } from '@pixi/react';
+import { Container, Graphics, Text, Sprite } from 'pixi.js';
+
+extend({ Container, Graphics, Text, Sprite });
 
 function App() {
   useEffect(() => {
@@ -27,4 +31,4 @@ function App() {
 
 export default App;
 
-ReactModal.setAppElement("#root");
+ReactModal.setAppElement('#root');

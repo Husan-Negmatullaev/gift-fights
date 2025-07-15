@@ -12,6 +12,8 @@ export const useJoinToLobby = () => {
   >(JOIN_TO_LOBBY);
 
   const joinToLobby = (lobbyId: number, giftsIds: string[]) => {
+    console.log("PAYLOAD", lobbyId, giftsIds);
+
     return mutate({
       variables: {
         data: {

@@ -17,6 +17,7 @@ export const GET_LOBBY = graphql(`
       winnerId
       createdAt
       updatedAt
+      countdownExpiresAt
       participants {
         id
         userId
