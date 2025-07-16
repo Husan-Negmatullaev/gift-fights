@@ -74,6 +74,16 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     });
   }, [segments]);
 
+  const [arrow, setArrow] = useState<PIXI.Texture | null>(null);
+
+  useEffect(() => {
+    const loadArrow = async () => {
+      const arrow = await Assets.load('/assets/images/light-triangle.png');
+      setArrow(arrow);
+    };
+    loadArrow();
+  }, []);
+
   const segmentsWithAngles = calculateSegmentAngles();
 
   // Синхронизируем targetRotation с internalRotation
@@ -235,7 +245,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
           {/* Arrow */}
           <pixiContainer x={radius / 2 + 35} y={0}>
             {/* <pixiGraphics draw={drawArrow} /> */}
-            <pixiSprite texture={Arrow} />
+            {arrow && <pixiSprite texture={arrow} />}
           </pixiContainer>
         </Application>
 
@@ -310,5 +320,3 @@ const WedgeIcon = ({
 
   return <pixiGraphics draw={draw} />;
 };
-
-const Arrow = await Assets.load('/assets/images/light-triangle.png');
