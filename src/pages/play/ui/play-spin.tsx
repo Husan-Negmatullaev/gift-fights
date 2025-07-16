@@ -194,7 +194,7 @@ export const PlaySpin = () => {
 				</div>
 				<div>
 					<div className="grid gap-2 peer">
-						{lobby?.participants.map((participant, _index, list) => (
+						{lobby?.participants.map((participant, _index) => (
 							<div key={participant.id} className="bg-dark-blue-900">
 								<div className="flex items-center px-4 p-2 gap-3 rounded-lg bg-dark-blue-50">
 									<SafeAvatar url={participant.user.image} className="size-8" />
@@ -210,7 +210,7 @@ export const PlaySpin = () => {
 
 										<div className="grid place-items-center bg-dark-blue-150 text-blue-100 rounded-lg min-h-6 basis-11.5 text-tiny font-semibold px-3">
 											{Math.min(
-												(participant.amount / list.length) * 100,
+												(participant.amount / totalAmount) * 100,
 												100,
 											).toFixed(2)}
 											%
