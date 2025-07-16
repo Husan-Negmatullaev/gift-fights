@@ -1,9 +1,9 @@
 import { graphql } from "@/shared/api/graphql";
-import { useQuery } from "@apollo/client";
 import type {
   GetGiftsQuery,
   GetGiftsQueryVariables,
 } from "@/shared/api/graphql/graphql";
+import { useQuery } from "@apollo/client";
 
 const GET_GIFTS = graphql(`
   query GetGifts(
