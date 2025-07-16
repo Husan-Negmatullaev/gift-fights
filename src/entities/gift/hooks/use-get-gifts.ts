@@ -46,6 +46,7 @@ export const useGetGifts = (args: GetGiftsQueryVariables) => {
   >(GET_GIFTS, {
     variables: args,
     fetchPolicy: "network-only",
+    pollInterval: 5000,
   });
 
   return {

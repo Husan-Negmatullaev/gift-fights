@@ -23,6 +23,7 @@ export const useGetWithdrawnGifts = (take: number, skip: number) => {
     WithdrawnGiftsQueryVariables
   >(GET_WITHDRAWN_GIFTS_QUERY, {
     variables: { take, skip },
+    pollInterval: 5000,
   });
 
   return {

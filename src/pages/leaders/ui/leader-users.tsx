@@ -1,9 +1,14 @@
-import { useGetMySquare, useGetRewards } from "@/entities/leaderboards";
+import {
+	useGetLeaderboardInfo,
+	useGetMySquare,
+	useGetRewards,
+} from "@/entities/leaderboards";
 import { Place, type GetLeaderboardQuery } from "@/shared/api/graphql/graphql";
 import { AppLottie } from "@/shared/components/lottie/app-lottie";
 import { LoadableLottie } from "@/shared/components/lottie/loadable-lottie";
 import { Avatar } from "@/shared/ui/avatar/avatar";
 import { Icons } from "@/shared/ui/icons/icons";
+import { useEffect, useState } from "react";
 
 type LeaderUsersProps = {
 	leaders: GetLeaderboardQuery["leaderboard"];
@@ -20,11 +25,59 @@ function removeLastBackgroundLayers(lottieJson: any, count = 1) {
 	return lottieJson;
 }
 
+const useLeaderboardTimer = (endDate: string | null) => {
+	const [timeRemaining, setTimeRemaining] = useState<string>("");
+
+	useEffect(() => {
+		if (!endDate) {
+			setTimeRemaining("");
+			return;
+		}
+
+		const updateTimer = () => {
+			const now = new Date().getTime();
+			const end = new Date(endDate).getTime();
+			const timeLeft = Math.max(0, end - now);
+
+			if (timeLeft <= 0) {
+				setTimeRemaining("00д 00ч 00м");
+				return;
+			}
+
+			const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+			const hours = Math.floor(
+				(timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+			);
+			const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+			const formatTime = () => {
+				const parts = [];
+				if (days > 0) parts.push(`${days}д`);
+				if (hours > 0) parts.push(`${hours}ч`);
+				if (minutes > 0) parts.push(`${minutes}м`);
+				return parts.join(" ") || "0м";
+			};
+
+			setTimeRemaining(formatTime());
+		};
+
+		updateTimer();
+		const interval = setInterval(updateTimer, 60000); // Update every minute
+
+		return () => clearInterval(interval);
+	}, [endDate]);
+
+	return timeRemaining;
+};
+
 export const LeaderUsers = (props: LeaderUsersProps) => {
 	const { leaders } = props;
 
 	const { data: myScore } = useGetMySquare();
 	const { data: rewards } = useGetRewards();
+	const { data: leaderboardInfo } = useGetLeaderboardInfo();
+
+	const timeRemaining = useLeaderboardTimer(leaderboardInfo?.endDate);
 
 	const users: Record<
 		number,
@@ -75,7 +128,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 				<h1 className=" text-white font-semibold text-2xl">Таблица лидеров</h1>
 				<div className="bg-[white] px-3 py-2 rounded-[10px]">
 					<p className="text-[var(--color-blue-100)] text-[13px] font-bold">
-						6д 14 ч 23 м
+						{timeRemaining}
 					</p>
 				</div>
 			</div>
