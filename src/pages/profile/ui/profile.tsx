@@ -11,60 +11,6 @@ export const Profile = () => {
 	const { profile, refetch } = useProfileContext();
 	const { data: withdrawnGifts } = useGetWithdrawnGifts(15, 0);
 
-	// Mock lobby data for testing
-	// const lobbyData = {
-	// 	id: "mock-lobby-123",
-	// 	title: "Epic Gift Battle",
-	// 	betAmount: 50,
-	// 	participants: [
-	// 		{
-	// 			id: "user-1",
-	// 			username: "Player1",
-	// 			avatar: "/assets/images/avatar.webp",
-	// 			isWinner: true,
-	// 			score: 100,
-	// 		},
-	// 		{
-	// 			id: "user-2",
-	// 			username: "Player2",
-	// 			avatar: "/assets/images/avatar.webp",
-	// 			isWinner: false,
-	// 			score: 75,
-	// 		},
-	// 	],
-	// 	status: "completed",
-	// 	createdAt: new Date().toISOString(),
-	// 	winner: {
-	// 		id: "user-1",
-	// 		username: "Player1",
-	// 		prize: "Epic Chest of TONs",
-	// 	},
-	// };
-
-	// const mockWithdrawnGifts = [
-	// 	{
-	// 		id: "01HXYZ1234567890ABCDEF",
-	// 		title: "Epic Chest of TONs",
-	// 		slug: "swisswatch-13036",
-	// 		price: 150.0,
-	// 		status: "Withdrawing",
-	// 	},
-	// 	{
-	// 		id: "01HXYZ1234567890ABCDEG",
-	// 		title: "Lucky Chest of TONs",
-	// 		slug: "swisswatch-13036",
-	// 		price: 75.5,
-	// 		status: "Success",
-	// 	},
-	// 	{
-	// 		id: "01HXYZ1234567890ABCDEH",
-	// 		title: "Bag of TONs",
-	// 		slug: "swisswatch-13036",
-	// 		price: 25.0,
-	// 		status: "Success",
-	// 	},
-	// ];
-
 	useEffect(() => {
 		refetch();
 	}, [refetch]);
@@ -72,17 +18,6 @@ export const Profile = () => {
 	return (
 		<section className="grid gap-5 pb-7.5">
 			<ProfileInformation profile={profile} />
-			{/* <div
-				onClick={() => {
-					navigate(`/spin/123/result/456`, {
-						replace: true,
-						state: {
-							lobby: lobbyData, // The lobby object with participants
-						},
-					});
-				}}
-				className="w-[40px] h-[40px] bg-[red]"
-			></div> */}
 			<div className="px-6">
 				<div className="flex flex-col gap-7.5">
 					<article className="relative bg-linear-117 from-blue -from-37% to-dark-blue-50 to-78% rounded-xl rounded-tr-4.5xl text-white">
@@ -163,7 +98,7 @@ export const Profile = () => {
 									slug={gift.slug}
 									title={gift.title}
 									price={gift.price}
-									// status={gift.status}
+									status={gift.status}
 								/>
 							</li>
 						))}

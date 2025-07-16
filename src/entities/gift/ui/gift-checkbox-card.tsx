@@ -31,7 +31,7 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
 			.catch(console.error);
 	}, [giftUrl]);
 
-	if (status === "Withdrawing") {
+	if (status === "Pending") {
 		return (
 			<article
 				className={clsx(
