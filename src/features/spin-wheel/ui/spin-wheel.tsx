@@ -3,6 +3,7 @@ import { Application } from '@pixi/react';
 import * as PIXI from 'pixi.js';
 import { AvatarSprite } from './avatar-sprite';
 import { type GetLobbyQuery } from '@/shared/api/graphql/graphql';
+import { Assets } from 'pixi.js';
 
 interface WheelSegment {
   id: number;
@@ -72,6 +73,16 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
       };
     });
   }, [segments]);
+
+  const [arrow, setArrow] = useState<PIXI.Texture | null>(null);
+
+  useEffect(() => {
+    const loadArrow = async () => {
+      const arrow = await Assets.load('/assets/images/light-triangle.png');
+      setArrow(arrow);
+    };
+    loadArrow();
+  }, []);
 
   const segmentsWithAngles = calculateSegmentAngles();
 
@@ -233,20 +244,8 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
           </pixiContainer>
           {/* Arrow */}
           <pixiContainer x={radius / 2 + 35} y={0}>
-            <pixiGraphics
-              draw={(g: PIXI.Graphics) => {
-                g.clear();
-                g.beginFill(0xffd700);
-                g.lineStyle(2, 0x1f2937);
-
-                // Draw arrow pointing down to the wheel
-                g.moveTo(0, -15);
-                g.lineTo(-20, -40);
-                g.lineTo(20, -40);
-                g.lineTo(0, -15);
-                g.endFill();
-              }}
-            />
+            {/* <pixiGraphics draw={drawArrow} /> */}
+            {arrow && <pixiSprite texture={arrow} />}
           </pixiContainer>
         </Application>
 
