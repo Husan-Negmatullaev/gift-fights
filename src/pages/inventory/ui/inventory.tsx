@@ -3,33 +3,84 @@ import {
   useGetGifts,
   useWithdrawGifts,
 } from '@/entities/gift';
-import { ProfileInformation } from '@/entities/user';
-import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
-import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
-import { Modal } from '@/shared/ui/modal/modal';
-import { useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { useProfileContext } from '@/entities/profile';
 import {
   useConfirmTransaction,
   useCreateTransaction,
   useTonConnect,
 } from '@/entities/ton';
+import { ProfileInformation } from '@/entities/user';
 import { TransactionType } from '@/shared/api/graphql/graphql';
-import { useTonConnectUI } from '@tonconnect/ui-react';
+import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
 import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
-import { LoadingSpinner } from '@/shared/components/loading-spinner/loading-spinner';
+import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
+import { Modal } from '@/shared/ui/modal/modal';
+import { useTonConnectUI } from '@tonconnect/ui-react';
+import { useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 interface IFormInput {
   gifts: string[];
 }
 
+// const mockGifts = [
+// 	{
+// 		id: "gift-1",
+// 		slug: "swisswatch-13036",
+// 		msgId: 1,
+// 		title: "Pepe Gift",
+// 		model: "pepe-model",
+// 		price: 10.5,
+// 		symbol: "PEPE",
+// 		userId: "user-1",
+// 		blocked: false,
+// 		externalId: "ext-1",
+// 		symbolPermille: 1000,
+// 		rarityPermille: 500,
+// 		backgroundPermille: 200,
+// 		status: "Withdrawing",
+// 	},
+// 	{
+// 		id: "gift-2",
+// 		slug: "swisswatch-13036",
+// 		msgId: 2,
+// 		title: "Froggy Gift",
+// 		model: "froggy-model",
+// 		price: 15.0,
+// 		symbol: "FROG",
+// 		userId: "user-1",
+// 		blocked: false,
+// 		externalId: "ext-2",
+// 		symbolPermille: 1200,
+// 		rarityPermille: 600,
+// 		backgroundPermille: 300,
+// 		status: "Available",
+// 	},
+// 	{
+// 		id: "gift-3",
+// 		slug: "swisswatch-13036",
+// 		msgId: 3,
+// 		title: "Cap Gift",
+// 		model: "cap-model",
+// 		price: 8.75,
+// 		symbol: "CAP",
+// 		userId: "user-1",
+// 		blocked: false,
+// 		externalId: "ext-3",
+// 		symbolPermille: 800,
+// 		rarityPermille: 400,
+// 		backgroundPermille: 150,
+// 		status: "Available",
+// 	},
+// ];
+
 export const Inventory = () => {
   const { profile } = useProfileContext();
-  const { gifts, refetch, loading } = useGetGifts({
+  const { gifts, refetch } = useGetGifts({
     take: 25,
     skip: 0,
   });
+  const loading = true;
   const [open, setOpen] = useState(false);
   const [tonConnectUI] = useTonConnectUI();
   const { withdrawGifts } = useWithdrawGifts();
@@ -51,6 +102,8 @@ export const Inventory = () => {
   const handleToggleModal = () => setOpen((prev) => !prev);
 
   const filteredBlockedGifts = useMemo(
+    // () => mockGifts.filter((gift) => gift.blocked === false),
+    // [mockGifts],
     () => gifts.filter((gift) => gift.blocked === false),
     [gifts],
   );
@@ -67,7 +120,7 @@ export const Inventory = () => {
     return selectedGifts.reduce((acc, gift) => acc + gift.price, 0);
   }, [selectedGifts]);
 
-  const amountWithCommission = totalAmount * 0.01;
+  const amountWithCommission = selectedGifts.length * 0.5;
 
   const handleConfirm = () => {
     handleToggleModal();
@@ -101,17 +154,14 @@ export const Inventory = () => {
           boc: res.boc,
           id: data.data?.createTransaction.id as string,
         })
-          .then(
-            (success) => (
-              console.log('success', success),
-              withdrawGifts({
-                giftsIds: selectedGifts.map((gift) => gift.id),
-                transactionId: data.data?.createTransaction.id as string,
-              }).then(() => {
-                handleToggleModal();
-                refetch();
-              })
-            ),
+          .then(() =>
+            withdrawGifts({
+              giftsIds: selectedGifts.map((gift) => gift.id),
+              transactionId: data.data?.createTransaction.id as string,
+            }).then(() => {
+              handleToggleModal();
+              refetch();
+            }),
           )
           .catch((error) => console.error('error', error));
       })
@@ -129,10 +179,9 @@ export const Inventory = () => {
       <div className="px-6 pb-6">
         <h5 className="font-thin text-tiny/2.5 mb-2">Ваши Gift's:</h5>
 
-        <ul
-          aria-busy={loading}
-          className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
+        <ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
           {filteredBlockedGifts.map((gift) => (
+            // {mockGifts.map((gift) => (
             <li key={gift.id}>
               <GiftCheckboxCard
                 size="lg"
@@ -140,6 +189,7 @@ export const Inventory = () => {
                 slug={gift.slug}
                 title={gift.title}
                 price={gift.price}
+                // status={gift.status}
                 checkbox={{
                   value: gift.id,
                   ...register('gifts', {
@@ -150,20 +200,26 @@ export const Inventory = () => {
             </li>
           ))}
         </ul>
-        <div className="peer-empty:block peer-busy:hidden hidden">
+        <div
+          aria-busy={loading}
+          className="aria-busy:hidden peer-empty:block hidden">
           <p className="text-center font-medium text-lg">
             Вы можете отправить ваш гифт на аккаунт{' '}
             <a
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue underline"
+              className="text-blue-100 underline"
               href="https://t.me/gifts_fight_relayer">
               @gifts_fight_relayer
             </a>
           </p>
         </div>
 
-        {loading && <LoadingSpinner />}
+        {/* {loading && (
+					<div className="mx-auto">
+						<LoadingSpinner />
+					</div>
+				)} */}
       </div>
 
       {!open && (
@@ -190,7 +246,6 @@ export const Inventory = () => {
 
         <div className="grid gap-2 justify-center grid-flow-dense auto-rows-[92px] grid-cols-[repeat(3,_92px)] mb-17">
           {selectedGifts.map((gift) => {
-            console.log('gift', gift);
             return (
               <div
                 key={gift.id}

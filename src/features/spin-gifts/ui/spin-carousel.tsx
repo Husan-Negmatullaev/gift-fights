@@ -22,7 +22,22 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   const [isEternalSpinning, setIsEternalSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [gameTimer, setGameTimer] = useState(15);
-  const [countdown, setCountdown] = useState<number>(lobby.timeToStart);
+  // Функция для расчета актуального countdown на основе countdownExpiresAt
+  const calculateActualCountdown = useCallback(() => {
+    if (!lobby.countdownExpiresAt) {
+      return lobby.timeToStart;
+    }
+
+    const now = new Date().getTime();
+    const expiresAt = new Date(lobby.countdownExpiresAt).getTime();
+    const timeLeft = Math.max(0, Math.ceil((expiresAt - now) / 1000));
+
+    return timeLeft;
+  }, [lobby.countdownExpiresAt, lobby.timeToStart]);
+
+  const [countdown, setCountdown] = useState<number>(
+    calculateActualCountdown(),
+  );
   const [selectedSegment, setSelectedSegment] = useState<number | null>(null);
   const [gamePhase, setGamePhase] = useState<LobbyStatus>(lobby.status);
   const [isHighlighting, setIsHighlighting] = useState(false);
@@ -55,8 +70,6 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   };
 
   const getPhaseLabel = () => {
-    // console.log('hasEnoughPlayers', hasEnoughPlayers);
-
     if (!hasEnoughPlayers) {
       return 'Waiting:';
     }
@@ -102,32 +115,11 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
 
   const segmentCount = participants.length;
 
-  // Calculate segment angle dynamically
-  // const segmentAngle = 360 / segmentCount;
-
-  // Function to start the eternal spinning phase
-  // const startEternalSpin = useCallback(() => {
-  //   if (!gameStarted) return;
-
-  //   console.log('Starting eternal spin phase');
-  //   setGamePhase(LobbyStatus.InProcess);
-  //   setIsEternalSpinning(true);
-  //   setGameTimer(5);
-  // }, [gameStarted]);
-
   const stopSpinAndSelectWinner = useCallback(
     (winnerId: string) => {
       if (!isEternalSpinning) return;
 
-      console.log('Stopping spin and selecting winner:', winnerId);
-
-      // Use participants if provided, otherwise fall back to segments
       const activeParticipants = participants;
-
-      console.log(
-        'Active participants:',
-        activeParticipants.map((participant) => participant.userId),
-      );
 
       // Find winner by userId
       let selectedIndex = activeParticipants.findIndex(
@@ -141,8 +133,6 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
           `Winner ID ${winnerId} not found in participants, using random selection`,
         );
       }
-
-      console.log('Selected winner index:', selectedIndex);
 
       // Calculate the target rotation to land on the winner's segment
       const currentSegmentAngle = 360 / activeParticipants.length;
@@ -172,7 +162,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
         setTimeout(() => {
           onSelected(winnerId);
           setIsHighlighting(false);
-        }, 800);
+        }, 2000);
       }, 3000); // 3 seconds for the final deceleration animation
     },
     [isEternalSpinning, participants, rotation, onSelected],
@@ -254,6 +244,12 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
     return () => clearTimeout(timer);
   }, [countdown, gamePhase, participants, segmentCount, handleAutoSpin]);
 
+  // Обновление countdown при изменении lobby.countdownExpiresAt
+  useEffect(() => {
+    const actualCountdown = calculateActualCountdown();
+    setCountdown(actualCountdown);
+  }, [lobby.countdownExpiresAt, calculateActualCountdown]);
+
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
 
@@ -273,7 +269,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
 
     setGameStarted(true);
     setGamePhase(LobbyStatus.Countdown);
-    setCountdown(lobby.timeToStart);
+    setCountdown(calculateActualCountdown());
   };
 
   useUserJoinedToLobbySocket(lobby.id, (payload) => {
@@ -289,14 +285,18 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
     onRefetchLobby();
     setGameStarted(true);
     setGamePhase(LobbyStatus.Countdown);
-    setCountdown(lobby.timeToStart);
+    setCountdown(calculateActualCountdown());
   });
 
-  useLobbyProcessSubscription(lobby.id, (_payload) => {
+  useLobbyProcessSubscription(lobby.id, () => {
+    console.log('Игра началась!');
+
     startGame();
   });
 
   useLobbyWinnerSubscription(lobby.id, (payload) => {
+    console.log('Игра закончилась!');
+
     handleAutoSpin(payload.payload.winnerId);
   });
 
