@@ -22,7 +22,9 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
 }) => {
   const {
     isSpinning,
+    isSlowingDown,
     rotation,
+    targetRotation,
     gameStarted,
     segments,
     hasEnoughPlayers,
@@ -74,27 +76,17 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
 
   return (
     <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-      <div className="flex flex-col items-center">
-        <div className={`relative ${!hasEnoughPlayers ? 'opacity-60' : ''}`}>
-          <div className="relative">
-            <SpinWheel
-              radius={200}
-              segments={segments}
-              isSpinning={isSpinning}
-              targetRotation={rotation}
-              onSpinComplete={() => {
-                // Обработка завершения вращения
-                console.log('Spin completed');
-                // onSelected(segments[0].id);
-              }}
-              lobby={lobby}
-              phaseText={getPhaseText()}
-              phaseLabel={getPhaseLabel()}
-              hasEnoughPlayers={hasEnoughPlayers}
-            />
-          </div>
-        </div>
-      </div>
+      {/* <div className="flex flex-col items-center"> */}
+      <SpinWheel
+        segments={segments}
+        isSpinning={isSpinning || isSlowingDown}
+        targetRotation={targetRotation || rotation}
+        lobby={lobby}
+        phaseText={getPhaseText()}
+        phaseLabel={getPhaseLabel()}
+        hasEnoughPlayers={hasEnoughPlayers}
+      />
+      {/* </div> */}
     </div>
   );
 };

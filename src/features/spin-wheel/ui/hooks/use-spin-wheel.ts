@@ -19,7 +19,9 @@ interface WheelSegment {
 interface SpinWheelState {
   isSpinning: boolean;
   isEternalSpinning: boolean;
+  isSlowingDown: boolean; // Новое состояние для плавного замедления
   rotation: number;
+  targetRotation?: number; // Целевая позиция для плавного перехода
   gameTimer: number;
   countdown: number;
   selectedSegment: number | null;
@@ -54,6 +56,7 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
   const [state, setState] = useState<SpinWheelState>({
     isSpinning: false,
     isEternalSpinning: false,
+    isSlowingDown: false,
     rotation: 0,
     gameTimer: 15,
     countdown: calculateActualCountdown(),
@@ -209,41 +212,45 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
       const { finalTargetRotation, selectedIndex } =
         calculateWinnerRotation(winnerId);
 
+      // Сначала переходим в фазу замедления
       setState((prev) => ({
         ...prev,
         isEternalSpinning: false,
-        isSpinning: true,
-        rotation: finalTargetRotation,
+        isSlowingDown: true,
+        targetRotation: finalTargetRotation, // Сохраняем целевую позицию
       }));
 
-      // После завершения анимации (12 секунд)
+      // Через 2 секунды замедления переходим к финальной анимации
       setTimeout(() => {
         setState((prev) => ({
           ...prev,
-          isSpinning: false,
-          selectedSegment: selectedIndex,
-          gamePhase: LobbyStatus.Completed,
-          isHighlighting: true,
-          isSearchingWinner: false, // Сбрасываем состояние поиска победителя
+          isSlowingDown: false,
+          isSpinning: true,
         }));
 
-        // Ждем 800мс и вызываем onSelected
+        // После завершения финальной анимации (1 секунда)
         setTimeout(() => {
-          onSelected(winnerId);
           setState((prev) => ({
             ...prev,
-            isHighlighting: false,
+            isSpinning: false,
+            selectedSegment: selectedIndex,
+            gamePhase: LobbyStatus.Completed,
+            isHighlighting: true,
+            isSearchingWinner: false,
           }));
-        }, 1000); // Изменили с 2000 на 800мс
-      }, 12000); // 12 секунд для завершения анимации
+
+          // Ждем 500мс и вызываем onSelected
+          setTimeout(() => {
+            onSelected(winnerId);
+            setState((prev) => ({
+              ...prev,
+              isHighlighting: false,
+            }));
+          }, 500);
+        }, 1000);
+      }, 2000); // 2 секунды замедления
     },
-    [
-      state.isEternalSpinning,
-      state.isSpinning,
-      state.rotation,
-      calculateWinnerRotation,
-      onSelected,
-    ],
+    [state.isEternalSpinning, calculateWinnerRotation, onSelected],
   );
 
   const startEternalSpin = useCallback(() => {
@@ -282,7 +289,6 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
     [
       state.isEternalSpinning,
       state.isSpinning,
-      state.gamePhase,
       stopSpinAndSelectWinner,
       startEternalSpin,
     ],
@@ -299,7 +305,7 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
     }));
   }, [state.hasEnoughPlayers, state.gameStarted, calculateActualCountdown]);
 
-  // Анимация вечного вращения
+  // Анимация вечного вращения и замедления
   useEffect(() => {
     let animationFrame: number;
 
@@ -307,9 +313,34 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
       const animate = () => {
         setState((prev) => ({
           ...prev,
-          rotation: prev.rotation + 3, // Уменьшили скорость с 10 до 3
+          rotation: prev.rotation + 0.1, // Уменьшили скорость еще в два раза (было 1, стало 0.5)
         }));
         animationFrame = requestAnimationFrame(animate);
+      };
+      animationFrame = requestAnimationFrame(animate);
+    } else if (state.isSlowingDown) {
+      // Фаза замедления - постепенно приближаемся к целевой позиции
+      let slowdownProgress = 0;
+      const startRotation = state.rotation;
+      const targetRotation = state.targetRotation || startRotation;
+
+      const animate = () => {
+        slowdownProgress += 0.008; // Очень медленное увеличение прогресса
+        const progress = Math.min(slowdownProgress, 1);
+
+        // Плавная интерполяция с easing
+        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        const currentRotation =
+          startRotation + (targetRotation - startRotation) * easeOutQuart;
+
+        setState((prev) => ({
+          ...prev,
+          rotation: currentRotation,
+        }));
+
+        if (progress < 1) {
+          animationFrame = requestAnimationFrame(animate);
+        }
       };
       animationFrame = requestAnimationFrame(animate);
     }
@@ -319,7 +350,12 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
         cancelAnimationFrame(animationFrame);
       }
     };
-  }, [state.gamePhase, state.isEternalSpinning, state.rotation]);
+  }, [
+    state.gamePhase,
+    state.isEternalSpinning,
+    state.isSlowingDown,
+    state.rotation,
+  ]);
 
   // Автоматическая остановка вращения при наличии победителя
   useEffect(() => {
@@ -334,7 +370,7 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
           ...prev,
           pendingWinnerId: null,
         }));
-      }, 8000); // Увеличили до 8 секунд для более длительного вращения
+      }, 2000); // Уменьшили до 2 секунд для более быстрого показа победителя
 
       return () => clearTimeout(timer);
     }
@@ -420,7 +456,9 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
     // Состояние
     isSpinning: state.isSpinning,
     isEternalSpinning: state.isEternalSpinning,
+    isSlowingDown: state.isSlowingDown,
     rotation: state.rotation,
+    targetRotation: state.targetRotation,
     gameTimer: state.gameTimer,
     countdown: state.countdown,
     selectedSegment: state.selectedSegment,

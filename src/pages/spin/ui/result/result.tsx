@@ -2,7 +2,9 @@ import type { GetLobbyQuery } from '@/shared/api/graphql/graphql';
 import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
 import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
 import { Avatar } from '@/shared/ui/avatar/avatar';
+import { Icons } from '@/shared/ui/icons/icons';
 import { useLocation, useParams } from 'react-router';
+// import { Icons } from 'react-toastify';
 // const resultType: Record<"win" | "lose", string> = {
 // 	win: "bg-linear-360 from-blue-50 from-0% to-blue-100 to-100%",
 // 	lose: "bg-linear-360 from-red-150 from-0% to-red-200 to-100%",
@@ -44,7 +46,7 @@ export const Result = () => {
 
   return (
     <div className="py-7 pb-25">
-      <h1 className="font-bold text-xl text-white mb-[40px] text-center">
+      <h1 className="font-bold text-xl text-white mb-10 text-center">
         Победитель
       </h1>
       <div className="relative">
@@ -66,15 +68,13 @@ export const Result = () => {
               {winner?.user.username}
             </div>
             <div className="relative text-[10px] font-light">{`Выйгрыш`}</div>
-            <div className="relative text-[18px] font-[700] text-[#1DC1FD]">{`${totalAmount} TON`}</div>
+            <div className="relative text-[18px] font-[700] text-[#1DC1FD]">{`${totalAmount.toFixed(
+              2,
+            )} TON`}</div>
           </div>
         </div>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <img
-            alt="Light triangle"
-            className="w-auto h-auto"
-            src="/assets/images/light-triangle.png"
-          />
+          <Icons name="spin-arrow-bottom" className="size-auto" />
         </div>
       </div>
       <p className="text-regular text-white text-start ml-[24px] mb-4">
