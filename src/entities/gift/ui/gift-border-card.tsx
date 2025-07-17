@@ -12,13 +12,13 @@ type GiftBorderCardProps = {
 	slug: string;
 	title: string;
 	price: number;
-	// status: string;
+	status: string;
 };
 
 export const GiftBorderCard = (props: GiftBorderCardProps) => {
-	const { size, className, slug, title, price } = props;
+	const { size, className, slug, title, price, status } = props;
 
-	if (status === "Withdrawing") {
+	if (status === "Pending") {
 		return (
 			<article
 				className={clsx(

@@ -1,9 +1,9 @@
 import { graphql } from '@/shared/api/graphql';
-import { useQuery } from '@apollo/client';
 import type {
   WithdrawnGiftsQuery,
   WithdrawnGiftsQueryVariables,
 } from '@/shared/api/graphql/graphql';
+import { useQuery } from '@apollo/client';
 
 const GET_WITHDRAWN_GIFTS_QUERY = graphql(`
   query WithdrawnGifts($take: Int!, $skip: Int!) {
@@ -12,6 +12,7 @@ const GET_WITHDRAWN_GIFTS_QUERY = graphql(`
       slug
       title
       price
+      status
     }
   }
 `);
@@ -22,6 +23,7 @@ export const useGetWithdrawnGifts = (take: number, skip: number) => {
     WithdrawnGiftsQueryVariables
   >(GET_WITHDRAWN_GIFTS_QUERY, {
     variables: { take, skip },
+    pollInterval: 5000,
   });
 
   return {
