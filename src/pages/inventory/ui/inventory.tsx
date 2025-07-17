@@ -13,6 +13,7 @@ import {
 import { ProfileInformation } from "@/entities/user";
 import { TransactionType } from "@/shared/api/graphql/graphql";
 import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
+import { LoadingSpinner } from "@/shared/components/loading-spinner/loading-spinner";
 import { LoadableLottie } from "@/shared/components/lottie/loadable-lottie";
 import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
 import { Icons } from "@/shared/ui/icons/icons";
@@ -79,12 +80,12 @@ interface IFormInput {
 
 export const Inventory = () => {
 	const { profile } = useProfileContext();
-	const { gifts, refetch } = useGetGifts({
+	const { gifts, refetch, loading } = useGetGifts({
 		take: 25,
 		skip: 0,
 	});
 	const { data: withdrawnGifts } = useGetWithdrawnGifts(15, 0);
-	const loading = true;
+	// const loading = true;
 	const [open, setOpen] = useState(false);
 	const [tonConnectUI] = useTonConnectUI();
 	const { withdrawGifts } = useWithdrawGifts();
@@ -203,6 +204,7 @@ export const Inventory = () => {
 							</article>
 						</li>
 					))}
+
 					{filteredBlockedGifts.map((gift) => (
 						// {mockGifts.map((gift) => (
 						<li key={gift.id}>
@@ -223,6 +225,11 @@ export const Inventory = () => {
 						</li>
 					))}
 				</ul>
+				{loading && (
+					<div className="mt-10 mx-auto flex justify-center">
+						<LoadingSpinner />
+					</div>
+				)}
 				<div
 					aria-busy={loading}
 					className="aria-busy:hidden peer-empty:block hidden"
@@ -239,12 +246,6 @@ export const Inventory = () => {
 						</a>
 					</p>
 				</div>
-
-				{/* {loading && (
-					<div className="mx-auto">
-						<LoadingSpinner />
-					</div>
-				)} */}
 			</div>
 
 			{!open && (
