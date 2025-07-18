@@ -1,5 +1,4 @@
 import { GiftBorderCardVariantThree, useGetGifts } from '@/entities/gift';
-// import { SpinCarousel } from '@/features/spin-gifts';
 import { useGetLobby, useJoinToLobby } from '@/entities/lobby';
 import { useProfileContext } from '@/entities/profile';
 import { SpinWheelContainer } from '@/features/spin-wheel';
@@ -61,7 +60,6 @@ export const PlaySpin = () => {
     },
     [showError],
   );
-
   const handleSelectSpinResult = (winnerId: string) => {
     navigate(`/spin/${lobbyParamId}/result/${winnerId}`, {
       replace: true,
@@ -70,8 +68,6 @@ export const PlaySpin = () => {
       },
     });
   };
-
-  // console.log(handleSelectSpinResult);
 
   const handleSelectGift = (giftId: string, isActive: boolean) => {
     if (isActive) {
@@ -225,11 +221,11 @@ export const PlaySpin = () => {
           <div className="peer-empty:block py-15 hidden">
             <div className="text-center">
               <p className="font-thin text-lg/5 text-white/70 mb-6">
-                У вас нет доступных gift’s для осуществления ставки
+                У вас нет доступных gift's для осуществления ставки
               </p>
 
               <p className="font-medium text-lg/5 text-white mb-2">
-                Отправьте свои Gift’s сюда, для пополнения
+                Отправьте свои Gift's сюда, для пополнения
               </p>
 
               <a

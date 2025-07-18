@@ -12,7 +12,6 @@ export const ReferralBalanceOutput = () => {
   const { createWithdrawBonus, loading } = useCreateWithdrawBonus();
 
   const handleToggleModal = () => {
-    console.log('toggle');
     setIsModalOpen((prev) => !prev);
   };
 
@@ -29,9 +28,11 @@ export const ReferralBalanceOutput = () => {
   };
 
   const bonuses = profile.bonuses;
+
   function isTelegramWebApp() {
     return typeof window !== 'undefined' && !!window.Telegram?.WebApp;
   }
+
   function canVibrate() {
     return (
       typeof window !== 'undefined' &&
@@ -39,6 +40,7 @@ export const ReferralBalanceOutput = () => {
       typeof window.navigator.vibrate === 'function'
     );
   }
+
   const onErrorWithdraw = useCallback(async () => {
     // Показываем toast уведомление
     showError('Не хватает реф. баланса!');
@@ -51,6 +53,7 @@ export const ReferralBalanceOutput = () => {
       window.navigator.vibrate(100);
     }
   }, [showError]);
+
   return (
     <>
       <article className="relative bg-dark-blue-50 rounded-xl rounded-tr-4.5xl text-white mb-6">
