@@ -29,7 +29,7 @@ export const PlaySpin = () => {
 		// max: lobby?.maxBet,
 		blocked: false,
 	});
-	const { showSuccess, showError } = useToast();
+	const { showError } = useToast();
 	const [giftsId, setGiftsId] = useState<string[]>([]);
 	const [isOpenModal, setIsOspenModal] = useState(false);
 	const tabsRef = useRef<TabsImperativeRef | null>(null);
