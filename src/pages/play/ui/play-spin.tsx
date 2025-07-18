@@ -1,9 +1,9 @@
 import { GiftBorderCardVariantThree, useGetGifts } from '@/entities/gift';
-// import { SpinCarousel } from '@/features/spin-gifts';
 import { useGetLobby, useJoinToLobby } from '@/entities/lobby';
 import { useProfileContext } from '@/entities/profile';
 import { SpinWheelContainer } from '@/features/spin-wheel';
 import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
+import { LoadingSpinner } from '@/shared/components/loading-spinner/loading-spinner';
 import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
 import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
 import { useToast } from '@/shared/hooks/use-toast';
@@ -61,7 +61,6 @@ export const PlaySpin = () => {
     },
     [showError],
   );
-
   const handleSelectSpinResult = (winnerId: string) => {
     navigate(`/spin/${lobbyParamId}/result/${winnerId}`, {
       replace: true,
@@ -70,8 +69,6 @@ export const PlaySpin = () => {
       },
     });
   };
-
-  // console.log(handleSelectSpinResult);
 
   const handleSelectGift = (giftId: string, isActive: boolean) => {
     if (isActive) {
@@ -131,7 +128,7 @@ export const PlaySpin = () => {
         </div>
       </header>
       <div className="mb-7.5">
-        {lobby && (
+        {lobby ? (
           <SpinWheelContainer
             onSelected={handleSelectSpinResult}
             onRefetchLobby={() => refetchLobby()}
@@ -141,6 +138,10 @@ export const PlaySpin = () => {
             }}
             lobby={lobby}
           />
+        ) : (
+          <div className="mx-auto my-10 flex justify-center">
+            <LoadingSpinner />
+          </div>
         )}
       </div>
 
@@ -225,11 +226,11 @@ export const PlaySpin = () => {
           <div className="peer-empty:block py-15 hidden">
             <div className="text-center">
               <p className="font-thin text-lg/5 text-white/70 mb-6">
-                У вас нет доступных gift’s для осуществления ставки
+                У вас нет доступных gift's для осуществления ставки
               </p>
 
               <p className="font-medium text-lg/5 text-white mb-2">
-                Отправьте свои Gift’s сюда, для пополнения
+                Отправьте свои Gift's сюда, для пополнения
               </p>
 
               <a
