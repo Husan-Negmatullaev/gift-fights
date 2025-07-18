@@ -228,7 +228,7 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
           isSpinning: true,
         }));
 
-        // После завершения финальной анимации (1 секунда)
+        // После завершения финальной анимации (1.5 секунды для более плавной остановки)
         setTimeout(() => {
           setState((prev) => ({
             ...prev,
@@ -247,7 +247,7 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
               isHighlighting: false,
             }));
           }, 500);
-        }, 1000);
+        }, 1500); // Увеличили до 1.5 секунды для более плавной финальной анимации
       }, 2000); // 2 секунды замедления
     },
     [state.isEternalSpinning, calculateWinnerRotation, onSelected],
@@ -305,7 +305,7 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
     }));
   }, [state.hasEnoughPlayers, state.gameStarted, calculateActualCountdown]);
 
-  // Анимация вечного вращения и замедления
+  // Анимация вечного вращения, замедления и финальной остановки
   useEffect(() => {
     let animationFrame: number;
 
@@ -313,7 +313,7 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
       const animate = () => {
         setState((prev) => ({
           ...prev,
-          rotation: prev.rotation + 0.1, // Уменьшили скорость еще в два раза (было 1, стало 0.5)
+          rotation: prev.rotation + 0.1, // Плавное бесконечное вращение
         }));
         animationFrame = requestAnimationFrame(animate);
       };
@@ -343,6 +343,31 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
         }
       };
       animationFrame = requestAnimationFrame(animate);
+    } else if (state.isSpinning && state.targetRotation !== undefined) {
+      // Финальная фаза - плавное вращение к точной позиции победителя
+      let finalProgress = 0;
+      const startRotation = state.rotation;
+      const targetRotation = state.targetRotation;
+
+      const animate = () => {
+        finalProgress += 0.01; // Замедлили для более плавной финальной анимации
+        const progress = Math.min(finalProgress, 1);
+
+        // Очень плавный easing для финальной остановки
+        const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+        const currentRotation =
+          startRotation + (targetRotation - startRotation) * easeOutCubic;
+
+        setState((prev) => ({
+          ...prev,
+          rotation: currentRotation,
+        }));
+
+        if (progress < 1) {
+          animationFrame = requestAnimationFrame(animate);
+        }
+      };
+      animationFrame = requestAnimationFrame(animate);
     }
 
     return () => {
@@ -354,7 +379,8 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
     state.gamePhase,
     state.isEternalSpinning,
     state.isSlowingDown,
-    state.rotation,
+    state.isSpinning,
+    state.targetRotation,
   ]);
 
   // Автоматическая остановка вращения при наличии победителя
@@ -370,7 +396,7 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
           ...prev,
           pendingWinnerId: null,
         }));
-      }, 2000); // Уменьшили до 2 секунд для более быстрого показа победителя
+      }, 3000); // Увеличили до 3 секунд для более плавного перехода
 
       return () => clearTimeout(timer);
     }

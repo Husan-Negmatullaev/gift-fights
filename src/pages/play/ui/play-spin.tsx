@@ -1,19 +1,18 @@
 import { GiftBorderCardVariantThree, useGetGifts } from '@/entities/gift';
 // import { SpinCarousel } from '@/features/spin-gifts';
-import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
-import { Tabs, type TabsImperativeRef } from '@/shared/ui/tabs/tabs';
-import { useParams } from 'react-router';
-import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
-import { useNavigate } from 'react-router';
 import { useGetLobby, useJoinToLobby } from '@/entities/lobby';
-import { useMemo, useRef, useState } from 'react';
-import { Modal } from '@/shared/ui/modal/modal';
-import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
-import clsx from 'clsx';
 import { useProfileContext } from '@/entities/profile';
+import { SpinWheelContainer } from '@/features/spin-wheel';
+import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
+import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
+import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
 import { SafeAvatar } from '@/shared/ui/avatar/safe-avatar';
 import { Icons } from '@/shared/ui/icons/icons';
-import { SpinWheelContainer } from '@/features/spin-wheel';
+import { Modal } from '@/shared/ui/modal/modal';
+import { Tabs, type TabsImperativeRef } from '@/shared/ui/tabs/tabs';
+import clsx from 'clsx';
+import { useMemo, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
 
 export const PlaySpin = () => {
   const { id } = useParams();
@@ -185,15 +184,15 @@ export const PlaySpin = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-100 underline"
-                href="https://t.me/gifts_fight_relayer">
-                @gifts_fight_relayer
+                href="https://t.me/labs_relayer">
+                @labs_relayer
               </a>
             </div>
           </div>
         </div>
         <div>
           <div className="grid gap-2 peer">
-            {lobby?.participants.map((participant, _index, list) => (
+            {lobby?.participants.map((participant, _index) => (
               <div key={participant.id} className="bg-dark-blue-900">
                 <div className="flex items-center px-4 p-2 gap-3 rounded-lg bg-dark-blue-50">
                   <SafeAvatar url={participant.user.image} className="size-8" />
@@ -209,7 +208,7 @@ export const PlaySpin = () => {
 
                     <div className="grid place-items-center bg-dark-blue-150 text-blue-100 rounded-lg min-h-6 basis-11.5 text-tiny font-semibold px-3">
                       {Math.min(
-                        (participant.amount / list.length) * 100,
+                        (participant.amount / totalAmount) * 100,
                         100,
                       ).toFixed(2)}
                       %

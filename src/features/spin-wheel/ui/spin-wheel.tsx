@@ -2,8 +2,8 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Application } from '@pixi/react';
 import * as PIXI from 'pixi.js';
 import { type GetLobbyQuery } from '@/shared/api/graphql/graphql';
-import { Assets } from 'pixi.js';
 import { Icons } from '@/shared/ui/icons/icons';
+import { HtmlAvatar } from './components/html-avatar';
 
 interface WheelSegment {
   id: number;
@@ -34,7 +34,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   segments,
   isSpinning = false,
   targetRotation = 0,
-  phaseText = '30 сек',
+  phaseText = '60 сек',
   phaseLabel = 'Начало через :',
   hasEnoughPlayers = true,
 }) => {
@@ -43,9 +43,6 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
 
   const animationRef = useRef<number | null>(null);
   const [internalRotation, setInternalRotation] = useState(0);
-  const [avatarTextures, setAvatarTextures] = useState<
-    Map<string, PIXI.Texture>
-  >(new Map());
 
   // Calculate segment angles based on stake formula: (stake / totalStakes) * 100
   const calculateSegmentAngles = useCallback(() => {
@@ -73,30 +70,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     });
   }, [segments]);
 
-  // Загружаем текстуры аватарок
-  useEffect(() => {
-    const loadAvatarTextures = async () => {
-      const newTextures = new Map<string, PIXI.Texture>();
-
-      for (const segment of segments) {
-        if (segment.userImage && segment.userImage.trim() !== '') {
-          try {
-            const texture = await Assets.load(segment.userImage);
-            newTextures.set(segment.id.toString(), texture);
-          } catch (error) {
-            console.warn(
-              `Failed to load avatar for segment ${segment.id}:`,
-              error,
-            );
-          }
-        }
-      }
-
-      setAvatarTextures(newTextures);
-    };
-
-    loadAvatarTextures();
-  }, [segments]);
+  // Удаляем логику загрузки текстур - теперь используем HTML img элементы
 
   const segmentsWithAngles = calculateSegmentAngles();
 
@@ -155,18 +129,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     g.endFill();
   }, []);
 
-  const drawAvatar = useCallback((g: PIXI.Graphics) => {
-    g.clear();
-
-    // Рисуем круг для аватара
-    g.beginFill(0x2d353f);
-    g.drawCircle(0, 0, 20);
-    g.endFill();
-
-    // Рисуем границу
-    g.lineStyle(2, 0x4a5568);
-    g.drawCircle(0, 0, 20);
-  }, []);
+  // Удаляем drawAvatar - теперь используем HTML аватары
 
   return (
     <div className="flex flex-col items-center">
@@ -182,7 +145,6 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
           {/* Wheel */}
           <pixiContainer x={sizes / 2} y={sizes / 2}>
             <pixiContainer rotation={internalRotation}>
-              {/* Границы сегментов */}
               {segmentsWithAngles.length === 0 || !hasEnoughPlayers ? (
                 <pixiGraphics
                   draw={(g: PIXI.Graphics) => {
@@ -200,7 +162,6 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
                 segmentsWithAngles.map((segment) => {
                   const startAngleDeg = (segment.startAngle * 180) / Math.PI;
                   const endAngleDeg = (segment.endAngle * 180) / Math.PI;
-
                   return (
                     <WedgeIcon
                       x={0}
@@ -216,53 +177,9 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
                 })
               )}
 
-              {/* Аватарки внутри того же контейнера */}
-              {segmentsWithAngles.map((segment) => {
-                const midAngle = (segment.startAngle + segment.endAngle) / 2;
-                const labelRadius = radius * 0.65;
-
-                // Координаты аватаров (без учета вращения колеса, так как они уже в вращающемся контейнере)
-                const x = Math.cos(midAngle) * labelRadius;
-                const y = Math.sin(midAngle) * labelRadius;
-
-                const avatarTexture = avatarTextures.get(segment.id.toString());
-
-                return (
-                  <pixiContainer key={`avatar-${segment.id}`} x={x} y={y}>
-                    {avatarTexture ? (
-                      <pixiSprite
-                        texture={avatarTexture}
-                        width={40}
-                        height={40}
-                        anchor={0.5}
-                      />
-                    ) : (
-                      <pixiGraphics draw={drawAvatar} />
-                    )}
-                    {/* Инициалы игрока */}
-                    <pixiText
-                      x={0}
-                      y={0}
-                      anchor={0.5}
-                      text={
-                        segment.playerName
-                          ? segment.playerName.substring(0, 2).toUpperCase()
-                          : '?'
-                      }
-                      style={
-                        new PIXI.TextStyle({
-                          fontSize: 12,
-                          fill: 0xffffff,
-                          fontWeight: 'bold',
-                        })
-                      }
-                    />
-                  </pixiContainer>
-                );
-              })}
+              {/* Аватары теперь рендерятся как HTML элементы поверх canvas */}
             </pixiContainer>
 
-            {/* Center circle */}
             <pixiContainer>
               <pixiGraphics draw={drawWheel} />
               <pixiText
@@ -293,11 +210,30 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
               />
             </pixiContainer>
           </pixiContainer>
-          {/* Arrow */}
-          {/* <pixiContainer x={sizes / 2 + radius + 10} y={sizes / 2 - 10}>
-            {arrow && <pixiSprite texture={arrow} />}
-          </pixiContainer> */}
         </Application>
+
+        {/* HTML аватары поверх canvas */}
+        {segmentsWithAngles.map((segment) => {
+          const midAngle = (segment.startAngle + segment.endAngle) / 2;
+          // Размещаем аватары в серой области между внутренним кругом (70) и внешним краем (162)
+          const labelRadius = radius * 0.75; // 121px - посередине между 70 и 162
+
+          // Координаты аватаров
+          const x = Math.cos(midAngle) * labelRadius;
+          const y = Math.sin(midAngle) * labelRadius;
+
+          return (
+            <HtmlAvatar
+              x={x}
+              y={y}
+              key={`html-avatar-${segment.id}`}
+              src={segment.userImage || ''}
+              playerName={segment.playerName}
+              rotation={internalRotation}
+              containerSize={sizes}
+            />
+          );
+        })}
 
         <Icons
           name="spin-arrow-bottom"

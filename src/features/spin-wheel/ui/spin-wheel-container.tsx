@@ -1,11 +1,12 @@
 import React from 'react';
 import { SpinWheel } from './spin-wheel';
-import { useSpinWheel } from './hooks/use-spin-wheel';
+import { useSpinWheel } from '../hooks/use-spin-wheel';
 import { LobbyStatus, type GetLobbyQuery } from '@/shared/api/graphql/graphql';
 import { useLobbyCountdownSubscription } from '../../spin-gifts/hooks/use-lobby-countdown-subscription';
 import { useUserJoinedToLobbySocket } from '../../spin-gifts/hooks/use-user-joined-to-lobby-subscription';
 import { useLobbyProcessSubscription } from '../../spin-gifts/hooks/use-lobby-process-subscription';
 import { useLobbyWinnerSubscription } from '../../spin-gifts/hooks/use-lobby-winner-subscription';
+import { useLobbyCacheUpdater } from '../hooks/use-lobby-cache-updater';
 
 interface SpinWheelContainerProps {
   lobby: GetLobbyQuery['lobby'];
@@ -36,6 +37,8 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
     updateCountdown,
     setGameStarted,
   } = useSpinWheel({ lobby, onSelected });
+
+  const { updateLobbyCache } = useLobbyCacheUpdater();
 
   // Socket.io подписки (аналогично spin-carousel.tsx)
   useUserJoinedToLobbySocket(lobby.id, (payload) => {
@@ -72,6 +75,9 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
     console.log('Игра закончилась!');
 
     handleAutoSpin(payload.payload.winnerId);
+
+    // Обновляем кеш лобби в главной странице
+    updateLobbyCache();
   });
 
   return (
