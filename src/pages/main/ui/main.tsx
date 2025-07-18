@@ -49,7 +49,7 @@ export const Main = () => {
 						<p className="text-tiny mb-2 text-[14px]">Жми сюда 👇</p>
 						<div
 							onClick={() => {
-								tg.openLink("https://t.me/labs_relayer");
+								tg.openTelegramLink("https://t.me/labs_relayer");
 							}}
 							className="grid place-content-center bg-white text-blue px-4 min-h-7.5 max-w-31 text-xs font-semibold rounded-2.5"
 						>
