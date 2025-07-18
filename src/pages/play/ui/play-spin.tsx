@@ -3,6 +3,7 @@ import { useGetLobby, useJoinToLobby } from '@/entities/lobby';
 import { useProfileContext } from '@/entities/profile';
 import { SpinWheelContainer } from '@/features/spin-wheel';
 import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
+import { LoadingSpinner } from '@/shared/components/loading-spinner/loading-spinner';
 import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
 import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
 import { useToast } from '@/shared/hooks/use-toast';
@@ -127,7 +128,7 @@ export const PlaySpin = () => {
         </div>
       </header>
       <div className="mb-7.5">
-        {lobby && (
+        {lobby ? (
           <SpinWheelContainer
             onSelected={handleSelectSpinResult}
             onRefetchLobby={() => refetchLobby()}
@@ -137,6 +138,10 @@ export const PlaySpin = () => {
             }}
             lobby={lobby}
           />
+        ) : (
+          <div className="mx-auto my-10 flex justify-center">
+            <LoadingSpinner />
+          </div>
         )}
       </div>
 
