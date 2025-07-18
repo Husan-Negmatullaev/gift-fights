@@ -6,12 +6,13 @@ import { SpinWheelContainer } from '@/features/spin-wheel';
 import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
 import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
 import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
+import { useToast } from '@/shared/hooks/use-toast';
 import { SafeAvatar } from '@/shared/ui/avatar/safe-avatar';
 import { Icons } from '@/shared/ui/icons/icons';
 import { Modal } from '@/shared/ui/modal/modal';
 import { Tabs, type TabsImperativeRef } from '@/shared/ui/tabs/tabs';
 import clsx from 'clsx';
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 
 export const PlaySpin = () => {
@@ -24,14 +25,42 @@ export const PlaySpin = () => {
   const { gifts, refetch: refetchGifts } = useGetGifts({
     take: 25,
     skip: 0,
-    min: lobby?.minBet,
-    max: lobby?.maxBet,
+    // min: lobby?.minBet,
+    // max: lobby?.maxBet,
     blocked: false,
   });
-
+  const { showError } = useToast();
   const [giftsId, setGiftsId] = useState<string[]>([]);
   const [isOpenModal, setIsOspenModal] = useState(false);
   const tabsRef = useRef<TabsImperativeRef | null>(null);
+
+  function isTelegramWebApp() {
+    return typeof window !== 'undefined' && !!window.Telegram?.WebApp;
+  }
+
+  function canVibrate() {
+    return (
+      typeof window !== 'undefined' &&
+      'vibrate' in window.navigator &&
+      typeof window.navigator.vibrate === 'function'
+    );
+  }
+
+  const onErrorJoinToLobby = useCallback(
+    async (text: string) => {
+      // Показываем toast уведомление
+      showError(text);
+
+      // Вибрация через Telegram WebApp
+      if (isTelegramWebApp() && window.Telegram.WebApp.HapticFeedback) {
+        window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+      } else if (canVibrate()) {
+        // Fallback: обычная вибрация для браузера
+        window.navigator.vibrate(100);
+      }
+    },
+    [showError],
+  );
 
   const handleSelectSpinResult = (winnerId: string) => {
     navigate(`/spin/${lobbyParamId}/result/${winnerId}`, {
@@ -121,8 +150,31 @@ export const PlaySpin = () => {
             withShadow
             className="w-full"
             content="Сделать ставку"
-            onClick={handleToggleModal}
-            disabled={giftsId.length === 0}
+            onClick={() => {
+              const selectedGifts = gifts.filter((gift) =>
+                giftsId.includes(gift.id),
+              );
+
+              const totalPrice = selectedGifts.reduce(
+                (acc, gift) => acc + gift.price,
+                0,
+              );
+              if (lobby?.minBet && totalPrice < lobby.minBet) {
+                console.log('<');
+                onErrorJoinToLobby(
+                  `Стоимость подарков должна быть не меньше ${lobby.minBet} TON`,
+                );
+                return;
+              }
+              if (lobby?.maxBet && totalPrice > lobby.maxBet) {
+                console.log('>');
+                onErrorJoinToLobby(
+                  `Стоимость подарков должна быть не больше ${lobby.maxBet} TON`,
+                );
+                return;
+              }
+              handleToggleModal();
+            }}
           />
         )}
         {isAlreadyBetting && (

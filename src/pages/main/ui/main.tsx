@@ -1,4 +1,5 @@
 import { lobbyImagesByBets, useGetLobbies } from '@/entities/lobby';
+import { useTelegram } from '@/entities/telegram';
 import { LobbyStatus } from '@/shared/api/graphql/graphql';
 import { LoadingSpinner } from '@/shared/components/loading-spinner/loading-spinner';
 import { Link } from 'react-router';
@@ -7,17 +8,19 @@ function getLobbyBetKey(
   minBet: number | null,
   maxBet: number | null,
 ): Record<'background' | 'image', string> {
-  if (minBet === null && maxBet === null) {
+  if (minBet === null || maxBet === null) {
     return {
       image: '/assets/images/main/infinite-cube.webp',
       background: '/assets/images/play/octopus.webp',
     };
   }
 
-  return lobbyImagesByBets[`min_${minBet!}_max_${maxBet!}`];
+  return lobbyImagesByBets[`min_${minBet}_max_${maxBet}`];
 }
 
 export const Main = () => {
+  const tg = useTelegram();
+
   const { lobbies, loading } = useGetLobbies(15, 0, [
     LobbyStatus.Countdown,
     LobbyStatus.InProcess,
@@ -31,7 +34,6 @@ export const Main = () => {
       </div>
     );
   }
-
   return (
     <div>
       <article className="relative bg-linear-117 from-blue -from-37% to-dark-blue-50 to-78% text-white mb-8">
@@ -46,8 +48,12 @@ export const Main = () => {
               {'Хочешь добавить NFT-гифт ?'}
             </h2>
             <p className="text-tiny mb-2 text-[14px]">Жми сюда 👇</p>
-            <div className="grid place-content-center bg-white text-blue px-4 min-h-7.5 max-w-31 text-xs font-semibold rounded-2.5">
-              @username
+            <div
+              onClick={() => {
+                tg.openTelegramLink('https://t.me/labs_relayer');
+              }}
+              className="grid place-content-center bg-white text-blue px-4 min-h-7.5 max-w-31 text-xs font-semibold rounded-2.5">
+              @labs_relayer
             </div>
           </div>
         </div>
@@ -66,6 +72,8 @@ export const Main = () => {
 
           const isAllBetsNullable =
             lobby.minBet === null && lobby.maxBet === null;
+
+          console.log(lobby.minBet, lobby.maxBet, images);
 
           return (
             <Link to={`/spin/${lobby.id}`} className="block" key={lobby.id}>
