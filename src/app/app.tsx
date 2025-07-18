@@ -9,6 +9,7 @@ import { ProfileUserProvider } from '@/features/profile-user-provider';
 import { ToastProvider } from './providers/toast-provider';
 import { extend } from '@pixi/react';
 import { Container, Graphics, Text, Sprite } from 'pixi.js';
+import { LobbyProvider } from '@/features/lobby';
 
 extend({ Container, Graphics, Text, Sprite });
 
@@ -21,8 +22,10 @@ function App() {
     <TonConnectProvider>
       <ApolloProvider>
         <ProfileUserProvider>
-          <AppRouterProvider />
-          <ToastProvider />
+          <LobbyProvider>
+            <AppRouterProvider />
+            <ToastProvider />
+          </LobbyProvider>
         </ProfileUserProvider>
       </ApolloProvider>
     </TonConnectProvider>

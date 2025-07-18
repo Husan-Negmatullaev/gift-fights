@@ -1,11 +1,12 @@
 import React from 'react';
 import { SpinWheel } from './spin-wheel';
-import { useSpinWheel } from './hooks/use-spin-wheel';
+import { useSpinWheel } from '../hooks/use-spin-wheel';
 import { LobbyStatus, type GetLobbyQuery } from '@/shared/api/graphql/graphql';
 import { useLobbyCountdownSubscription } from '../../spin-gifts/hooks/use-lobby-countdown-subscription';
 import { useUserJoinedToLobbySocket } from '../../spin-gifts/hooks/use-user-joined-to-lobby-subscription';
 import { useLobbyProcessSubscription } from '../../spin-gifts/hooks/use-lobby-process-subscription';
 import { useLobbyWinnerSubscription } from '../../spin-gifts/hooks/use-lobby-winner-subscription';
+import { useLobbyCacheUpdater } from '../hooks/use-lobby-cache-updater';
 
 interface SpinWheelContainerProps {
   lobby: GetLobbyQuery['lobby'];
@@ -22,7 +23,9 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
 }) => {
   const {
     isSpinning,
+    isSlowingDown,
     rotation,
+    targetRotation,
     gameStarted,
     segments,
     hasEnoughPlayers,
@@ -34,6 +37,8 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
     updateCountdown,
     setGameStarted,
   } = useSpinWheel({ lobby, onSelected });
+
+  const { updateLobbyCache } = useLobbyCacheUpdater();
 
   // Socket.io подписки (аналогично spin-carousel.tsx)
   useUserJoinedToLobbySocket(lobby.id, (payload) => {
@@ -70,31 +75,24 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
     console.log('Игра закончилась!');
 
     handleAutoSpin(payload.payload.winnerId);
+
+    // Обновляем кеш лобби в главной странице
+    updateLobbyCache();
   });
 
   return (
     <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-      <div className="flex flex-col items-center">
-        <div className={`relative ${!hasEnoughPlayers ? 'opacity-60' : ''}`}>
-          <div className="relative">
-            <SpinWheel
-              radius={200}
-              segments={segments}
-              isSpinning={isSpinning}
-              targetRotation={rotation}
-              onSpinComplete={() => {
-                // Обработка завершения вращения
-                console.log('Spin completed');
-                // onSelected(segments[0].id);
-              }}
-              lobby={lobby}
-              phaseText={getPhaseText()}
-              phaseLabel={getPhaseLabel()}
-              hasEnoughPlayers={hasEnoughPlayers}
-            />
-          </div>
-        </div>
-      </div>
+      {/* <div className="flex flex-col items-center"> */}
+      <SpinWheel
+        segments={segments}
+        isSpinning={isSpinning || isSlowingDown}
+        targetRotation={targetRotation || rotation}
+        lobby={lobby}
+        phaseText={getPhaseText()}
+        phaseLabel={getPhaseLabel()}
+        hasEnoughPlayers={hasEnoughPlayers}
+      />
+      {/* </div> */}
     </div>
   );
 };

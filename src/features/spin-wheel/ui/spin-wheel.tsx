@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Application } from '@pixi/react';
 import * as PIXI from 'pixi.js';
-import { AvatarSprite } from './avatar-sprite';
 import { type GetLobbyQuery } from '@/shared/api/graphql/graphql';
-import { Assets } from 'pixi.js';
+import { Icons } from '@/shared/ui/icons/icons';
+import { HtmlAvatar } from './components/html-avatar';
 
 interface WheelSegment {
   id: number;
@@ -21,7 +21,6 @@ interface WheelSegment {
 }
 
 interface SpinWheelProps {
-  radius?: number;
   isSpinning?: boolean;
   phaseText?: string;
   phaseLabel?: string;
@@ -29,23 +28,20 @@ interface SpinWheelProps {
   segments: WheelSegment[];
   hasEnoughPlayers?: boolean;
   lobby: GetLobbyQuery['lobby'];
-  onSpinComplete: (winnerId: string) => void;
 }
 
 export const SpinWheel: React.FC<SpinWheelProps> = ({
   segments,
-  radius = 324,
-  onSpinComplete,
   isSpinning = false,
   targetRotation = 0,
-  phaseText = '30 сек',
+  phaseText = '60 сек',
   phaseLabel = 'Начало через :',
   hasEnoughPlayers = true,
 }) => {
+  const radius = 162;
   const sizes = 324;
 
   const animationRef = useRef<number | null>(null);
-  const [changeSize, setChangeSize] = useState(sizes + 1);
   const [internalRotation, setInternalRotation] = useState(0);
 
   // Calculate segment angles based on stake formula: (stake / totalStakes) * 100
@@ -74,15 +70,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     });
   }, [segments]);
 
-  const [arrow, setArrow] = useState<PIXI.Texture | null>(null);
-
-  useEffect(() => {
-    const loadArrow = async () => {
-      const arrow = await Assets.load('/assets/images/light-triangle.png');
-      setArrow(arrow);
-    };
-    loadArrow();
-  }, []);
+  // Удаляем логику загрузки текстур - теперь используем HTML img элементы
 
   const segmentsWithAngles = calculateSegmentAngles();
 
@@ -93,14 +81,14 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     }
   }, [targetRotation, isSpinning]);
 
-  // Animate to target rotation when spinning
+  // Animate to target rotation when spinning (только для финальной анимации)
   useEffect(() => {
     if (
       isSpinning &&
       targetRotation !== undefined &&
       targetRotation !== internalRotation
     ) {
-      const duration = 12000; // Увеличили до 12 секунд для более плавной анимации
+      const duration = 1000; // 1 секунда для финальной анимации
       const startTime = Date.now();
       const startRotation = internalRotation;
       const totalRotation = targetRotation - startRotation;
@@ -109,25 +97,14 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
 
-        // Более сложная easing функция для реалистичного замедления
+        // Очень мягкая easing функция для финальной остановки
         const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-        const easeOutBack =
-          progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-        const combinedEasing = (easeOutQuart + easeOutBack) / 2;
-
-        const currentRotation = startRotation + totalRotation * combinedEasing;
+        const currentRotation = startRotation + totalRotation * easeOutQuart;
 
         setInternalRotation(currentRotation);
 
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
-        } else {
-          // Animation completed
-          // if (onSpinComplete) {
-          //   setTimeout(() => {
-          //     onSpinComplete();
-          //   }, 1000); // Увеличили задержку до 1 секунды
-          // }
         }
       };
 
@@ -140,7 +117,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isSpinning, targetRotation, internalRotation, onSpinComplete]);
+  }, [isSpinning, targetRotation, internalRotation]);
 
   const drawWheel = useCallback((g: PIXI.Graphics) => {
     g.clear();
@@ -148,70 +125,61 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
     // Add center circle
     g.beginFill(0x273c56);
     g.lineStyle(15, 0x1d232a);
-    g.drawCircle(0, 0, 75);
+    g.drawCircle(0, 0, 70);
     g.endFill();
   }, []);
 
+  // Удаляем drawAvatar - теперь используем HTML аватары
+
   return (
     <div className="flex flex-col items-center">
-      <div style={{ position: 'relative', width: sizes, height: sizes + 20 }}>
+      <div className="relative pointer-events-none">
         <Application
           antialias
           autoDensity
           width={sizes}
-          height={sizes + 40}
+          height={sizes}
           backgroundAlpha={0}
-          resolution={window.devicePixelRatio || 1}>
+          resolution={window.devicePixelRatio || 1}
+          className={`${!hasEnoughPlayers ? 'opacity-60' : ''}`}>
           {/* Wheel */}
-          <pixiContainer
-            width={changeSize}
-            height={changeSize}
-            x={changeSize / 2}
-            y={changeSize / 2 + 35}
-            ref={() => setChangeSize(() => 324)}>
+          <pixiContainer x={sizes / 2} y={sizes / 2}>
             <pixiContainer rotation={internalRotation}>
-              {/* Draw segments using WedgeIcon */}
-              {segmentsWithAngles.length === 0 || !hasEnoughPlayers
-                ? // Empty wheel or not enough players
-                  (() => {
-                    return (
-                      <pixiGraphics
-                        draw={(g: PIXI.Graphics) => {
-                          g.clear();
-                          g.fill(0x374151);
-                          g.setStrokeStyle({
-                            width: 3,
-                            color: 0x6b7280,
-                          });
-                          g.circle(0, 0, radius);
-                          g.fill();
-                        }}
-                      />
-                    );
-                  })()
-                : (() => {
-                    return segmentsWithAngles.map((segment) => {
-                      const startAngleDeg =
-                        (segment.startAngle * 180) / Math.PI;
-                      const endAngleDeg = (segment.endAngle * 180) / Math.PI;
-
-                      return (
-                        <WedgeIcon
-                          x={0}
-                          y={0}
-                          key={segment.id}
-                          innerRadius={25}
-                          color={0x2d353f}
-                          outerRadius={radius}
-                          endAngle={endAngleDeg}
-                          startAngle={startAngleDeg}
-                        />
-                      );
+              {segmentsWithAngles.length === 0 || !hasEnoughPlayers ? (
+                <pixiGraphics
+                  draw={(g: PIXI.Graphics) => {
+                    g.clear();
+                    g.fill(0x374151);
+                    g.setStrokeStyle({
+                      width: 3,
+                      color: 0x6b7280,
                     });
-                  })()}
+                    g.circle(0, 0, radius);
+                    g.fill();
+                  }}
+                />
+              ) : (
+                segmentsWithAngles.map((segment) => {
+                  const startAngleDeg = (segment.startAngle * 180) / Math.PI;
+                  const endAngleDeg = (segment.endAngle * 180) / Math.PI;
+                  return (
+                    <WedgeIcon
+                      x={0}
+                      y={0}
+                      key={segment.id}
+                      innerRadius={25}
+                      color={0x2d353f}
+                      outerRadius={radius}
+                      endAngle={endAngleDeg}
+                      startAngle={startAngleDeg}
+                    />
+                  );
+                })
+              )}
+
+              {/* Аватары теперь рендерятся как HTML элементы поверх canvas */}
             </pixiContainer>
 
-            {/* Center circle */}
             <pixiContainer>
               <pixiGraphics draw={drawWheel} />
               <pixiText
@@ -234,7 +202,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
                 text={phaseText}
                 style={
                   new PIXI.TextStyle({
-                    fontSize: 24,
+                    fontSize: 20,
                     fill: 0xffffff,
                     fontWeight: '500',
                   })
@@ -242,38 +210,35 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
               />
             </pixiContainer>
           </pixiContainer>
-          {/* Arrow */}
-          <pixiContainer x={radius / 2 + 35} y={0}>
-            {/* <pixiGraphics draw={drawArrow} /> */}
-            {arrow && <pixiSprite texture={arrow} />}
-          </pixiContainer>
         </Application>
 
-        {/* HTML Avatars overlay */}
+        {/* HTML аватары поверх canvas */}
         {segmentsWithAngles.map((segment) => {
           const midAngle = (segment.startAngle + segment.endAngle) / 2;
-          const labelRadius = radius * 0.65;
+          // Размещаем аватары в серой области между внутренним кругом (70) и внешним краем (162)
+          const labelRadius = radius * 0.75; // 121px - посередине между 70 и 162
 
-          // Применяем вращение колеса к координатам аватаров
-          const rotatedAngle = midAngle + (internalRotation * Math.PI) / 180;
-          const x = Math.cos(rotatedAngle) * labelRadius;
-          const y = Math.sin(rotatedAngle) * labelRadius;
+          // Координаты аватаров
+          const x = Math.cos(midAngle) * labelRadius;
+          const y = Math.sin(midAngle) * labelRadius;
 
           return (
-            <AvatarSprite
-              key={segment.id}
+            <HtmlAvatar
               x={x}
               y={y}
-              size={40}
-              stageWidth={sizes}
-              rotation={rotatedAngle}
-              stageHeight={sizes + 20}
-              backgroundColor={0x2d353f}
-              url={segment.userImage || ''}
+              key={`html-avatar-${segment.id}`}
+              src={segment.userImage || ''}
               playerName={segment.playerName}
+              rotation={internalRotation}
+              containerSize={sizes}
             />
           );
         })}
+
+        <Icons
+          name="spin-arrow-bottom"
+          className="absolute -top-8 left-1/2 -translate-x-1/2"
+        />
       </div>
     </div>
   );
@@ -290,32 +255,50 @@ interface AnnularSectorProps {
 }
 
 const WedgeIcon = ({
-  innerRadius,
-  outerRadius,
-  startAngle,
-  endAngle,
-  color = 0xff9900,
   x = 0,
   y = 0,
+  endAngle,
+  startAngle,
+  innerRadius,
+  outerRadius,
+  color = 0xff9900,
 }: AnnularSectorProps) => {
   const toRadians = (deg: number) => (deg * Math.PI) / 180;
 
   const draw = (g: PIXI.Graphics) => {
     g.clear();
-    g.beginFill(color);
 
     const sa = toRadians(startAngle);
     const ea = toRadians(endAngle);
     const cx = x;
     const cy = y;
 
+    // Рисуем заливку сегмента
+    g.beginFill(color);
     g.moveTo(cx + Math.cos(sa) * outerRadius, cy + Math.sin(sa) * outerRadius);
     g.arc(cx, cy, outerRadius, sa, ea);
     g.lineTo(cx + Math.cos(ea) * innerRadius, cy + Math.sin(ea) * innerRadius);
     g.arc(cx, cy, innerRadius, ea, sa, true);
     g.closePath();
-
     g.endFill();
+
+    // Рисуем границы сегмента
+    g.lineStyle(2, 0x4a5568, 0.8); // Граница с прозрачностью
+
+    // Внешняя дуга
+    g.moveTo(cx + Math.cos(sa) * outerRadius, cy + Math.sin(sa) * outerRadius);
+    g.arc(cx, cy, outerRadius, sa, ea);
+
+    // Внутренняя дуга
+    g.moveTo(cx + Math.cos(sa) * innerRadius, cy + Math.sin(sa) * innerRadius);
+    g.arc(cx, cy, innerRadius, sa, ea);
+
+    // Радиальные линии (границы сегментов)
+    g.moveTo(cx + Math.cos(sa) * outerRadius, cy + Math.sin(sa) * outerRadius);
+    g.lineTo(cx + Math.cos(sa) * innerRadius, cy + Math.sin(sa) * innerRadius);
+
+    g.moveTo(cx + Math.cos(ea) * outerRadius, cy + Math.sin(ea) * outerRadius);
+    g.lineTo(cx + Math.cos(ea) * innerRadius, cy + Math.sin(ea) * innerRadius);
   };
 
   return <pixiGraphics draw={draw} />;

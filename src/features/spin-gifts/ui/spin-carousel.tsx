@@ -158,12 +158,12 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
         setGamePhase(LobbyStatus.Completed);
         setIsHighlighting(true);
 
-        // After 800ms, call onSelected and stop highlighting
+        // After 500ms, call onSelected and stop highlighting
         setTimeout(() => {
           onSelected(winnerId);
           setIsHighlighting(false);
-        }, 2000);
-      }, 3000); // 3 seconds for the final deceleration animation
+        }, 500);
+      }, 2000); // 2 seconds for the final deceleration animation
     },
     [isEternalSpinning, participants, rotation, onSelected],
   );
@@ -195,7 +195,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
 
     if (isEternalSpinning) {
       const animate = () => {
-        setRotation((prev) => prev + 10); // Continuous rotation speed
+        setRotation((prev) => prev + 0.1); // Уменьшили скорость еще в два раза (было 1, стало 0.5)
         animationFrame = requestAnimationFrame(animate);
       };
       animationFrame = requestAnimationFrame(animate);

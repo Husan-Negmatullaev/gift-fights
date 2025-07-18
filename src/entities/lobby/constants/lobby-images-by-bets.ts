@@ -6,7 +6,7 @@ export const lobbyImagesByBets: Record<
     image: "/assets/images/main/bag-of-tons.webp",
     background: "/assets/images/play/octopus.webp",
   },
-  min_1_max_5: {
+  min_1_max_10: {
     image: "/assets/images/main/chest-of-tons.webp",
     background: "/assets/images/play/octopus.webp",
   },
@@ -14,12 +14,12 @@ export const lobbyImagesByBets: Record<
     image: "/assets/images/main/handbag-of-tons.webp",
     background: "/assets/images/play/octopus.webp",
   },
-  min_20_max_50: {
+  min_10_max_50: {
     image: "/assets/images/main/lucky-chest-of-tons.webp",
     background: "/assets/images/play/octopus.webp",
   },
-  min_50_max_100: {
-    image: "/assets/images/main/epic-chest-of-tons.webp",
-    background: "/assets/images/play/octopus.webp",
-  },
+  // min_50_max_100: {
+  //   image: "/assets/images/main/epic-chest-of-tons.webp",
+  //   background: "/assets/images/play/octopus.webp",
+  // },
 };
