@@ -8,6 +8,13 @@ function getLobbyBetKey(
   minBet: number | null,
   maxBet: number | null,
 ): Record<'background' | 'image', string> {
+  if (minBet === 50 && maxBet === null) {
+    return {
+      image: '/assets/images/main/epic-chest-of-tons.webp',
+      background: '/assets/images/play/octopus.webp',
+    };
+  }
+
   if (minBet === null || maxBet === null) {
     return {
       image: '/assets/images/main/infinite-cube.webp',
@@ -36,7 +43,7 @@ export const Main = () => {
   }
 
   return (
-    <div>
+    <div className="pb-4">
       <article className="relative bg-linear-117 from-blue -from-37% to-dark-blue-50 to-78% text-white mb-8">
         <div className="bg-linear-90 overflow-hidden relative from-blue-50 to-blue-100 min-h-30.5 grid items-center px-6">
           <img
@@ -74,6 +81,8 @@ export const Main = () => {
           const isAllBetsNullable =
             lobby.minBet === null && lobby.maxBet === null;
 
+          console.log(lobby.minBet, lobby.maxBet, images.image);
+
           return (
             <Link to={`/spin/${lobby.id}`} className="block" key={lobby.id}>
               <article className="relative bg-linear-117 from-blue -from-37% to-dark-blue-50 to-78% rounded-2.5xl text-white">
@@ -103,9 +112,15 @@ export const Main = () => {
                           {lobby.minBet} TON
                         </div>
                         -
-                        <div className="grid place-content-center bg-white text-blue px-4 min-h-7.5 text-xs font-semibold rounded-2.5">
-                          {lobby.maxBet} TON
-                        </div>
+                        {lobby.maxBet ? (
+                          <div className="grid place-content-center bg-white text-blue px-4 min-h-7.5 text-xs font-semibold rounded-2.5">
+                            {lobby.maxBet} TON
+                          </div>
+                        ) : (
+                          <div className="grid place-content-center bg-white text-blue px-4 min-h-7.5 text-xs font-semibold rounded-2.5">
+                            ∞ TON
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
