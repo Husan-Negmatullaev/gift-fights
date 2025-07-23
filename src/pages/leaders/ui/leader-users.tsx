@@ -16,13 +16,23 @@ type LeaderUsersProps = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function removeLastBackgroundLayers(lottieJson: any, count = 1) {
-	if (!lottieJson?.layers || !Array.isArray(lottieJson?.layers)) {
-		console.warn("layers is missing or not an array");
+	// Handle null, undefined, or invalid animation data
+	if (!lottieJson || typeof lottieJson !== "object") {
 		return lottieJson;
 	}
 
-	lottieJson.layers = lottieJson.layers.slice(0, -count);
-	return lottieJson;
+	if (!lottieJson.layers || !Array.isArray(lottieJson.layers)) {
+		// Only warn if we have a valid object but missing layers
+		if (lottieJson && typeof lottieJson === "object") {
+			console.warn("layers is missing or not an array in lottie animation");
+		}
+		return lottieJson;
+	}
+
+	// Create a copy to avoid mutating the original
+	const modifiedJson = { ...lottieJson };
+	modifiedJson.layers = modifiedJson.layers.slice(0, -count);
+	return modifiedJson;
 }
 
 const useLeaderboardTimer = (endDate: string | null) => {
@@ -111,7 +121,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 			reward: rewards?.find((reward) => reward.place === Place.Second) ?? null,
 			leaderboard: leaders[1]?.user ?? null,
 			position: {
-				top: "45px",
+				top: "40px",
 				left: 0,
 			},
 		},
@@ -119,7 +129,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 			reward: rewards?.find((reward) => reward.place === Place.Third) ?? null,
 			leaderboard: leaders[2]?.user ?? null,
 			position: {
-				top: "40px",
+				top: "90px",
 				left: 100,
 			},
 		},
@@ -138,6 +148,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 				{Object.entries(users)
 					.sort(([a], [b]) => Number(a) - Number(b))
 					.map(([index, leader]) => {
+						const hasData = leader.leaderboard;
 						return (
 							<div
 								key={index}
@@ -146,6 +157,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 									top: leader.position.top,
 									left: `${leader.position.left}%`,
 									transform: `translateX(-${leader.position.left}%)`,
+									display: hasData ? "block" : "none",
 								}}
 							>
 								<div className="h-20 w-20 mx-4">
@@ -197,7 +209,9 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 			</div>
 			<div className="backdrop-blur-[20px] min-h-10.5 flex items-center gap-2 justify-between rounded-2xl px-3 py-2 border border-[#0098EA] mt-30">
 				<div className="flex items-center">
-					<span className="text-[#A8A8A8] mx-4">#{myScore?.rank}</span>
+					<span className="text-[#A8A8A8] w-14 text-center">
+						#{myScore?.rank}
+					</span>
 					<img
 						src={`https://t.me/i/userpic/320/${myScore?.user.username}.jpg`}
 						alt={myScore?.user.username}

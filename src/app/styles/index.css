@@ -37,6 +37,12 @@
   --color-dark-blue-1050: #193751;
   --color-dark-blue-1100: #0e5368;
   --color-dark-blue-1150: #172535;
+  --color-dark-blue-1200: #002554;
+  --color-dark-blue-1250: #292e32;
+  --color-dark-blue-1300: #10151a;
+  --color-dark-blue-1350: #0c364e;
+  --color-dark-blue-1400: #282d31;
+  --color-dark-blue-1450: #0a1b31;
 
   --color-blue: #0098ea;
   --color-blue-50: #2d83ec;
@@ -49,6 +55,10 @@
 
   --color-gray: #5c5c5c;
   --color-gray-50: #d9d9d9;
+  --color-gray-100: #49494a;
+  --color-gray-150: #545659;
+  --color-gray-200: #a8a8a8;
+  --color-gray-250: #545f6f;
 
   --color-white: #ffffff;
   --color-black: #000000;
@@ -56,6 +66,7 @@
   --color-green: #00fb36;
 
   --color-dark: #14191f;
+  --color-dark-50: #292c30;
 
   --color-red: #fb0000;
   --color-red-50: #ff1a1a;
@@ -108,6 +119,49 @@
   input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+
+  /* Hide scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for Firefox */
+  * {
+    scrollbar-width: none;
+  }
+
+  /* Hide scrollbar for IE and Edge */
+  * {
+    -ms-overflow-style: none;
+  }
+
+  /* Additional scrollbar hiding for specific elements */
+  html,
+  body,
+  #root,
+  main,
+  div {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  #root::-webkit-scrollbar,
+  main::-webkit-scrollbar,
+  div::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Force hide scrollbars on all elements */
+  * {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  *::-webkit-scrollbar {
+    display: none !important;
   }
 }
 

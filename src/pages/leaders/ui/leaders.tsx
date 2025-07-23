@@ -26,7 +26,7 @@ export const Leaders = () => {
 						<li className="group" key={index}>
 							<div className="bg-[#FFFFFF1A] backdrop-blur-[20px] min-h-10.5 flex items-center gap-2 justify-between rounded-2xl px-3 py-2 border border-[#797979]">
 								<div className="flex items-center gap-2">
-									<span className="text-[#A8A8A8] mx-4">
+									<span className="text-[#A8A8A8] w-12 text-center">
 										#{leaderboard.rank}
 									</span>
 									<img

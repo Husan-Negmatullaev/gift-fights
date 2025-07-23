@@ -44,7 +44,7 @@ export const Tabs = (props: TabsProps) => {
       <div
         className={clsx(
           listClassName,
-          'grid grid-flow-col auto-cols-fr rounded-full bg-dark-blue-150',
+          'grid grid-flow-col auto-cols-fr rounded-full bg-dark-50',
         )}>
         {tabs.map((title, index) => (
           <button
@@ -53,7 +53,7 @@ export const Tabs = (props: TabsProps) => {
             tabIndex={-1}
             onClick={handleSelectTab(index)}
             aria-selected={index === selectedTab}
-            className="cursor-pointer text-white aria-selected:bg-blue-50 rounded-full text-sm min-h-8.5 flex items-center justify-center">
+            className="cursor-pointer text-white aria-selected:bg-gray-150 rounded-full text-sm min-h-8.5 flex items-center justify-center">
             {title}
           </button>
         ))}

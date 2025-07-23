@@ -1,5 +1,6 @@
 import Box from '@/shared/assets/icons/box.svg?react';
 import Check from '@/shared/assets/icons/check.svg?react';
+import ChevronLeft from '@/shared/assets/icons/chevron-left.svg?react';
 import Clock from '@/shared/assets/icons/clock.svg?react';
 import Cross from '@/shared/assets/icons/cross.svg?react';
 import Home from '@/shared/assets/icons/home.svg?react';
@@ -13,11 +14,17 @@ import Trophy from '@/shared/assets/icons/trophy.svg?react';
 import UserGroup from '@/shared/assets/icons/user-group.svg?react';
 import User from '@/shared/assets/icons/user.svg?react';
 
+import Fight from '@/shared/assets/icons/fight.svg?react';
+import Info from '@/shared/assets/icons/info.svg?react';
+import Share from '@/shared/assets/icons/share.svg?react';
+
 import type { IconComponentType, IconNamesType } from '../types/icon-types';
 
 export const ICON_COMPONENTS: Record<IconNamesType, IconComponentType> = {
   box: Box,
   ton: Ton,
+  info: Info,
+  share: Share,
   user: User,
   plus: Plus,
   home: Home,
@@ -28,7 +35,8 @@ export const ICON_COMPONENTS: Record<IconNamesType, IconComponentType> = {
   trophy: Trophy,
   question: Question,
   'user-group': UserGroup,
+  'chevron-left': ChevronLeft,
   'spin-arrow-bottom': SpinArrowBottom,
   clock: Clock,
-
+  fight: Fight,
 };

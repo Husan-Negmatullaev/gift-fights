@@ -19,7 +19,7 @@ export const Checkbox = (props: CheckboxProps) => {
       className={clsx(
         wrapperClassName,
         CHECKBOX_VARIANTS_CONSTANTS[variant],
-        'grid place-content-center size-7 rounded-md has-checked:bg-blue transition-colors ',
+        'grid place-content-center size-6.5 border border-gray-100 rounded-md bg-dark-blue-1250 has-checked:border-blue-100 has-checked:bg-blue-100 transition-colors',
       )}>
       <input
         id={id}
@@ -29,7 +29,7 @@ export const Checkbox = (props: CheckboxProps) => {
       />
       <Icons
         name="check"
-        className="text-transparent peer-checked:text-white transition-colors"
+        className="size-4 text-transparent peer-checked:text-white transition-colors"
       />
     </label>
   );

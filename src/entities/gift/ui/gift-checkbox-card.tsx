@@ -85,7 +85,7 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
 					className={clsx(
 						GIFT_SIZES[size].title,
 						GIFT_SIZES[size].header,
-						"flex items-center justify-between font-medium px-2",
+						"flex items-center justify-between font-regular px-2 mt-2",
 					)}
 				>
 					<h5>{title}</h5>

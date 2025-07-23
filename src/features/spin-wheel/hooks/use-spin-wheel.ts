@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
 import { LobbyStatus, type GetLobbyQuery } from '@/shared/api/graphql/graphql';
+import { useCallback, useEffect, useState } from 'react';
 
 interface WheelSegment {
   id: number;
@@ -42,16 +42,26 @@ interface SpinWheelProps {
 export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
   // Функция для расчета актуального countdown на основе countdownExpiresAt
   const calculateActualCountdown = useCallback(() => {
-    if (!lobby.countdownExpiresAt) {
-      return lobby.timeToStart;
+    // ВСЕГДА используем countdownExpiresAt для точного расчета если он есть
+    if (lobby.countdownExpiresAt) {
+      const now = new Date().getTime();
+      const expiresAt = new Date(lobby.countdownExpiresAt).getTime();
+      const timeLeft = Math.max(0, Math.ceil((expiresAt - now) / 1000));
+      return timeLeft;
     }
 
-    const now = new Date().getTime();
-    const expiresAt = new Date(lobby.countdownExpiresAt).getTime();
-    const timeLeft = Math.max(0, Math.ceil((expiresAt - now) / 1000));
+    // Если countdownExpiresAt отсутствует, но статус Countdown - это проблема перезагрузки страницы
+    if (lobby.status === LobbyStatus.Countdown) {
+      console.warn(
+        '⚠️ Countdown phase without countdownExpiresAt - likely page reload during countdown',
+      );
+      return 0; // Немедленно переходим к следующей фазе
+    }
 
-    return timeLeft;
-  }, [lobby.countdownExpiresAt, lobby.timeToStart]);
+    // Для других статусов возвращаем 0 - не используем неактуальный timeToStart
+    console.warn('⚠️ No countdownExpiresAt available, returning 0');
+    return 0;
+  }, [lobby.countdownExpiresAt, lobby.status]);
 
   const [state, setState] = useState<SpinWheelState>({
     isSpinning: false,
@@ -121,7 +131,7 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
   const getPhaseText = useCallback(() => {
     const phaseText = (() => {
       if (!state.hasEnoughPlayers) {
-        return 'Нужно 2+ игрока';
+        return 'Ожидание';
       }
 
       // Если ищем победителя, показываем это
@@ -407,39 +417,6 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
     stopSpinAndSelectWinner,
   ]);
 
-  // Таймер обратного отсчета
-  useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
-
-    if (state.gamePhase === LobbyStatus.Countdown && state.countdown > 0) {
-      timer = setTimeout(() => {
-        setState((prev) => ({
-          ...prev,
-          countdown: prev.countdown - 1,
-        }));
-      }, 1000);
-    } else if (
-      state.gamePhase === LobbyStatus.Countdown &&
-      state.countdown === 0
-    ) {
-      const demoWinnerId =
-        lobby.participants.length > 0
-          ? lobby.participants[
-              Math.floor(Math.random() * lobby.participants.length)
-            ].userId.toString()
-          : Math.floor(Math.random() * state.segments.length).toString();
-      handleAutoSpin(demoWinnerId);
-    }
-
-    return () => clearTimeout(timer);
-  }, [
-    state.countdown,
-    state.gamePhase,
-    lobby.participants,
-    state.segments.length,
-    handleAutoSpin,
-  ]);
-
   // Таймер игры
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
@@ -460,6 +437,100 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
     return () => clearTimeout(timer);
   }, [state.gameTimer, state.gamePhase, state.isEternalSpinning]);
 
+  // Специальная обработка для состояния Countdown и InProcess при перезагрузке страницы
+  useEffect(() => {
+    // Если лобби в состоянии Countdown, но countdownExpiresAt отсутствует - это перезагрузка страницы
+    if (lobby.status === LobbyStatus.Countdown && !lobby.countdownExpiresAt) {
+      console.log(
+        '🔄 Detected page reload during countdown phase, starting game automatically',
+      );
+
+      // Устанавливаем игру как начатую и переходим к логике автоматического спина
+      setState((prev) => ({
+        ...prev,
+        gameStarted: true,
+        gamePhase: LobbyStatus.Countdown,
+        countdown: 0, // Устанавливаем 0 для немедленного перехода к игре
+      }));
+    }
+
+    // Если лобби в состоянии InProcess при загрузке - тоже обрабатываем как перезагрузку
+    if (lobby.status === LobbyStatus.InProcess && !state.gameStarted) {
+      console.log(
+        '🔄 Detected page reload during InProcess phase, synchronizing game state',
+      );
+
+      setState((prev) => ({
+        ...prev,
+        gameStarted: true,
+        gamePhase: LobbyStatus.InProcess,
+        countdown: 0,
+        gameTimer: 5, // Устанавливаем короткий таймер для быстрого перехода к спину
+      }));
+
+      // Запускаем демо-спин через короткое время
+      const timer = setTimeout(() => {
+        const demoWinnerId =
+          lobby.participants.length > 0
+            ? lobby.participants[
+              Math.floor(Math.random() * lobby.participants.length)
+            ].userId.toString()
+            : '1';
+        handleAutoSpin(demoWinnerId);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [
+    lobby.status,
+    lobby.countdownExpiresAt,
+    state.gameStarted,
+    lobby.participants,
+    handleAutoSpin,
+  ]);
+
+  // Реальное время обновление countdown на основе countdownExpiresAt
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval>;
+
+    // Если есть countdownExpiresAt, обновляем каждую секунду
+    if (lobby.countdownExpiresAt && state.gamePhase === LobbyStatus.Countdown) {
+      interval = setInterval(() => {
+        const actualCountdown = calculateActualCountdown();
+        setState((prev) => ({
+          ...prev,
+          countdown: actualCountdown,
+        }));
+
+        // Если время истекло, запускаем фальшивый спинер
+        if (actualCountdown === 0) {
+          console.log(
+            '🎮 Countdown завершен (на основе countdownExpiresAt), запускаем фальшивый спинер',
+          );
+
+          setState((prev) => ({
+            ...prev,
+            gamePhase: LobbyStatus.InProcess,
+            isEternalSpinning: true,
+            gameTimer: 15,
+            isSearchingWinner: true,
+          }));
+
+          // Очищаем интервал так как countdown завершен
+          if (interval) {
+            clearInterval(interval);
+          }
+        }
+      }, 1000);
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [lobby.countdownExpiresAt, state.gamePhase, calculateActualCountdown]);
+
   // Обновление состояния при изменении лобби
   useEffect(() => {
     const actualCountdown = calculateActualCountdown();
@@ -472,7 +543,6 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
     }));
   }, [
     lobby.countdownExpiresAt,
-    lobby.timeToStart,
     lobby.status,
     lobby.participants.length,
     calculateActualCountdown,

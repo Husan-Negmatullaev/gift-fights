@@ -27,8 +27,6 @@ export const Profile = () => {
 		<section className="grid gap-5 pb-7.5 ">
 			<ProfileInformation profile={profile} />
 			<div className="px-6 ">
-				{/* Tab Content */}
-
 				<div className="flex flex-col gap-7.5 -mt-4">
 					<article className="relative bg-linear-117 from-blue -from-37% to-dark-blue-50 to-78% rounded-2xl text-white overflow-hidden border border-[#FFFFFF33] shadow-[0px_0px_10px_4px_#2E5C7F]">
 						<div className="bg-linear-90 overflow-hidden relative from-blue-50 to-blue-100 p-4 rounded-2xl">
@@ -53,8 +51,6 @@ export const Profile = () => {
 									type="button"
 									className="cursor-pointer bg-white rounded-2.5 min-h-8.5 px-4 text-black font-medium text-xs basis-25 shrink-0"
 									onClick={() =>
-										// https://t.me/test_fight_gifts_bot/gift_fight
-
 										onCopy(
 											`https://t.me/test_fight_gifts_bot/app?startapp=${profile.referralCode}`,
 										)
@@ -71,7 +67,6 @@ export const Profile = () => {
 						/>
 					</article>
 				</div>
-				{/* Tab Navigation */}
 				<div className="mb-2 mt-4">
 					<div className="bg-dark-blue-50 rounded-full flex">
 						<button
@@ -164,9 +159,9 @@ export const Profile = () => {
 						<ReferralBalanceOutput />
 						<h2 className="text-lg font-bold mb-4">Статистика</h2>
 						<div className="flex flex-col gap-3">
-							<RefStatItem title="Друзья" value={12} />
-							<RefStatItem title="Ваш бонус" value={12} isPercent />
-							<RefStatItem title="Общий доход" value={0.0} isTon />
+							<RefStatItem title="Друзья" value={profile.referrals.length} />
+							<RefStatItem title="Ваш бонус" value={20} isPercent />
+							{/* <RefStatItem title="Общий доход" value={0.0} isTon /> */}
 						</div>
 					</>
 				)}

@@ -1,7 +1,7 @@
 import { useTelegram } from "@/entities/telegram";
 import { Icons } from "@/shared/ui/icons/icons";
 
-export const MainBanner = () => {
+export const MainBanner = ({ onOpenModal }: { onOpenModal: () => void }) => {
 	const tg = useTelegram();
 	return (
 		<article
@@ -21,9 +21,9 @@ export const MainBanner = () => {
 					</p>
 				</div>
 				<div
-					onClick={() => {
-						tg.openTelegramLink("https://t.me/labs_relayer");
-					}}
+					// onClick={() => {
+					// 	tg.openTelegramLink("https://t.me/labs_relayer");
+					// }}
 					className="border border-[#FFFFFF33] rounded-[8px] text-[12px] font-regular bg-[#FFFFFFB2] max-w-[193px] h-[40px] flex items-center"
 				>
 					<div className="flex items-center gap-1 mr-2 ml-2">
@@ -31,6 +31,7 @@ export const MainBanner = () => {
 						<p className="text-[18px] font-bold text-black">22:12:45</p>
 					</div>
 					<button
+						onClick={onOpenModal}
 						className="rounded-[8px] w-[78px] border-none outline-none h-[32px] mr-1"
 						style={{
 							background: "linear-gradient(360deg, #2D83EC 0%, #1AC9FF 100%)",

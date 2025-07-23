@@ -2,8 +2,8 @@ import {
   useConnectTon,
   useTonConnect,
   useIntegrateTonWalletToUser,
-} from "@/entities/ton";
-import { Icons } from "@/shared/ui/icons/icons";
+} from '@/entities/ton';
+import { Icons } from '@/shared/ui/icons/icons';
 
 export const ConnectTonWallet = () => {
   const { integrateWallet } = useIntegrateTonWalletToUser();
@@ -22,8 +22,7 @@ export const ConnectTonWallet = () => {
         <button
           type="button"
           onClick={onConnect}
-          className="flex items-center bg-blue text-white rounded-full px-2.5 min-h-9 cursor-pointer hover:bg-blue-600 transition-colors"
-        >
+          className="flex items-center bg-linear-360 from-0% to-100% from-blue-50 to-blue-100 text-white rounded-full px-2.5 min-h-9 cursor-pointer hover:bg-blue-600 transition-colors">
           <Icons name="ton" width={20} height={20} />
 
           <span className="font-medium text-xs/4">Connect Wallet</span>
@@ -34,8 +33,7 @@ export const ConnectTonWallet = () => {
         <button
           type="button"
           onClick={onDisconnect}
-          className="flex items-center gap-1 bg-dark-blue-1050 text-white rounded-full px-2.5 min-h-9 cursor-pointer hover:bg-blue-600 transition-colors"
-        >
+          className="flex items-center gap-1 bg-dark-blue-1050 text-white rounded-full px-2.5 min-h-9 cursor-pointer hover:bg-blue-600 transition-colors">
           <Icons name="cross" width={16} height={16} />
 
           <span className="font-medium text-xs/4">

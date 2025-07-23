@@ -1,8 +1,13 @@
 import { lobbyImagesByBets, useGetLobbies } from "@/entities/lobby";
+import { useTelegram } from "@/entities/telegram";
 import { LobbyStatus } from "@/shared/api/graphql/graphql";
+import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
 import { LoadingSpinner } from "@/shared/components/loading-spinner/loading-spinner";
+import { Icons } from "@/shared/ui/icons/icons";
+import { Modal } from "@/shared/ui/modal/modal";
 import { LiveWinners } from "@/widgets/live-winners";
 import { MainBanner } from "@/widgets/main-banner";
+import { useState } from "react";
 import { Link } from "react-router";
 
 function getLobbyBetKey(
@@ -30,6 +35,8 @@ function getLobbyBetKey(
 }
 
 export const Main = () => {
+	const [open, setOpen] = useState(false);
+	const handleToggleModal = () => setOpen((prev) => !prev);
 	const { lobbies, loading } = useGetLobbies(15, 0, [
 		LobbyStatus.Countdown,
 		LobbyStatus.InProcess,
@@ -43,18 +50,18 @@ export const Main = () => {
 			</div>
 		);
 	}
-
+	const tg = useTelegram();
 	return (
 		<div>
-			<LiveWinners online={1234} gifts={[]} />
-			<MainBanner />
+			<LiveWinners gifts={[]} />
+			<MainBanner onOpenModal={handleToggleModal} />
 			<div className="px-6 mb-4">
 				<p className="font-bold text-[24px]">Лобби</p>
 				<p className="text-[#A8A8A8] text-[16px] font-regular">
 					Делайте ставки, выигрывайте, но не превышайте сумму ставки
 				</p>
 			</div>
-			<div className="px-6 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-9 content-start">
+			<div className="px-6 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 lg:gap-9 content-start">
 				{lobbies.map((lobby) => {
 					const images = getLobbyBetKey(
 						lobby.minBet ?? null,
@@ -98,7 +105,46 @@ export const Main = () => {
 					);
 				})}
 			</div>
-
+			<Modal open={open} onClose={handleToggleModal}>
+				<div className="mb-3 mt-4 text-center px-3 flex flex-col items-center">
+					<h2 className="mb-2 font-medium text-lg/4.5">
+						Бесплатный подарок 🎁
+					</h2>
+					<p className="text-[#A8A8A8]">
+						Подпишитесь на наш канал{" "}
+						<a
+							href="https://t.me/labs_relayer"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-[#1AC9FF] underline"
+						>
+							@labs_relayer
+						</a>
+						, чтобы получить подарок. Подарок нельзя вывести. Можно использовать
+						в прокрутах — исчезает после применения.
+					</p>
+					<div className="flex justify-center bg-[#95A5C131] w-26.5 h-26.5 rounded-2xl items-center border border-[#A0ADC370] border-[1px] overflow-hidden mt-6">
+						<img
+							src="/assets/images/main/pepe_heart.webp"
+							className="w-28 h-28 drop-shadow-[0_0_10px_#8A97B2FF]"
+						/>
+					</div>
+					<p className="text-[#A8A8A8] text-xs mt-2 mb-6">{"0.5 TON"}</p>
+					<button className="bg-[#FFCA38] text-black text-sm font-bold px-2 py-1 rounded-lg flex items-center gap-2 mb-4">
+						<Icons name="clock" className="w-[10px] h-[10px] text-[#1D1D1D]" />
+						22:12:45
+					</button>
+					<BottomButton
+						withShadow
+						content="Подписаться"
+						className="px-4 mt-4 w-full"
+						onClick={() => {
+							tg.openTelegramLink("https://t.me/labs_relayer");
+						}}
+						// onClick={handleSubmit((penis) => penis.gifts)}
+					/>
+				</div>
+			</Modal>
 			{/* <Link to="/spin" className="block">
 				<article className="relative bg-linear-117 from-blue -from-37% to-dark-blue-50 to-78% rounded-2.5xl text-white">
 					<div className="bg-linear-90 overflow-hidden relative from-blue-50 to-blue-100 min-h-30.5 grid items-center px-4.5 rounded-2.5xl">

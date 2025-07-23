@@ -130,12 +130,10 @@ const mockLiveData = {
 };
 
 interface LiveWinnersProps {
-	online: number;
 	gifts: any[];
 }
 
 export const LiveWinners: React.FC<LiveWinnersProps> = memo(({}) => {
-	// Use mock data instead of Redux state for development
 	const live = mockLiveData;
 
 	return (

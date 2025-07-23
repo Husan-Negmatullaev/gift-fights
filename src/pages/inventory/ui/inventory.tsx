@@ -77,7 +77,6 @@ interface IFormInput {
 // ];
 
 export const Inventory = () => {
-	// const { profile } = useProfileContext();
 	const { gifts, refetch, loading } = useGetGifts({
 		take: 25,
 		skip: 0,
