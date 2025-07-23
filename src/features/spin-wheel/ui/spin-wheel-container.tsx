@@ -9,10 +9,10 @@ import { useLobbyWinnerSubscription } from '../../spin-gifts/hooks/use-lobby-win
 import { useLobbyCacheUpdater } from '../hooks/use-lobby-cache-updater';
 
 interface SpinWheelContainerProps {
-  lobby: GetLobbyQuery['lobby'];
-  onSelected: (winnerId: string) => void;
   onRefetchLobby: () => void;
+  lobby: GetLobbyQuery['lobby'];
   onRefreshAfterJoining: () => void;
+  onSelected: (winnerId: string) => void;
 }
 
 export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
@@ -30,11 +30,12 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
     segments,
     hasEnoughPlayers,
     getPhaseText,
-    getPhaseLabel,
+    // getPhaseLabel,
     handleAutoSpin,
     updateGamePhase,
     updateCountdown,
     setGameStarted,
+    gamePhase,
   } = useSpinWheel({ lobby, onSelected });
 
   const { updateLobbyCache } = useLobbyCacheUpdater();
@@ -80,19 +81,29 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
     updateLobbyCache();
   });
 
+  // console.log(
+  //   lobby,
+  //   segments,
+  //   gamePhase,
+  //   getPhaseText,
+  //   hasEnoughPlayers,
+  //   isSpinning,
+  //   isSlowingDown,
+  //   targetRotation,
+  //   rotation,
+  // );
+
   return (
     <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-      {/* <div className="flex flex-col items-center"> */}
       <SpinWheel
+        lobby={lobby}
         segments={segments}
+        gamePhase={gamePhase}
+        phaseText={getPhaseText()}
+        hasEnoughPlayers={hasEnoughPlayers}
         isSpinning={isSpinning || isSlowingDown}
         targetRotation={targetRotation || rotation}
-        lobby={lobby}
-        phaseText={getPhaseText()}
-        phaseLabel={getPhaseLabel()}
-        hasEnoughPlayers={hasEnoughPlayers}
       />
-      {/* </div> */}
     </div>
   );
 };

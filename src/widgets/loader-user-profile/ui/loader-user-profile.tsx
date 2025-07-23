@@ -1,5 +1,4 @@
 import { useProfileContext } from '@/entities/profile';
-import { Icons } from '@/shared/ui/icons/icons';
 import { useState, useEffect } from 'react';
 
 type LoadUserProfileProps = {
@@ -106,40 +105,23 @@ export const LoadUserProfile = (props: LoadUserProfileProps) => {
   if (isShowLoading) return <>{children}</>;
 
   return (
-    <main className="grid place-items-center place-content-center gap-12.5 bg-dark shadow-[inset_0px_0px_38.5px_0px_var(--color-dark-blue-1100)]">
+    <main className="grid place-items-center place-content-center gap-12.5 bg-dark-blue-1450">
       <div>
-        <img
-          className="w-61.5"
-          alt="gift fight logo"
-          src="/assets/images/preloader.webp"
-        />
+        <img alt="gift fight logo" src="/assets/images/preloader.webp" />
       </div>
       <div>
+        <div className="text-center  text-white text-2xl font-bold mb-3">
+          {loadingText}
+        </div>
         <div className="relative mb-3">
-          <div className="relative w-76 h-7 bg-dark-blue-1150 rounded-four border border-white shadow-[0px_0px_3.75px_#1ac9ff,inset_0px_0px_6.19px_#1ac9ff] overflow-hidden">
+          <div className="relative w-50 h-6 mx-auto bg-dark-blue-1450 rounded-lg border-4 border-gray-250 overflow-hidden">
             <div
               style={{ width: `${progress}%` }}
-              className="h-full bg-gradient-to-r bg-white rounded-[3.57px] transition-all duration-200 ease-out relative">
-              {/* <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse"></div>
-
-              <div className="absolute inset-0 bg-[#1ac9ff] opacity-50 blur-sm rounded-[3.57px]"></div>
-
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0099cc] to-[#1ac9ff] opacity-80 rounded-[3.57px]"></div> */}
-            </div>
-            <div className="absolute inset-0 shadow-[inset_0px_2px_4px_rgba(0,0,0,0.3)] rounded-[3.57px] pointer-events-none"></div>
+              className="h-full bg-gradient-to-t from-blue-50 to-blue-100 rounded-four transition-all duration-200 ease-out relative"></div>
           </div>
-
-          <Icons
-            width={30}
-            name="spin-arrow-bottom"
-            className="absolute bottom-4 duration-200 ease-out transition-[left] drop-shadow-[0px_0px_3.75px_var(--color-blue-100)] [&>path]:shadow-[inset_0px_0px_6.19px_0px_var(--color-blue-100)]"
-            style={{
-              left: `${Math.max(0, Math.min(271, (progress / 100) * 271))}px`,
-            }}
-          />
         </div>
-        <div className="font-bold text-white text-base text-center leading-normal">
-          {loadingText}&nbsp;&nbsp; {Math.round(progress)}%
+        <div className="text-gray-200 text-lg text-center leading-normal">
+          {Math.round(progress)}%
         </div>
       </div>
     </main>

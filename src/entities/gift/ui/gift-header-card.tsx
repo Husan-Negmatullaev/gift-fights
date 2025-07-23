@@ -1,7 +1,4 @@
-// import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
-import { Avatar } from '@/shared/ui/avatar/avatar';
 import { Icons } from '@/shared/ui/icons/icons';
-// import Gift from '@/shared/assets/lottie/berrybox.json';
 
 type GiftHeaderCardProps = {
   url?: string;
@@ -10,19 +7,19 @@ type GiftHeaderCardProps = {
 };
 
 export const GiftHeaderCard = (props: GiftHeaderCardProps) => {
-  const { url, name } = props;
+  const { url } = props;
 
-  const hideHeader = Boolean(name);
+  // const hideHeader = Boolean(name);
 
   return (
     <article className="bg-dark-blue-500 grid grid-rows-[auto_1fr_auto] rounded-lg overflow-hidden">
-      {hideHeader && (
+      {/* {hideHeader && (
         <header className="flex gap-1 items-center px-1 mb-1 pt-1">
           <Avatar url="/assets/images/leaders/avatar.webp" className="size-3" />
 
           <h5 className="text-six">{name}</h5>
         </header>
-      )}
+      )} */}
 
       {url ? (
         <div className="relative pb-[100%] mb-1">

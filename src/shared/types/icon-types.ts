@@ -6,13 +6,16 @@ export type IconNamesType =
   | 'cross'
   | 'home'
   | 'plus'
+  | 'info'
   | 'user'
+  | 'share'
   | 'rocket'
   | 'check'
   | 'trophy'
   | 'loader'
   | 'question'
   | 'user-group'
+  | 'chevron-left'
   | 'spin-arrow-bottom';
 
 export type IconComponentType = FunctionComponent<IconProps>;

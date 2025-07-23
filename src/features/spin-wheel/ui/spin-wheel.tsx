@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Application } from '@pixi/react';
 import * as PIXI from 'pixi.js';
-import { type GetLobbyQuery } from '@/shared/api/graphql/graphql';
+import { LobbyStatus, type GetLobbyQuery } from '@/shared/api/graphql/graphql';
 import { Icons } from '@/shared/ui/icons/icons';
 import { HtmlAvatar } from './components/html-avatar';
 
@@ -21,23 +21,56 @@ interface WheelSegment {
 }
 
 interface SpinWheelProps {
-  isSpinning?: boolean;
   phaseText?: string;
-  phaseLabel?: string;
+  isSpinning?: boolean;
+  gamePhase: LobbyStatus;
   targetRotation?: number;
   segments: WheelSegment[];
   hasEnoughPlayers?: boolean;
   lobby: GetLobbyQuery['lobby'];
 }
 
-export const SpinWheel: React.FC<SpinWheelProps> = ({
-  segments,
-  isSpinning = false,
-  targetRotation = 0,
-  phaseText = '60 сек',
-  phaseLabel = 'Начало через :',
-  hasEnoughPlayers = true,
-}) => {
+// Функция для форматирования времени в формат "00:XX"
+const formatTimer = (text: string): string => {
+  // Ищем число в тексте (например, "60 сек" -> "60")
+  const match = text.match(/(\d+)/);
+  if (match) {
+    const seconds = parseInt(match[1], 10);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
+      .toString()
+      .padStart(2, '0')}`;
+  }
+
+  // Если текст "Ищем победителя" или подобный, показываем "00:00"
+  if (
+    text.includes('победител') ||
+    text.includes('Ищем') ||
+    text === 'Выиграл'
+  ) {
+    return '00:00';
+  }
+
+  // Если это уже в формате времени, возвращаем как есть
+  if (text.match(/^\d{2}:\d{2}$/)) {
+    return text;
+  }
+
+  // Для всех остальных случаев возвращаем "00:00"
+  return '00:00';
+};
+
+export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
+  const {
+    segments,
+    gamePhase,
+    isSpinning = false,
+    targetRotation = 0,
+    phaseText = '60 сек',
+    hasEnoughPlayers = true,
+  } = props;
+
   const radius = 162;
   const sizes = 324;
 
@@ -122,14 +155,39 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
   const drawWheel = useCallback((g: PIXI.Graphics) => {
     g.clear();
 
-    // Add center circle
-    g.beginFill(0x273c56);
-    g.lineStyle(15, 0x1d232a);
-    g.drawCircle(0, 0, 70);
+    // Add center ring (кольцо с отверстием)
+    const centerOuterRadius = 70;
+    const centerInnerRadius = 35; // Половина от внешнего радиуса
+
+    g.beginFill(0x10151a, 0);
+
+    // Рисуем кольцо через построение пути
+    const segments = 32;
+
+    // Внешний контур
+    for (let i = 0; i <= segments; i++) {
+      const angle = (i / segments) * Math.PI * 2;
+      const x = Math.cos(angle) * centerOuterRadius;
+      const y = Math.sin(angle) * centerOuterRadius;
+
+      if (i === 0) {
+        g.moveTo(x, y);
+      } else {
+        g.lineTo(x, y);
+      }
+    }
+
+    // Внутренний контур (в обратном направлении для создания отверстия)
+    for (let i = segments; i >= 0; i--) {
+      const angle = (i / segments) * Math.PI * 2;
+      const x = Math.cos(angle) * centerInnerRadius;
+      const y = Math.sin(angle) * centerInnerRadius;
+      g.lineTo(x, y);
+    }
+
+    g.closePath();
     g.endFill();
   }, []);
-
-  // Удаляем drawAvatar - теперь используем HTML аватары
 
   return (
     <div className="flex flex-col items-center">
@@ -140,39 +198,82 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
           width={sizes}
           height={sizes}
           backgroundAlpha={0}
-          resolution={window.devicePixelRatio || 1}
-          className={`${!hasEnoughPlayers ? 'opacity-60' : ''}`}>
-          {/* Wheel */}
+          resolution={window.devicePixelRatio || 1}>
           <pixiContainer x={sizes / 2} y={sizes / 2}>
             <pixiContainer rotation={internalRotation}>
               {segmentsWithAngles.length === 0 || !hasEnoughPlayers ? (
                 <pixiGraphics
                   draw={(g: PIXI.Graphics) => {
                     g.clear();
-                    g.fill(0x374151);
-                    g.setStrokeStyle({
-                      width: 3,
-                      color: 0x6b7280,
-                    });
-                    g.circle(0, 0, radius);
-                    g.fill();
+
+                    const outerRadius = radius;
+                    const innerRadius = radius / 2;
+
+                    // Рисуем кольцо через построение пути
+                    g.beginFill(0xffffff, 0.1);
+
+                    // Строим путь для кольца
+                    const segments = 32;
+
+                    // Внешний контур
+                    for (let i = 0; i <= segments; i++) {
+                      const angle = (i / segments) * Math.PI * 2;
+                      const x = Math.cos(angle) * outerRadius;
+                      const y = Math.sin(angle) * outerRadius;
+
+                      if (i === 0) {
+                        g.moveTo(x, y);
+                      } else {
+                        g.lineTo(x, y);
+                      }
+                    }
+
+                    // Внутренний контур (в обратном направлении для создания отверстия)
+                    for (let i = segments; i >= 0; i--) {
+                      const angle = (i / segments) * Math.PI * 2;
+                      const x = Math.cos(angle) * innerRadius;
+                      const y = Math.sin(angle) * innerRadius;
+                      g.lineTo(x, y);
+                    }
+
+                    g.closePath();
+                    g.endFill();
                   }}
                 />
               ) : (
-                segmentsWithAngles.map((segment) => {
+                segmentsWithAngles.map((segment, index) => {
                   const startAngleDeg = (segment.startAngle * 180) / Math.PI;
                   const endAngleDeg = (segment.endAngle * 180) / Math.PI;
+
+                  // Массив цветов для сегментов
+
+                  const segmentColor =
+                    segmentColors[index % segmentColors.length];
+
                   return (
-                    <WedgeIcon
-                      x={0}
-                      y={0}
-                      key={segment.id}
-                      innerRadius={25}
-                      color={0x2d353f}
-                      outerRadius={radius}
-                      endAngle={endAngleDeg}
-                      startAngle={startAngleDeg}
-                    />
+                    <pixiContainer key={segment.id}>
+                      {/* Тень сегмента */}
+                      <WedgeIcon
+                        x={2}
+                        y={2}
+                        innerRadius={70}
+                        color={segmentColor}
+                        outerRadius={radius}
+                        endAngle={endAngleDeg}
+                        startAngle={startAngleDeg}
+                        alpha={0.3}
+                      />
+                      {/* Основной сегмент */}
+                      <WedgeIcon
+                        x={0}
+                        y={0}
+                        innerRadius={70}
+                        color={segmentColor}
+                        outerRadius={radius}
+                        endAngle={endAngleDeg}
+                        startAngle={startAngleDeg}
+                      />
+                    </pixiContainer>
                   );
                 })
               )}
@@ -182,7 +283,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
 
             <pixiContainer>
               <pixiGraphics draw={drawWheel} />
-              <pixiText
+              {/* <pixiText
                 x={0}
                 y={-20}
                 anchor={0.5}
@@ -194,17 +295,32 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
                     fontWeight: '500',
                   })
                 }
-              />
+              /> */}
               <pixiText
                 x={0}
-                y={15}
+                y={0}
                 anchor={0.5}
-                text={phaseText}
+                text={formatTimer(phaseText)}
                 style={
                   new PIXI.TextStyle({
-                    fontSize: 20,
-                    fill: 0xffffff,
-                    fontWeight: '500',
+                    fontSize: [
+                      LobbyStatus.InProcess,
+                      LobbyStatus.WaitingForPlayers,
+                    ].includes(gamePhase)
+                      ? 16
+                      : 32,
+                    fill: [
+                      LobbyStatus.InProcess,
+                      LobbyStatus.WaitingForPlayers,
+                    ].includes(gamePhase)
+                      ? 0x808080
+                      : 0xffffff,
+                    fontWeight: [
+                      LobbyStatus.InProcess,
+                      LobbyStatus.WaitingForPlayers,
+                    ].includes(gamePhase)
+                      ? '400'
+                      : '700',
                   })
                 }
               />
@@ -215,8 +331,8 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
         {/* HTML аватары поверх canvas */}
         {segmentsWithAngles.map((segment) => {
           const midAngle = (segment.startAngle + segment.endAngle) / 2;
-          // Размещаем аватары в серой области между внутренним кругом (70) и внешним краем (162)
-          const labelRadius = radius * 0.75; // 121px - посередине между 70 и 162
+          // Размещаем аватары в области сегментов между внутренним кругом (70) и внешним краем (162)
+          const labelRadius = (70 + radius) / 2; // 116px - посередине между 70 и 162
 
           // Координаты аватаров
           const x = Math.cos(midAngle) * labelRadius;
@@ -226,18 +342,18 @@ export const SpinWheel: React.FC<SpinWheelProps> = ({
             <HtmlAvatar
               x={x}
               y={y}
-              key={`html-avatar-${segment.id}`}
-              src={segment.userImage || ''}
-              playerName={segment.playerName}
-              rotation={internalRotation}
               containerSize={sizes}
+              rotation={internalRotation}
+              src={segment.userImage || ''}
+              key={`html-avatar-${segment.id}`}
+              playerName={segment.playerName}
             />
           );
         })}
 
         <Icons
           name="spin-arrow-bottom"
-          className="absolute -top-8 left-1/2 -translate-x-1/2"
+          className="absolute -top-4 left-1/2 -translate-x-1/2"
         />
       </div>
     </div>
@@ -252,6 +368,7 @@ interface AnnularSectorProps {
   color?: number;
   x?: number;
   y?: number;
+  alpha?: number;
 }
 
 const WedgeIcon = ({
@@ -262,6 +379,7 @@ const WedgeIcon = ({
   innerRadius,
   outerRadius,
   color = 0xff9900,
+  alpha = 1,
 }: AnnularSectorProps) => {
   const toRadians = (deg: number) => (deg * Math.PI) / 180;
 
@@ -274,32 +392,23 @@ const WedgeIcon = ({
     const cy = y;
 
     // Рисуем заливку сегмента
-    g.beginFill(color);
+    g.beginFill(color, alpha);
     g.moveTo(cx + Math.cos(sa) * outerRadius, cy + Math.sin(sa) * outerRadius);
     g.arc(cx, cy, outerRadius, sa, ea);
     g.lineTo(cx + Math.cos(ea) * innerRadius, cy + Math.sin(ea) * innerRadius);
     g.arc(cx, cy, innerRadius, ea, sa, true);
     g.closePath();
     g.endFill();
-
-    // Рисуем границы сегмента
-    g.lineStyle(2, 0x4a5568, 0.8); // Граница с прозрачностью
-
-    // Внешняя дуга
-    g.moveTo(cx + Math.cos(sa) * outerRadius, cy + Math.sin(sa) * outerRadius);
-    g.arc(cx, cy, outerRadius, sa, ea);
-
-    // Внутренняя дуга
-    g.moveTo(cx + Math.cos(sa) * innerRadius, cy + Math.sin(sa) * innerRadius);
-    g.arc(cx, cy, innerRadius, sa, ea);
-
-    // Радиальные линии (границы сегментов)
-    g.moveTo(cx + Math.cos(sa) * outerRadius, cy + Math.sin(sa) * outerRadius);
-    g.lineTo(cx + Math.cos(sa) * innerRadius, cy + Math.sin(sa) * innerRadius);
-
-    g.moveTo(cx + Math.cos(ea) * outerRadius, cy + Math.sin(ea) * outerRadius);
-    g.lineTo(cx + Math.cos(ea) * innerRadius, cy + Math.sin(ea) * innerRadius);
   };
 
   return <pixiGraphics draw={draw} />;
 };
+
+const segmentColors = [
+  0xc49cff, // #C49CFF - фиолетовый
+  0xff86c8, // #FF86C8 - розовый
+  0x7ef29d, // #7EF29D - зеленый
+  0x33e1e4, // #33E1E4 - голубой
+  0xff8e8e, // #FF8E8E - красный
+  0x78d9ff, // #78D9FF - синий
+];

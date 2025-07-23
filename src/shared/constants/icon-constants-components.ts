@@ -11,12 +11,18 @@ import Ton from '@/shared/assets/icons/ton.svg?react';
 import Trophy from '@/shared/assets/icons/trophy.svg?react';
 import UserGroup from '@/shared/assets/icons/user-group.svg?react';
 import User from '@/shared/assets/icons/user.svg?react';
+import ChevronLeft from '@/shared/assets/icons/chevron-left.svg?react';
+
+import Share from '@/shared/assets/icons/share.svg?react';
+import Info from '@/shared/assets/icons/info.svg?react';
 
 import type { IconComponentType, IconNamesType } from '../types/icon-types';
 
 export const ICON_COMPONENTS: Record<IconNamesType, IconComponentType> = {
   box: Box,
   ton: Ton,
+  info: Info,
+  share: Share,
   user: User,
   plus: Plus,
   home: Home,
@@ -27,5 +33,6 @@ export const ICON_COMPONENTS: Record<IconNamesType, IconComponentType> = {
   trophy: Trophy,
   question: Question,
   'user-group': UserGroup,
+  'chevron-left': ChevronLeft,
   'spin-arrow-bottom': SpinArrowBottom,
 };
