@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { LobbyStatus, type GetLobbyQuery } from '@/shared/api/graphql/graphql';
 
 interface WheelSegment {
@@ -40,6 +40,40 @@ interface SpinWheelProps {
 }
 
 export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
+  // Реф для отслеживания предыдущего сегмента (для звука)
+  const previousSegmentRef = useRef<number>(-1);
+
+  // Функция воспроизведения звука клика
+  const playClickSound = useCallback(() => {
+    try {
+      const audio = new Audio('/assets/audio/cs-spin.wav');
+      audio.volume = 0.3; // Уменьшаем громкость
+      audio.play().catch((e) => console.log('Audio play failed:', e));
+    } catch (e) {
+      console.log('Audio creation failed:', e);
+    }
+  }, []);
+
+  // Функция для определения текущего сегмента по углу поворота
+  const getCurrentSegment = useCallback(
+    (rotation: number, segmentsCount: number) => {
+      if (segmentsCount === 0) return -1;
+
+      // Нормализуем угол к положительному значению
+      const normalizedRotation =
+        ((rotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+
+      // Размер каждого сегмента в радианах
+      const segmentSize = (Math.PI * 2) / segmentsCount;
+
+      // Определяем текущий сегмент (стрелка указывает вверх)
+      const currentSegment = Math.floor(normalizedRotation / segmentSize);
+
+      return currentSegment;
+    },
+    [],
+  );
+
   // Функция для расчета актуального countdown на основе countdownExpiresAt
   const calculateActualCountdown = useCallback(() => {
     // ВСЕГДА используем countdownExpiresAt для точного расчета если он есть
@@ -313,6 +347,9 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
   const startEternalSpin = useCallback(() => {
     if (!state.gameStarted) return;
 
+    // Сбрасываем предыдущий сегмент при начале нового спиннинга
+    previousSegmentRef.current = -1;
+
     setState((prev) => ({
       ...prev,
       gamePhase: LobbyStatus.InProcess,
@@ -354,6 +391,9 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
   const startGame = useCallback(() => {
     if (!state.hasEnoughPlayers || state.gameStarted) return;
 
+    // Сбрасываем предыдущий сегмент при начале новой игры
+    previousSegmentRef.current = -1;
+
     setState((prev) => ({
       ...prev,
       gameStarted: true,
@@ -368,10 +408,31 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
 
     if (state.isEternalSpinning) {
       const animate = () => {
-        setState((prev) => ({
-          ...prev,
-          rotation: prev.rotation + 0.1, // Плавное бесконечное вращение
-        }));
+        setState((prev) => {
+          const newRotation = prev.rotation + 0.1;
+
+          // Проверяем пересечение границ сегментов для звука
+          const segmentsCount = state.segments.length;
+          if (segmentsCount > 0) {
+            const currentSegment = getCurrentSegment(
+              newRotation,
+              segmentsCount,
+            );
+            const previousSegment = previousSegmentRef.current;
+
+            // Если сегмент изменился, воспроизводим звук
+            if (currentSegment !== previousSegment && previousSegment !== -1) {
+              playClickSound();
+            }
+
+            previousSegmentRef.current = currentSegment;
+          }
+
+          return {
+            ...prev,
+            rotation: newRotation,
+          };
+        });
         animationFrame = requestAnimationFrame(animate);
       };
       animationFrame = requestAnimationFrame(animate);
@@ -390,10 +451,29 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
         const currentRotation =
           startRotation + (targetRotation - startRotation) * easeOutQuart;
 
-        setState((prev) => ({
-          ...prev,
-          rotation: currentRotation,
-        }));
+        setState((prev) => {
+          // Проверяем пересечение границ сегментов для звука в фазе замедления
+          const segmentsCount = state.segments.length;
+          if (segmentsCount > 0) {
+            const currentSegment = getCurrentSegment(
+              currentRotation,
+              segmentsCount,
+            );
+            const previousSegment = previousSegmentRef.current;
+
+            // Если сегмент изменился, воспроизводим звук
+            if (currentSegment !== previousSegment && previousSegment !== -1) {
+              playClickSound();
+            }
+
+            previousSegmentRef.current = currentSegment;
+          }
+
+          return {
+            ...prev,
+            rotation: currentRotation,
+          };
+        });
 
         if (progress < 1) {
           animationFrame = requestAnimationFrame(animate);
@@ -415,10 +495,29 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
         const currentRotation =
           startRotation + (targetRotation - startRotation) * easeOutCubic;
 
-        setState((prev) => ({
-          ...prev,
-          rotation: currentRotation,
-        }));
+        setState((prev) => {
+          // Проверяем пересечение границ сегментов для звука в финальной фазе
+          const segmentsCount = state.segments.length;
+          if (segmentsCount > 0) {
+            const currentSegment = getCurrentSegment(
+              currentRotation,
+              segmentsCount,
+            );
+            const previousSegment = previousSegmentRef.current;
+
+            // Если сегмент изменился, воспроизводим звук
+            if (currentSegment !== previousSegment && previousSegment !== -1) {
+              playClickSound();
+            }
+
+            previousSegmentRef.current = currentSegment;
+          }
+
+          return {
+            ...prev,
+            rotation: currentRotation,
+          };
+        });
 
         if (progress < 1) {
           animationFrame = requestAnimationFrame(animate);
@@ -438,6 +537,9 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
     state.isSlowingDown,
     state.isSpinning,
     state.targetRotation,
+    state.segments.length,
+    getCurrentSegment,
+    playClickSound,
   ]);
 
   // Автоматическая остановка вращения при наличии победителя

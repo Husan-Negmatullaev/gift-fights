@@ -30,8 +30,16 @@ interface SpinWheelProps {
   lobby: GetLobbyQuery['lobby'];
 }
 
-// Функция для форматирования времени в формат "00:XX"
+// Функция для форматирования времени в формат "00:XX" только для таймеров
 const formatTimer = (text: string): string => {
+  // Проверяем, является ли текст таймером (содержит число + "сек" или уже в формате времени)
+  const isTimer = text.match(/(\d+)\s*сек/) || text.match(/^\d{2}:\d{2}$/);
+
+  if (!isTimer) {
+    // Если это не таймер, возвращаем оригинальный текст
+    return text;
+  }
+
   // Ищем число в тексте (например, "60 сек" -> "60")
   const match = text.match(/(\d+)/);
   if (match) {
@@ -43,22 +51,13 @@ const formatTimer = (text: string): string => {
       .padStart(2, '0')}`;
   }
 
-  // Если текст "Ищем победителя" или подобный, показываем "00:00"
-  if (
-    text.includes('победител') ||
-    text.includes('Ищем') ||
-    text === 'Выиграл'
-  ) {
-    return '00:00';
-  }
-
   // Если это уже в формате времени, возвращаем как есть
   if (text.match(/^\d{2}:\d{2}$/)) {
     return text;
   }
 
-  // Для всех остальных случаев возвращаем "00:00"
-  return '00:00';
+  // Для всех остальных случаев возвращаем оригинальный текст
+  return text;
 };
 
 export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
@@ -68,11 +67,10 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
     isSpinning = false,
     targetRotation = 0,
     phaseText = '60 сек',
-    hasEnoughPlayers = true,
   } = props;
 
   const radius = 162;
-  const sizes = 324;
+  const sizes = 324 + 25;
 
   const animationRef = useRef<number | null>(null);
   const [internalRotation, setInternalRotation] = useState(0);
@@ -201,7 +199,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
           resolution={window.devicePixelRatio || 1}>
           <pixiContainer x={sizes / 2} y={sizes / 2}>
             <pixiContainer rotation={internalRotation}>
-              {segmentsWithAngles.length === 0 || !hasEnoughPlayers ? (
+              {segmentsWithAngles.length === 0 ? (
                 <pixiGraphics
                   draw={(g: PIXI.Graphics) => {
                     g.clear();
@@ -246,32 +244,89 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
                   const endAngleDeg = (segment.endAngle * 180) / Math.PI;
 
                   // Массив цветов для сегментов
-
                   const segmentColor =
                     segmentColors[index % segmentColors.length];
 
+                  // Создаем blur фильтр для тени
+                  const blurFilter = new PIXI.BlurFilter(6, 4); // blur-radius = 6
+
                   return (
                     <pixiContainer key={segment.id}>
-                      {/* Тень сегмента */}
-                      <WedgeIcon
-                        x={2}
-                        y={2}
-                        innerRadius={70}
-                        color={segmentColor}
-                        outerRadius={radius}
-                        endAngle={endAngleDeg}
-                        startAngle={startAngleDeg}
-                        alpha={0.3}
+                      {/* Тень сегмента (под основным) с blur эффектом */}
+                      <pixiGraphics
+                        filters={[blurFilter]}
+                        draw={(g: PIXI.Graphics) => {
+                          g.clear();
+
+                          const sa = (startAngleDeg * Math.PI) / 180;
+                          const ea = (endAngleDeg * Math.PI) / 180;
+                          const cx = 0; // убрали смещение тени
+                          const cy = 0; // убрали смещение тени
+
+                          // Рисуем контур тени вокруг сегмента (темная версия цвета сегмента)
+                          const shadowColor = (() => {
+                            const r = (segmentColor >> 16) & 0xff;
+                            const g = (segmentColor >> 8) & 0xff;
+                            const b = segmentColor & 0xff;
+
+                            // Делаем каждый компонент темнее (умножаем на 0.3)
+                            const darkR = Math.floor(r * 0.3);
+                            const darkG = Math.floor(g * 0.3);
+                            const darkB = Math.floor(b * 0.3);
+
+                            return (darkR << 16) | (darkG << 8) | darkB;
+                          })();
+
+                          // Сильный spread эффект - увеличиваем размер тени на 12px
+                          const spreadSize = 12;
+                          const shadowOuterRadius = radius + spreadSize;
+                          const shadowInnerRadius = Math.max(
+                            70 - spreadSize,
+                            35,
+                          ); // не меньше 35px
+
+                          // Рисуем заливку тени с увеличенными размерами
+                          g.beginFill(shadowColor);
+
+                          g.moveTo(
+                            cx + Math.cos(sa) * shadowOuterRadius,
+                            cy + Math.sin(sa) * shadowOuterRadius,
+                          );
+                          g.arc(cx, cy, shadowOuterRadius, sa, ea);
+                          g.lineTo(
+                            cx + Math.cos(ea) * shadowInnerRadius,
+                            cy + Math.sin(ea) * shadowInnerRadius,
+                          );
+                          g.arc(cx, cy, shadowInnerRadius, ea, sa, true);
+                          g.closePath();
+                          g.endFill();
+                        }}
                       />
                       {/* Основной сегмент */}
-                      <WedgeIcon
-                        x={0}
-                        y={0}
-                        innerRadius={70}
-                        color={segmentColor}
-                        outerRadius={radius}
-                        endAngle={endAngleDeg}
-                        startAngle={startAngleDeg}
+                      <pixiGraphics
+                        draw={(g: PIXI.Graphics) => {
+                          g.clear();
+
+                          const sa = (startAngleDeg * Math.PI) / 180;
+                          const ea = (endAngleDeg * Math.PI) / 180;
+                          const cx = 0;
+                          const cy = 0;
+
+                          // Рисуем заливку сегмента
+                          g.beginFill(segmentColor);
+                          g.moveTo(
+                            cx + Math.cos(sa) * radius,
+                            cy + Math.sin(sa) * radius,
+                          );
+                          g.arc(cx, cy, radius, sa, ea);
+                          g.lineTo(
+                            cx + Math.cos(ea) * 70,
+                            cy + Math.sin(ea) * 70,
+                          );
+                          g.arc(cx, cy, 70, ea, sa, true);
+                          g.closePath();
+                          g.endFill();
+                        }}
                       />
                     </pixiContainer>
                   );
@@ -358,50 +413,6 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
       </div>
     </div>
   );
-};
-
-interface AnnularSectorProps {
-  innerRadius: number;
-  outerRadius: number;
-  startAngle: number;
-  endAngle: number;
-  color?: number;
-  x?: number;
-  y?: number;
-  alpha?: number;
-}
-
-const WedgeIcon = ({
-  x = 0,
-  y = 0,
-  endAngle,
-  startAngle,
-  innerRadius,
-  outerRadius,
-  color = 0xff9900,
-  alpha = 1,
-}: AnnularSectorProps) => {
-  const toRadians = (deg: number) => (deg * Math.PI) / 180;
-
-  const draw = (g: PIXI.Graphics) => {
-    g.clear();
-
-    const sa = toRadians(startAngle);
-    const ea = toRadians(endAngle);
-    const cx = x;
-    const cy = y;
-
-    // Рисуем заливку сегмента
-    g.beginFill(color, alpha);
-    g.moveTo(cx + Math.cos(sa) * outerRadius, cy + Math.sin(sa) * outerRadius);
-    g.arc(cx, cy, outerRadius, sa, ea);
-    g.lineTo(cx + Math.cos(ea) * innerRadius, cy + Math.sin(ea) * innerRadius);
-    g.arc(cx, cy, innerRadius, ea, sa, true);
-    g.closePath();
-    g.endFill();
-  };
-
-  return <pixiGraphics draw={draw} />;
 };
 
 const segmentColors = [

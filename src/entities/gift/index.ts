@@ -9,3 +9,6 @@ export { playWinSound } from './utils/gift-sounds';
 export { useGetGifts } from './hooks/use-get-gifts';
 export { useGetWithdrawnGifts } from './hooks/use-get-widthdrawn-gifts';
 export { useWithdrawGifts } from './hooks/use-withdraw-gifts';
+
+export { GIFT_RELAYER_LINK } from './constants/gift-relayer';
+export { GIFT_RELAYER_TEXT } from './constants/gift-relayer';

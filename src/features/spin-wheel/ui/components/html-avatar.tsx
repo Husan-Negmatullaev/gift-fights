@@ -45,7 +45,7 @@ export const HtmlAvatar: React.FC<HtmlAvatarProps> = ({
       <div className="relative w-10 h-10">
         {/* Placeholder с инициалами - показывается всегда, пока не загрузится изображение */}
         <div
-          className={`absolute inset-0 flex items-center justify-center bg-slate-600 rounded-full text-white text-xs font-bold transition-opacity duration-200 ${
+          className={`absolute inset-0 flex items-center justify-center bg-slate-600 rounded-full text-white text-xs font-bold transition-opacity duration-200 border-2 border-white ${
             hasValidSrc && imageLoaded && !imageError
               ? 'opacity-0'
               : 'opacity-100'
@@ -58,7 +58,7 @@ export const HtmlAvatar: React.FC<HtmlAvatarProps> = ({
           <img
             src={src}
             alt={playerName}
-            className={`w-10 h-10 rounded-full object-cover transition-opacity duration-200 ${
+            className={`w-10 h-10 rounded-full object-cover transition-opacity duration-200 border-2 border-white ${
               imageLoaded && !imageError ? 'opacity-100' : 'opacity-0'
             }`}
             onLoad={() => {
