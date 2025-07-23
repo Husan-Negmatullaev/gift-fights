@@ -1,5 +1,6 @@
 import Box from '@/shared/assets/icons/box.svg?react';
 import Check from '@/shared/assets/icons/check.svg?react';
+import Clock from '@/shared/assets/icons/clock.svg?react';
 import Cross from '@/shared/assets/icons/cross.svg?react';
 import Home from '@/shared/assets/icons/home.svg?react';
 import Loader from '@/shared/assets/icons/loader.svg?react';
@@ -28,4 +29,6 @@ export const ICON_COMPONENTS: Record<IconNamesType, IconComponentType> = {
   question: Question,
   'user-group': UserGroup,
   'spin-arrow-bottom': SpinArrowBottom,
+  clock: Clock,
+
 };

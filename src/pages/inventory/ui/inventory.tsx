@@ -4,13 +4,11 @@ import {
 	useGetWithdrawnGifts,
 	useWithdrawGifts,
 } from "@/entities/gift";
-import { useProfileContext } from "@/entities/profile";
 import {
 	useConfirmTransaction,
 	useCreateTransaction,
 	useTonConnect,
 } from "@/entities/ton";
-import { ProfileInformation } from "@/entities/user";
 import { TransactionType } from "@/shared/api/graphql/graphql";
 import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
 import { LoadingSpinner } from "@/shared/components/loading-spinner/loading-spinner";
@@ -79,7 +77,7 @@ interface IFormInput {
 // ];
 
 export const Inventory = () => {
-	const { profile } = useProfileContext();
+	// const { profile } = useProfileContext();
 	const { gifts, refetch, loading } = useGetGifts({
 		take: 25,
 		skip: 0,
@@ -182,12 +180,16 @@ export const Inventory = () => {
 
 	return (
 		<div className="pb-16">
-			<div className="mb-6">
-				<ProfileInformation profile={profile} />
-			</div>
-
 			<div className="px-6 pb-6">
-				<h5 className="font-thin text-tiny/2.5 mb-2">Ваши Gift's:</h5>
+				{filteredBlockedGifts.length > 0 && (
+					<div className="flex flex-col justify-between mb-4">
+						<h5 className="font-bold text-[24px]">Ваши Gift's:</h5>
+						<p className="text-[#A8A8A8]">
+							Выберите подарки, которые хотите вывести. Комиссия за вывод 20% от
+							суммы.
+						</p>
+					</div>
+				)}
 
 				<ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
 					{filteredPendingWithdrawnGifts.map((gift) => (
@@ -214,6 +216,7 @@ export const Inventory = () => {
 								slug={gift.slug}
 								title={gift.title}
 								price={gift.price}
+								id={Number(gift.msgId)}
 								// status={gift.status}
 								checkbox={{
 									value: gift.id,
@@ -232,23 +235,33 @@ export const Inventory = () => {
 				)}
 				<div
 					aria-busy={loading}
-					className="aria-busy:hidden peer-empty:block hidden"
+					className="aria-busy:hidden peer-empty:block hidden text-center"
 				>
-					<p className="text-center font-medium text-lg">
-						Вы можете отправить ваш гифт на аккаунт{" "}
+					<img
+						className="w-80 h-80 mx-auto"
+						src={"assets/images/empty_chest.png"}
+						alt=""
+					/>
+					<p className=" font-bold text-lg">Инвентарь пуст</p>
+					<p className="font-regular text-lg text-[#A8A8A8]">
+						{"Хотите начать игру?"}
+						<br />
+						{"Отправь NFT подарок "}
 						<a
 							target="_blank"
 							rel="noopener noreferrer"
 							className="text-blue-100 underline"
 							href="https://t.me/labs_relayer"
 						>
-							@labs_relayer
+							@labs_relayer,
 						</a>
+						<br />
+						{" и начните битву"}
 					</p>
 				</div>
 			</div>
 
-			{!open && (
+			{!open && filteredBlockedGifts.length > 0 && (
 				<div className="fixed w-full bottom-safe-app-bottom left-1/2 -translate-x-1/2 px-6 pb-4.5">
 					<BottomButton
 						withShadow

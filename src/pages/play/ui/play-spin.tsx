@@ -263,7 +263,7 @@ export const PlaySpin = () => {
                       {Math.min(
                         (participant.amount / totalAmount) * 100,
                         100,
-                      ).toFixed(0)}
+                      ).toFixed(2)}
                       %
                     </div>
                   </div>

@@ -19,7 +19,11 @@ export const Avatar = (props: AvatarProps) => {
 				"rounded-full overflow-hidden",
 			)}
 		>
-			<img src={url} alt="user avatar" className="size-full" />
+			<img
+				src={url}
+				alt="user avatar"
+				className="size-full border border-[#494A4A] border-[2.5px] rounded-full"
+			/>
 		</div>
 	);
 };

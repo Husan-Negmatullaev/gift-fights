@@ -13,7 +13,8 @@ export type IconNamesType =
   | 'loader'
   | 'question'
   | 'user-group'
-  | 'spin-arrow-bottom';
+  | 'spin-arrow-bottom'
+  | 'clock';
 
 export type IconComponentType = FunctionComponent<IconProps>;
 

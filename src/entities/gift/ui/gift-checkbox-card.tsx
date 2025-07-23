@@ -15,10 +15,11 @@ type GiftCheckboxCardProps = {
 	title: string;
 	price: number;
 	status?: string;
+	id: number;
 };
 
 export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
-	const { className, size, checkbox, slug, title, price, status } = props;
+	const { className, size, checkbox, slug, title, price, status, id } = props;
 
 	const giftUrl = `https://nft.fragment.com/gift/${slug}.lottie.json`;
 
@@ -47,20 +48,30 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
 		);
 	}
 	return (
-		<div className="relative group">
+		<div className="relative group rounded-2xl overflow-hidden">
 			<article
 				className={clsx(
 					className,
 					GIFT_SIZES[size].card,
-					"bg-dark-blue-50 text-white rounded-four has-checked:bg-dark-blue-650 transition-colors",
+					"has-checked:bg-[#1ACAFF31] text-white has-checked:border-[#1AC9FF] has-checked:border-[2px] transition-colors rounded-2xl overflow-hidden border border-[#FFFFFF66] border-[2px]",
+
 					// blocked && 'opacity-50 grayscale cursor-not-allowed',
 				)}
+				style={{ padding: 0, paddingBottom: 8 }}
 			>
-				<div className={clsx(GIFT_SIZES[size].image, "relative")}>
-					<TouchableLottie animation={animationData} className="size-38.5" />
+				<div
+					className={clsx(
+						GIFT_SIZES[size].image,
+						"relative rounded-t-[14px] rounded-b-[8px] overflow-hidden",
+					)}
+				>
+					<TouchableLottie
+						animation={animationData}
+						className="size-42.5 rounded-t-[14px] rounded-b-[8px] z-0 "
+					/>
 					<Checkbox
 						variant="bordered"
-						wrapperClassName="absolute -top-1.5 -right-1.5"
+						wrapperClassName="absolute top-2 left-2"
 						// disabled={blocked}
 						{...checkbox}
 					/>
@@ -74,24 +85,29 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
 					className={clsx(
 						GIFT_SIZES[size].title,
 						GIFT_SIZES[size].header,
-						"flex items-center justify-between font-medium",
+						"flex items-center justify-between font-medium px-2",
 					)}
 				>
 					<h5>{title}</h5>
+					<h5>#{id}</h5>
 					{/* <p>#{slug}</p> */}
 				</header>
-				<button
-					type="button"
-					// disabled={blocked}
-					className={clsx(
-						GIFT_SIZES[size].button,
-						"cursor-pointer font-medium flex items-center justify-center bg-blue w-full",
-						// blocked && 'opacity-50 cursor-not-allowed bg-gray-500',
-					)}
-				>
-					<Icons name="ton" className="size-5" />
-					<span>{price}</span>
-				</button>
+				<div className="px-2">
+					<button
+						type="button"
+						// disabled={blocked}
+						className={clsx(
+							// GIFT_SIZES[size].button,
+							"cursor-pointer font-medium flex items-center justify-center bg-[#FFFFFF1A] w-full rounded-xl border border-[#FFFFFF14] backdrop-blur-[20px] py-[6px] gap-1",
+							// blocked && 'opacity-50 cursor-not-allowed bg-gray-500',
+						)}
+					>
+						<span>{price}</span>
+						<div className="flex items-center justify-center bg-[#0098EA] rounded-full w-4 h-4">
+							<Icons name="ton" className="size-4" />
+						</div>
+					</button>
+				</div>
 			</article>
 		</div>
 	);
