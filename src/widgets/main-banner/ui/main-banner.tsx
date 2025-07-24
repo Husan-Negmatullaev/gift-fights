@@ -1,14 +1,22 @@
-import type { Quest } from "@/shared/api/graphql/graphql";
+import type { Quest, QuestUser } from "@/shared/api/graphql/graphql";
 import { Icons } from "@/shared/ui/icons/icons";
+
+// Custom hook for countdown timer
 
 export const MainBanner = ({
 	onOpenModal,
 	quests,
+	questUser,
+	countdownTime,
 }: {
 	onOpenModal: () => void;
 	quests: Quest[];
+	questUser: QuestUser[];
+	countdownTime: string;
 }) => {
 	const currentQuest = quests[0];
+	const currentQuestUser = questUser?.[0];
+
 	// const {
 	// 	claimReward,
 	// 	loading: claimRewardLoading,
@@ -39,7 +47,7 @@ export const MainBanner = ({
 				>
 					<div className="flex items-center gap-1 mr-2 ml-2">
 						<Icons name="clock" className="w-[18px] h-[18px] text-black" />
-						<p className="text-[18px] font-bold text-black">22:12:45</p>
+						<p className="text-[18px] font-bold text-black">{countdownTime}</p>
 					</div>
 					<button
 						onClick={onOpenModal}

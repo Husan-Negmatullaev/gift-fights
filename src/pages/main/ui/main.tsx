@@ -1,15 +1,15 @@
 import { lobbyImagesByBets, useGetLobbies } from "@/entities/lobby";
-import { useGetQuests } from "@/entities/quest";
+import { useGetQuests, useGetQuestUsers } from "@/entities/quest";
 
 import { useTelegram } from "@/entities/telegram";
-import { LobbyStatus } from "@/shared/api/graphql/graphql";
+import { LobbyStatus, type QuestUser } from "@/shared/api/graphql/graphql";
 import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
 import { LoadingSpinner } from "@/shared/components/loading-spinner/loading-spinner";
 import { Icons } from "@/shared/ui/icons/icons";
 import { Modal } from "@/shared/ui/modal/modal";
 import { LiveWinners } from "@/widgets/live-winners";
 import { MainBanner } from "@/widgets/main-banner";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
 function getLobbyBetKey(
@@ -38,14 +38,14 @@ function getLobbyBetKey(
 
 export const Main = () => {
 	const [open, setOpen] = useState(false);
-
+	const [subscribeClicked, setSubscribeClicked] = useState(false);
 	const { lobbies, loading } = useGetLobbies(15, 0, [
 		LobbyStatus.Countdown,
 		LobbyStatus.InProcess,
 		LobbyStatus.WaitingForPlayers,
 	]);
 	const { quests } = useGetQuests({ take: 10, skip: 0 });
-
+	const { questUsers } = useGetQuestUsers({ take: 1, skip: 0 });
 	const handleToggleModal = () => {
 		setOpen((prev) => !prev);
 	};
@@ -57,10 +57,62 @@ export const Main = () => {
 		);
 	}
 	const tg = useTelegram();
+	const useCountdownTimer = (lastReset: string | null | undefined) => {
+		const [timeLeft, setTimeLeft] = useState<string>("00:00:00");
+
+		useEffect(() => {
+			if (!lastReset) {
+				setTimeLeft("00:00:00");
+				return;
+			}
+
+			const calculateTimeLeft = () => {
+				const now = new Date().getTime();
+				const resetTime = new Date(lastReset).getTime();
+
+				// Assuming the quest resets every 24 hours (86400000 ms)
+				const resetInterval = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+				const nextReset = resetTime + resetInterval;
+				const difference = nextReset - now;
+
+				if (difference <= 0) {
+					setTimeLeft("00:00:00");
+					return;
+				}
+
+				const hours = Math.floor(difference / (1000 * 60 * 60));
+				const minutes = Math.floor(
+					(difference % (1000 * 60 * 60)) / (1000 * 60),
+				);
+				const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+				const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
+					.toString()
+					.padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+				setTimeLeft(formattedTime);
+			};
+
+			// Calculate immediately
+			calculateTimeLeft();
+
+			// Update every second
+			const interval = setInterval(calculateTimeLeft, 1000);
+
+			return () => clearInterval(interval);
+		}, [lastReset]);
+
+		return timeLeft;
+	};
+	const countdownTime = useCountdownTimer(questUsers?.[0]?.lastReset);
 	return (
 		<div>
 			<LiveWinners />
-			<MainBanner onOpenModal={handleToggleModal} quests={quests} />
+			<MainBanner
+				onOpenModal={handleToggleModal}
+				quests={quests}
+				questUser={questUsers as QuestUser[]}
+				countdownTime={countdownTime}
+			/>
 			<div className="px-6 mb-4">
 				<p className="font-bold text-[24px]">Лобби</p>
 				<p className="text-[#A8A8A8] text-[16px] font-regular">
@@ -138,12 +190,16 @@ export const Main = () => {
 					<p className="text-[#A8A8A8] text-xs mt-2 mb-6">{"0.5 TON"}</p>
 					<button className="bg-[#FFCA38] text-black text-sm font-bold px-2 py-1 rounded-lg flex items-center gap-2 mb-4">
 						<Icons name="clock" className="w-[10px] h-[10px] text-[#1D1D1D]" />
-						22:12:45
+						{countdownTime}
 					</button>
 
 					<BottomButton
 						withShadow
-						content={"Подписаться"}
+						content={
+							subscribeClicked || questUsers?.[0]?.completed
+								? "Забрать"
+								: "Подписаться"
+						}
 						className="px-4 mt-4 w-full"
 						onClick={() => {
 							tg.openTelegramLink(
