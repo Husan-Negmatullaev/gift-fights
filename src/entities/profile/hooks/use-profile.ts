@@ -26,10 +26,33 @@ const PROFILE = graphql(`
         image
       }
       withdrawnGifts {
+        status
+        transactionId
+        userId
+        giftId
+      }
+      gifts {
         id
-        slug
-        price
         title
+        slug
+        model
+        symbol
+        background
+        blocked
+        withdrawn
+        withdrawable
+        place
+        isReward
+        rewardWasTransferred
+        price
+        symbolPermille
+        rarityPermille
+        backgroundPermille
+        msgId
+        externalId
+        userId
+        createdAt
+        updatedAt
       }
     }
   }

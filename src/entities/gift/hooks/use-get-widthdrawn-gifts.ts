@@ -8,11 +8,10 @@ import { useQuery } from '@apollo/client';
 const GET_WITHDRAWN_GIFTS_QUERY = graphql(`
   query WithdrawnGifts($take: Int!, $skip: Int!) {
     withdrawnGifts(take: $take, skip: $skip) {
-      id
-      slug
-      title
-      price
       status
+      transactionId
+      userId
+      giftId
     }
   }
 `);

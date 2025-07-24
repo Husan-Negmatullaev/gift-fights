@@ -129,7 +129,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 			reward: rewards?.find((reward) => reward.place === Place.Third) ?? null,
 			leaderboard: leaders[2]?.user ?? null,
 			position: {
-				top: "90px",
+				top: "80px",
 				left: 100,
 			},
 		},

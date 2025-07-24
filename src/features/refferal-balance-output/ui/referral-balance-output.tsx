@@ -46,7 +46,7 @@ export const ReferralBalanceOutput = () => {
 			});
 	};
 
-	const bonuses = profile.bonuses;
+	const bonuses = profile?.bonuses || 0;
 
 	function isTelegramWebApp() {
 		return typeof window !== "undefined" && !!window.Telegram?.WebApp;
@@ -92,7 +92,9 @@ export const ReferralBalanceOutput = () => {
 					</div>
 					<div className="flex justify-between mt-1">
 						<p className="text-sm text-[#A8A8A8]">Мин. сумма: {1} TON</p>
-						<p className="text-sm text-white">Баланс: {profile.balance} TON</p>
+						<p className="text-sm text-white">
+							Баланс: {profile?.balance || 0} TON
+						</p>
 					</div>
 					<button
 						type="button"

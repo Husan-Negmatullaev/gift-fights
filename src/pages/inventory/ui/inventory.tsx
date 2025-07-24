@@ -1,9 +1,9 @@
 import {
 	GiftCheckboxCard,
-	useGetGifts,
 	useGetWithdrawnGifts,
 	useWithdrawGifts,
 } from "@/entities/gift";
+import { useProfileContext } from "@/entities/profile";
 import {
 	useConfirmTransaction,
 	useCreateTransaction,
@@ -77,10 +77,12 @@ interface IFormInput {
 // ];
 
 export const Inventory = () => {
-	const { gifts, refetch, loading } = useGetGifts({
-		take: 25,
-		skip: 0,
-	});
+	// const { gifts, refetch, loading } = useGetGifts({
+	// 	take: 25,
+	// 	skip: 0,
+	// });
+	const { profile, refetch, loading } = useProfileContext();
+	const gifts = profile?.gifts;
 	const { data: withdrawnGifts } = useGetWithdrawnGifts(15, 0);
 	// const loading = true;
 	const [open, setOpen] = useState(false);
@@ -191,41 +193,40 @@ export const Inventory = () => {
 				)}
 
 				<ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
-					{filteredPendingWithdrawnGifts.map((gift) => (
-						<li key={gift.id} className="relative h-57">
-							<article
-								className={clsx(
-									"bg-dark-blue-50 text-white rounded-four has-checked:bg-dark-blue-650 transition-colors h-full items-center justify-center relative",
-								)}
-							>
-								<Icons
-									name="loader"
-									className="animate-spin size-8 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+					{filteredBlockedGifts.map((gift) =>
+						!gift.withdrawn ? (
+							<li key={gift.id}>
+								<GiftCheckboxCard
+									size="lg"
+									key={gift.id}
+									slug={gift.slug}
+									title={gift.title}
+									price={gift.price}
+									id={Number(gift.msgId)}
+									// status={gift.status}
+									checkbox={{
+										value: gift.id,
+										...register("gifts", {
+											required: true,
+										}),
+									}}
 								/>
-							</article>
-						</li>
-					))}
-
-					{filteredBlockedGifts.map((gift) => (
-						// {mockGifts.map((gift) => (
-						<li key={gift.id}>
-							<GiftCheckboxCard
-								size="lg"
-								key={gift.id}
-								slug={gift.slug}
-								title={gift.title}
-								price={gift.price}
-								id={Number(gift.msgId)}
-								// status={gift.status}
-								checkbox={{
-									value: gift.id,
-									...register("gifts", {
-										required: true,
-									}),
-								}}
-							/>
-						</li>
-					))}
+							</li>
+						) : (
+							<li key={gift.id} className="relative h-57">
+								<article
+									className={clsx(
+										"bg-dark-blue-50 text-white rounded-four has-checked:bg-dark-blue-650 transition-colors h-full items-center justify-center relative",
+									)}
+								>
+									<Icons
+										name="loader"
+										className="animate-spin size-8 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+									/>
+								</article>
+							</li>
+						),
+					)}
 				</ul>
 				{loading && (
 					<div className="mt-10 mx-auto flex justify-center">

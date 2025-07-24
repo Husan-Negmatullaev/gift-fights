@@ -1,4 +1,4 @@
-import { GiftBorderCard, useGetWithdrawnGifts } from "@/entities/gift";
+import { GiftBorderCard } from "@/entities/gift";
 import { useProfileContext } from "@/entities/profile";
 import { ProfileInformation } from "@/entities/user";
 import { ReferralBalanceOutput } from "@/features/refferal-balance-output";
@@ -12,7 +12,8 @@ type TabType = "profile" | "referrals";
 export const Profile = () => {
 	const { onCopy } = useCopy();
 	const { profile, refetch } = useProfileContext();
-	const { data: withdrawnGifts } = useGetWithdrawnGifts(15, 0);
+	const gifts = profile?.gifts;
+	// const { data: withdrawnGifts } = useGetWithdrawnGifts(15, 0);
 	const [activeTab, setActiveTab] = useState<TabType>("profile");
 
 	useEffect(() => {
@@ -135,14 +136,20 @@ export const Profile = () => {
 							<h2 className="text-lg mb-2 font-bold">Последние выводы</h2>
 
 							<ul className="flex flex-col gap-2 peer">
-								{withdrawnGifts.map((gift) => (
+								{profile.withdrawnGifts.map((gift) => (
 									// {mockWithdrawnGifts.map((gift) => (
-									<li key={gift.id}>
+									<li key={gift.giftId}>
 										<GiftBorderCard
 											size="lg"
-											slug={gift.slug}
-											title={gift.title}
-											price={gift.price}
+											slug={
+												gifts?.find((g) => g.id === gift.giftId)?.slug ?? ""
+											}
+											title={
+												gifts?.find((g) => g.id === gift.giftId)?.title ?? ""
+											}
+											price={
+												gifts?.find((g) => g.id === gift.giftId)?.price ?? 0
+											}
 											status={gift.status}
 										/>
 									</li>
