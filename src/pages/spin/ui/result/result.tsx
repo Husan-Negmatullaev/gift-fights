@@ -1,15 +1,78 @@
-import type { GetLobbyQuery } from '@/shared/api/graphql/graphql';
 import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
 import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
 import { Avatar } from '@/shared/ui/avatar/avatar';
-import { useLocation, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
+import ConfettiExplosion from 'react-confetti-explosion';
+import { shareURL } from '@telegram-apps/sdk-react';
+import { Icons } from '@/shared/ui/icons/icons';
+import { useGetLobby } from '@/entities/lobby';
+import { useEffect, useState } from 'react';
 
 export const Result = () => {
-  const navigation = useLocation();
-  const { winnerId } = useParams();
+  const navigate = useNavigate();
+  const { winnerId, id } = useParams();
   const winnerIdParam = Number(winnerId);
+  const lobbyId = Number(id);
+  const [isExplodeConfetti, setIsExplodeConfetti] = useState(false);
 
-  const lobby = navigation.state.lobby as GetLobbyQuery['lobby'];
+  const { lobby, loading, error } = useGetLobby(lobbyId);
+
+  useEffect(() => {
+    if (lobby) {
+      setIsExplodeConfetti(true);
+    }
+  }, [lobby]);
+
+  // Показываем skeleton загрузку пока данные не загружены
+  if (loading) {
+    return (
+      <div className="pb-25">
+        <header className="mb-1.5 py-2 flex items-center justify-between px-4">
+          <div className="basis-10 min-h-10 bg-gray-300 rounded-lg animate-pulse" />
+          <div className="flex-1 mx-4 h-8 bg-gray-300 rounded animate-pulse" />
+          <div className="basis-10 min-h-10 bg-gray-300 rounded-lg animate-pulse" />
+        </header>
+        <div className="px-4 mb-4 pb-2">
+          <div className="text-center mb-4">
+            <div className="size-25 mb-1 bg-gray-300 rounded-full mx-auto animate-pulse" />
+            <div className="h-6 w-24 bg-gray-300 rounded mx-auto animate-pulse" />
+          </div>
+          <div className="grid grid-cols-2 justify-center items-center gap-1 max-w-80 mx-auto">
+            <div className="p-2 h-16 bg-gray-300 rounded-2xl animate-pulse" />
+            <div className="p-2 h-16 bg-gray-300 rounded-2xl animate-pulse" />
+          </div>
+        </div>
+        <div className="px-4">
+          <div className="h-6 w-40 bg-gray-300 rounded mb-4 animate-pulse" />
+          <div className="grid grid-cols-3 gap-2">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={index}
+                className="aspect-square bg-gray-300 rounded-lg animate-pulse"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Показываем ошибку если данные не загрузились
+  if (error || !lobby) {
+    return (
+      <div className="grid place-content-center h-full">
+        <div className="text-center text-white">
+          <h2 className="text-xl mb-2">Ошибка загрузки</h2>
+          <p className="text-gray-400">Не удалось загрузить данные лобби</p>
+          <button
+            onClick={() => navigate('/')}
+            className="mt-4 px-4 py-2 bg-blue rounded-lg">
+            На главную
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const winner = lobby.participants.find(
     (participant) => participant.userId === winnerIdParam,
@@ -32,78 +95,105 @@ export const Result = () => {
     }>,
   );
 
+  const handleShareLinkToGame = () => {
+    shareURL(window.location.href);
+  };
+
+  const handleClose = () => {
+    navigate('/');
+  };
+
+  const winRate =
+    totalAmount === 0 ? 0 : ((winner?.amount || 0) / totalAmount) * 100;
+
   return (
-    <div className="py-7 pb-25">
-      <h1 className="font-bold text-xl text-white mb-10 text-center">
-        Победитель
-      </h1>
-      <div className="relative">
-        <div
-          style={{
-            boxShadow:
-              '0px 0px 16px 0px #1AC9FF80 inset, 0px 0px 4px 0px #FFFFFF40 inset',
-          }}
-          className="text-center mb-7 bg-dark-blue-1000 fit size-49 mx-auto items-center justify-center place-content-center rounded-2.5xl overflow-hidden relative">
-          <div className="place-content-center pt-3 ">
-            <Avatar
-              className="size-14.5 mx-auto relative mb-2 "
-              style={{
-                boxShadow: '0 -4px 52px 22px #1AC9FF',
-              }}
-              url={winner?.user.image || ''}
-            />
-            <div className="relative text-lg font-semibold mb-2.5">
-              {winner?.user.username}
-            </div>
-            <div className="relative text-tiny font-light">{`Выигрыш`}</div>
-            <div className="relative text-[18px] font-[700] text-blue-300">{`${totalAmount.toFixed(
-              0,
-            )} TON`}</div>
+    <div className="pb-25">
+      {isExplodeConfetti && (
+        <ConfettiExplosion
+          duration={3000}
+          particleSize={16}
+          particleCount={200}
+        />
+      )}
+      <header className="mb-1.5 py-2 flex items-center justify-between px-4">
+        <button
+          onClick={handleShareLinkToGame}
+          className="basis-10 min-h-10 shrink-0 grid place-content-center cursor-pointer rounded-lg bg-white/10 backdrop-blur-[20px]">
+          <Icons className="size-4" name="share" />
+        </button>
+        <h1 className="flex-1 font-bold text-2xl text-white text-center">
+          Победитель
+        </h1>
+        <button
+          onClick={handleClose}
+          className="basis-10 min-h-10 shrink-0 grid place-content-center cursor-pointer rounded-lg bg-white/10 backdrop-blur-[20px]">
+          <Icons className="size-4" name="cross" />
+        </button>
+      </header>
+      <div className="px-4 mb-4 pb-2">
+        <div className="text-center mb-4">
+          <Avatar
+            url={winner?.user.image || ''}
+            className="size-25 mb-1 border-2 border-gray-350 mx-auto"
+          />
+          <h1 className="text-lg font-bold">{winner?.user.username}</h1>
+        </div>
+        <div className="grid grid-cols-2 justify-center items-center gap-1 max-w-80 mx-auto ">
+          <div className="p-2 bg-white/10 backdrop-blur-[1.25rem] border border-white/8 rounded-2xl text-center">
+            <h6 className="text-gray-200 text-base/4.5 mb-1">Выигрыш</h6>
+            <p className="flex items-center justify-center gap-1 font-bold text-lg text-white">
+              {totalAmount.toFixed(0)} TON{' '}
+              <div className="bg-blue size-4 rounded-full grid place-content-center">
+                <Icons name="ton" className="size-4" />
+              </div>{' '}
+            </p>
+          </div>
+          <div className="p-2 bg-white/10 backdrop-blur-[1.25rem] border border-white/8 rounded-2xl text-center">
+            <h6 className="text-gray-200 text-base/4.5 mb-1">Шанс</h6>
+            <p className="flex items-center justify-center gap-1 font-bold text-lg text-white">
+              {winRate.toFixed(0)}%
+            </p>
           </div>
         </div>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <img
-            alt="Light triangle"
-            className="size-auto"
-            src="/assets/images/light-triangle.png"
-          />
+      </div>
+      <div className="px-4">
+        <p className="text-lg font-bold text-white mb-4">Полученные гифты:</p>
+        <div className="grid grid-cols-3 gap-2">
+          {gifts.map((gift) => (
+            <LoadableLottie slug={gift.slug} key={gift.id}>
+              {(animation) => (
+                <GiftCard price={gift.price} animation={animation} />
+              )}
+            </LoadableLottie>
+          ))}
         </div>
       </div>
-      <p className="text-regular text-white text-start ml-6 mb-4">
-        Полученные гифты:
-      </p>
-      <div className="grid grid-cols-3 mx-6 gap-3">
-        {gifts.map((gift) => (
-          <LoadableLottie slug={gift.slug} key={gift.id}>
-            {(animation) => <GiftCard animation={animation} />}
-          </LoadableLottie>
-        ))}
-      </div>
-
-      {/* <div className="fixed w-full bottom-safe-app-bottom left-1/2 -translate-x-1/2 px-6 pb-4.5">
-				<BottomButton
-					withShadow
-					className="w-full"
-					content="Выиграть еше раз"
-				/>
-			</div> */}
     </div>
   );
 };
 
 type GiftCardProps = {
+  price: number;
   animation: unknown;
 };
 
 const GiftCard = (props: GiftCardProps) => {
-  const { animation } = props;
+  const { animation, price } = props;
 
   return (
-    <div className="relative pb-[100%] mb-1 rounded-[8px] overflow-hidden">
-      <TouchableLottie
-        animation={animation}
-        className="absolute size-full inset-0 object-cover"
-      />
+    <div>
+      <div className="border border-white/40 relative rounded-lg overflow-hidden mb-2">
+        <TouchableLottie
+          animation={animation}
+          className="aspect-square rounded-lg overflow-hidden -mb-px"
+        />
+      </div>
+      <p className="flex items-center justify-center gap-1">
+        <span className="text-white font-bold text-sm">{price}</span>
+        <div className="bg-blue size-4 rounded-full grid place-content-center">
+          <Icons name="ton" className="size-4" />
+        </div>
+      </p>
     </div>
   );
 };

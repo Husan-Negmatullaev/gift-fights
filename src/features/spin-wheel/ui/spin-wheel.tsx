@@ -189,7 +189,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="relative pointer-events-none">
+      <div className="relative">
         <Application
           antialias
           autoDensity
