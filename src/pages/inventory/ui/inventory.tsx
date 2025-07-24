@@ -1,8 +1,4 @@
-import {
-	GiftCheckboxCard,
-	useGetWithdrawnGifts,
-	useWithdrawGifts,
-} from "@/entities/gift";
+import { GiftCheckboxCard, useWithdrawGifts } from "@/entities/gift";
 import { useProfileContext } from "@/entities/profile";
 import {
 	useConfirmTransaction,
@@ -83,7 +79,7 @@ export const Inventory = () => {
 	// });
 	const { profile, refetch, loading } = useProfileContext();
 	const gifts = profile?.gifts;
-	const { data: withdrawnGifts } = useGetWithdrawnGifts(15, 0);
+	// const { data: withdrawnGifts } = useGetWithdrawnGifts(15, 0);
 	// const loading = true;
 	const [open, setOpen] = useState(false);
 	const [tonConnectUI] = useTonConnectUI();
@@ -112,10 +108,10 @@ export const Inventory = () => {
 		[gifts],
 	);
 
-	const filteredPendingWithdrawnGifts = useMemo(
-		() => withdrawnGifts?.filter((gift) => gift.status === "Pending") || [],
-		[withdrawnGifts],
-	);
+	// const filteredPendingWithdrawnGifts = useMemo(
+	// 	() => withdrawnGifts?.filter((gift) => gift.status === "Pending") || [],
+	// 	[withdrawnGifts],
+	// );
 
 	const selectedGiftsIds = getValues("gifts");
 
