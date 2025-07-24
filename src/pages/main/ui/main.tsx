@@ -59,7 +59,7 @@ export const Main = () => {
 	const tg = useTelegram();
 	return (
 		<div>
-			<LiveWinners gifts={[]} />
+			<LiveWinners />
 			<MainBanner onOpenModal={handleToggleModal} quests={quests} />
 			<div className="px-6 mb-4">
 				<p className="font-bold text-[24px]">Лобби</p>

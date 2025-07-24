@@ -131,7 +131,6 @@ export const Profile = () => {
 								</div>
 							</dl>
 						</div>
-
 						<div className="mt-8">
 							<h2 className="text-lg mb-2 font-bold">Последние выводы</h2>
 
