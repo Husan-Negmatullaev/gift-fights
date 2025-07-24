@@ -20,20 +20,28 @@ export const Leaders = () => {
 		<div className="grid grid-rows-[365px_1fr] gap-3 pb-10">
 			<LeaderUsers leaders={leaderboards} />
 
-			<div className="px-6">
-				<h6 className="text-eight font-medium px-2 mb-1">Глобальный рейтинг</h6>
+			<div className="px-6 mt-30">
 				<ul className="grid gap-2 peer empty:mb-20">
 					{leaderboards.map((leaderboard, index) => (
 						<li className="group" key={index}>
-							<div className="group-first:bg-blue bg-dark-blue-50 min-h-10.5 flex items-center gap-2 justify-between rounded-lg px-3">
-								<div className="flex items-center gap-2 text-sm ">
-									<span>#{leaderboard.rank}</span>
+							<div className="bg-[#FFFFFF1A] backdrop-blur-[20px] min-h-10.5 flex items-center gap-2 justify-between rounded-2xl px-3 py-2 border border-[#797979]">
+								<div className="flex items-center gap-2">
+									<span className="text-[#A8A8A8] w-12 text-center">
+										#{leaderboard.rank}
+									</span>
+									<img
+										src={leaderboard?.user.image || ""}
+										alt={leaderboard.user.username}
+										className="w-10 h-10 rounded-full border border-[#494A4A]"
+									/>
 									<span>{leaderboard.user.username}</span>
 								</div>
 
-								<div className="flex items-center font-medium text-sm">
+								<div className="flex items-center font-bold text-lg gap-2">
 									<span>{leaderboard.score?.toFixed(2)}</span>
-									<Icons name="ton" width={22} height={22} />
+									<div className="bg-[#0088CC] rounded-full w-[16px] h-[16px] flex items-center justify-center ml-[2px] ">
+										<Icons name="ton" width={14} height={14} />
+									</div>
 								</div>
 							</div>
 						</li>

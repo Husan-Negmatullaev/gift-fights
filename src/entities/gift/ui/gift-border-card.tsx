@@ -23,11 +23,42 @@ export const GiftBorderCard = (props: GiftBorderCardProps) => {
 			<article
 				className={clsx(
 					className,
-					"bg-dark-blue-50 text-white rounded-four relative min-h-[100px]",
+					GIFT_SIZES[size].card,
+					"bg-dark-blue-50 text-white rounded-2xl flex items-center px-4 py-2 border border-[#77777778] relative",
 				)}
 			>
-				<div className="absolute inset-0 flex items-center justify-center">
+				<div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-2xl">
 					<Icons name="loader" className="animate-spin size-8" />
+				</div>
+
+				<div className="blur-[2px] flex items-center w-full">
+					<div
+						className={clsx(
+							"w-[60px] h-[60px]",
+							"relative overflow-hidden border border-[#494A4A] rounded-xl",
+						)}
+					>
+						<LoadableLottie slug={slug}>
+							{(animationData) => (
+								<TouchableLottie
+									animation={animationData}
+									className="absolute size-full inset-0 object-cover overflow-hidden rounded-four"
+								/>
+							)}
+						</LoadableLottie>
+					</div>
+
+					<header
+						className={clsx("flex items-center font-regular flex-1 ml-2")}
+					>
+						<h5>{title}</h5>
+					</header>
+					<div className="flex items-center gap-2 font-bold text-lg">
+						<span>{price}</span>
+						<div className="flex items-center bg-[#0098EA] rounded-full w-[16px] h-[16px] justify-center">
+							<Icons name="ton" className="size-[14px]" />
+						</div>
+					</div>
 				</div>
 			</article>
 		);
@@ -38,13 +69,14 @@ export const GiftBorderCard = (props: GiftBorderCardProps) => {
 			className={clsx(
 				className,
 				GIFT_SIZES[size].card,
-				"bg-dark-blue-50 text-white rounded-four",
+				"bg-dark-blue-50 text-white rounded-2xl flex items-center px-4 py-2 border border-[#77777778] ",
 			)}
 		>
 			<div
 				className={clsx(
-					GIFT_SIZES[size].image,
-					"pb-[95%] relative overflow-hidden rounded-four",
+					"w-[60px] h-[60px]",
+					// GIFT_SIZES[size].image,
+					"relative overflow-hidden border border-[#494A4A] rounded-xl",
 				)}
 			>
 				<LoadableLottie slug={slug}>
@@ -56,24 +88,15 @@ export const GiftBorderCard = (props: GiftBorderCardProps) => {
 					)}
 				</LoadableLottie>
 			</div>
-			<header
-				className={clsx(
-					GIFT_SIZES[size].title,
-					GIFT_SIZES[size].header,
-					"flex items-center justify-between font-medium",
-				)}
-			>
+
+			<header className={clsx("flex items-center font-regular flex-1 ml-2")}>
 				<h5>{title}</h5>
-				{/* <p>#{slug}</p> */}
 			</header>
-			<div
-				className={clsx(
-					GIFT_SIZES[size].button,
-					"font-medium flex items-center justify-center bg-blue w-full",
-				)}
-			>
-				<Icons name="ton" className="size-2.5" />
+			<div className="flex items-center gap-2 font-bold text-lg">
 				<span>{price}</span>
+				<div className="flex items-center bg-[#0098EA] rounded-full w-[16px] h-[16px] justify-center">
+					<Icons name="ton" className="size-[14px]" />
+				</div>
 			</div>
 		</article>
 	);

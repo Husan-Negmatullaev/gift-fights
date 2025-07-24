@@ -11,6 +11,7 @@ import { LobbyPlayers } from '@/pages/lobby-players';
 import { Result } from '@/pages/spin';
 // import { Fight } from "@/pages/fight";
 import { Main } from '@/pages/main';
+import { MyFights } from '@/pages/my-fights/ui/my-fights';
 // import { LoadUserProfile } from "@/widgets/loader-user-profile";
 
 export const BROWSER_ROUTERS = createBrowserRouter([
@@ -21,6 +22,10 @@ export const BROWSER_ROUTERS = createBrowserRouter([
       {
         index: true,
         Component: Main,
+      },
+      {
+        path: 'fights',
+        Component: MyFights,
       },
       {
         path: 'leaders',

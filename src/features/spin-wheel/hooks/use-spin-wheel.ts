@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
 import { LobbyStatus, type GetLobbyQuery } from '@/shared/api/graphql/graphql';
+import { useCallback, useEffect, useState } from 'react';
 
 interface WheelSegment {
   id: number;
@@ -134,24 +134,6 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
         return 'Ожидание';
       }
 
-      // Особый случай: обнаружена перезагрузка во время countdown
-      if (
-        lobby.status === LobbyStatus.Countdown &&
-        !lobby.countdownExpiresAt &&
-        state.countdown === 0
-      ) {
-        return 'Синхронизация...';
-      }
-
-      // Особый случай: обнаружена перезагрузка во время InProcess
-      if (
-        lobby.status === LobbyStatus.InProcess &&
-        !state.gameStarted &&
-        state.gameTimer === 5
-      ) {
-        return 'Восстановление игры...';
-      }
-
       // Если ищем победителя, показываем это
       if (state.isSearchingWinner) {
         return 'Ищем победителя';
@@ -186,31 +168,11 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
     state.selectedSegment,
     state.segments,
     state.isSearchingWinner,
-    state.gameStarted,
-    lobby.status,
-    lobby.countdownExpiresAt,
   ]);
 
   const getPhaseLabel = useCallback(() => {
     if (!state.hasEnoughPlayers) {
       return 'Waiting:';
-    }
-
-    // Особые случаи для перезагрузки страницы
-    if (
-      lobby.status === LobbyStatus.Countdown &&
-      !lobby.countdownExpiresAt &&
-      state.countdown === 0
-    ) {
-      return 'Статус:';
-    }
-
-    if (
-      lobby.status === LobbyStatus.InProcess &&
-      !state.gameStarted &&
-      state.gameTimer === 5
-    ) {
-      return 'Статус:';
     }
 
     // Если ищем победителя, показываем соответствующий лейбл
@@ -230,16 +192,7 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
       default:
         return 'Начало через:';
     }
-  }, [
-    state.hasEnoughPlayers,
-    state.gamePhase,
-    state.isSearchingWinner,
-    state.gameStarted,
-    state.countdown,
-    state.gameTimer,
-    lobby.status,
-    lobby.countdownExpiresAt,
-  ]);
+  }, [state.hasEnoughPlayers, state.gamePhase, state.isSearchingWinner]);
 
   const calculateWinnerRotation = useCallback(
     (winnerId: string) => {
@@ -500,8 +453,8 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
         const demoWinnerId =
           lobby.participants.length > 0
             ? lobby.participants[
-                Math.floor(Math.random() * lobby.participants.length)
-              ].userId.toString()
+              Math.floor(Math.random() * lobby.participants.length)
+            ].userId.toString()
             : '1';
         handleAutoSpin(demoWinnerId);
       }, 1000);

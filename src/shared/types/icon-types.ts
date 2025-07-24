@@ -17,7 +17,9 @@ export type IconNamesType =
   | 'question'
   | 'user-group'
   | 'chevron-left'
-  | 'spin-arrow-bottom';
+  | 'spin-arrow-bottom'
+  | 'clock'
+  | 'fight';
 
 export type IconComponentType = FunctionComponent<IconProps>;
 

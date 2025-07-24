@@ -1,6 +1,6 @@
 import { graphql } from '@/shared/api/graphql';
-import { useQuery } from '@apollo/client';
 import type { ProfileQuery } from '@/shared/api/graphql/graphql';
+import { useQuery } from '@apollo/client';
 
 const PROFILE = graphql(`
   query Profile {
@@ -20,6 +20,11 @@ const PROFILE = graphql(`
       winRate
       wins
       losses
+      referrals {
+        id
+        username
+        image
+      }
       withdrawnGifts {
         id
         slug
