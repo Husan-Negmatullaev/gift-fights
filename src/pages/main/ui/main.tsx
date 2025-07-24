@@ -1,4 +1,6 @@
 import { lobbyImagesByBets, useGetLobbies } from "@/entities/lobby";
+import { useGetQuests } from "@/entities/quest";
+
 import { useTelegram } from "@/entities/telegram";
 import { LobbyStatus } from "@/shared/api/graphql/graphql";
 import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
@@ -36,13 +38,17 @@ function getLobbyBetKey(
 
 export const Main = () => {
 	const [open, setOpen] = useState(false);
-	const handleToggleModal = () => setOpen((prev) => !prev);
+
 	const { lobbies, loading } = useGetLobbies(15, 0, [
 		LobbyStatus.Countdown,
 		LobbyStatus.InProcess,
 		LobbyStatus.WaitingForPlayers,
 	]);
+	const { quests } = useGetQuests({ take: 10, skip: 0 });
 
+	const handleToggleModal = () => {
+		setOpen((prev) => !prev);
+	};
 	if (loading) {
 		return (
 			<div className="grid place-content-center h-full">
@@ -54,7 +60,7 @@ export const Main = () => {
 	return (
 		<div>
 			<LiveWinners gifts={[]} />
-			<MainBanner onOpenModal={handleToggleModal} />
+			<MainBanner onOpenModal={handleToggleModal} quests={quests} />
 			<div className="px-6 mb-4">
 				<p className="font-bold text-[24px]">Лобби</p>
 				<p className="text-[#A8A8A8] text-[16px] font-regular">
@@ -113,12 +119,12 @@ export const Main = () => {
 					<p className="text-[#A8A8A8]">
 						Подпишитесь на наш канал{" "}
 						<a
-							href="https://t.me/labs_relayer"
+							href={`https://t.me/${quests[0]?.requirements?.channelId}`}
 							target="_blank"
 							rel="noopener noreferrer"
 							className="text-[#1AC9FF] underline"
 						>
-							@labs_relayer
+							{quests[0]?.requirements?.channelId}
 						</a>
 						, чтобы получить подарок. Подарок нельзя вывести. Можно использовать
 						в прокрутах — исчезает после применения.
@@ -134,12 +140,15 @@ export const Main = () => {
 						<Icons name="clock" className="w-[10px] h-[10px] text-[#1D1D1D]" />
 						22:12:45
 					</button>
+
 					<BottomButton
 						withShadow
-						content="Подписаться"
+						content={"Подписаться"}
 						className="px-4 mt-4 w-full"
 						onClick={() => {
-							tg.openTelegramLink("https://t.me/labs_relayer");
+							tg.openTelegramLink(
+								`https://t.me/${quests[0]?.requirements?.channelId}`,
+							);
 						}}
 						// onClick={handleSubmit((penis) => penis.gifts)}
 					/>

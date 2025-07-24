@@ -61,6 +61,7 @@ export const ReferralBalanceOutput = () => {
 	}
 
 	const onErrorWithdraw = useCallback(async () => {
+		console.log("onErrorWithdraw");
 		// Показываем toast уведомление
 		showError("Не хватает реф. баланса!");
 
@@ -95,8 +96,12 @@ export const ReferralBalanceOutput = () => {
 					</div>
 					<button
 						type="button"
-						disabled={bonuses === 0}
-						onClick={bonuses === 0 ? onErrorWithdraw : handleToggleModal}
+						// disabled={bonuses === 0}
+						onClick={
+							bonuses === 0 || parseFloat(withdrawAmount) > bonuses
+								? onErrorWithdraw
+								: handleToggleModal
+						}
 						className="disabled:cursor-not-allowed cursor-pointer px-4 font-bold text-lg basis-25 shrink-0 bg-white text-black rounded-[16px] w-full py-[10px] mt-4"
 					>
 						Вывести

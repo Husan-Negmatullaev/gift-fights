@@ -1,8 +1,19 @@
-import { useTelegram } from "@/entities/telegram";
+import type { Quest } from "@/shared/api/graphql/graphql";
 import { Icons } from "@/shared/ui/icons/icons";
 
-export const MainBanner = ({ onOpenModal }: { onOpenModal: () => void }) => {
-	const tg = useTelegram();
+export const MainBanner = ({
+	onOpenModal,
+	quests,
+}: {
+	onOpenModal: () => void;
+	quests: Quest[];
+}) => {
+	const currentQuest = quests[0];
+	// const {
+	// 	claimReward,
+	// 	loading: claimRewardLoading,
+	// 	error: claimRewardError,
+	// } = useClaimReward();
 	return (
 		<article
 			className="relative text-white mb-8 mx-4 rounded-[16px] border border-[#FFFFFF33] overflow-hidden"
@@ -17,7 +28,7 @@ export const MainBanner = ({ onOpenModal }: { onOpenModal: () => void }) => {
 						{"Бесплатный подарок 🎁"}
 					</h2>
 					<p className="font-regular mb-2 text-[12px]">
-						Подпишитесь на @labs_relayer и получи Пепу
+						Подпишитесь на {currentQuest?.requirements?.channelId} и получи Пепу
 					</p>
 				</div>
 				<div
