@@ -22,6 +22,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
   const [isEternalSpinning, setIsEternalSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [gameTimer, setGameTimer] = useState(15);
+
   // Функция для расчета актуального countdown на основе countdownExpiresAt
   const calculateActualCountdown = useCallback(() => {
     if (!lobby.countdownExpiresAt) {

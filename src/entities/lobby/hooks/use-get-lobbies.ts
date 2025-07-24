@@ -34,7 +34,7 @@ export const useGetLobbies = (
     fetchPolicy: 'cache-first',
     nextFetchPolicy: 'cache-and-network',
     // Обновляем данные каждые 30 секунд для актуальности лобби
-    pollInterval: 30000,
+    // pollInterval: 30000,
     // Не кешируем данные долго, чтобы они оставались актуальными
     notifyOnNetworkStatusChange: true,
   });

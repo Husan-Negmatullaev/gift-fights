@@ -40,24 +40,18 @@ export const NavBar = () => {
       telegram.platform !== 'tdesktop' ? 'min-h-13' : 'min-h-17',
       'rounded-2.5 grid place-items-center transition-colors',
       !props.isActive && 'text-white',
-      props.isActive && 'text-blue bg-dark-blue-150',
+      props.isActive && 'text-blue',
     );
   };
 
-  const adaptiveIconSize = telegram.platform !== 'tdesktop' ? 28 : 32;
-
   return (
-    <div className="fixed left-0 bottom-0 w-full bg-dark-blue-50 py-2">
-      <nav className="pb-navbar">
-        <ul className="grid grid-flow-col items-center justify-between auto-cols-[68px] container-safe px-2.5">
+    <div className="fixed left-0 bottom-0 w-full py-2 bg-dark/70 backdrop-blur-2xl">
+      <nav className="pb-navbar relative">
+        <ul className="grid gap-2 grid-flow-col items-center justify-between auto-cols-[68px] container-safe px-4">
           {navList.map((item) => (
             <li key={item.path}>
               <NavLink to={item.path} className={setNavLinkClassName}>
-                <Icons
-                  name={item.icon}
-                  width={adaptiveIconSize}
-                  height={adaptiveIconSize}
-                />
+                <Icons name={item.icon} width={32} height={32} />
                 <span className="text-xs/3">{item.text}</span>
               </NavLink>
             </li>

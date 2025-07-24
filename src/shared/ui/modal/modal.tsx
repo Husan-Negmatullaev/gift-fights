@@ -22,7 +22,7 @@ export const Modal = (props: ModalProps) => {
       className={{
         afterOpen: '',
         beforeClose: '',
-        base: 'basis-100 relative bg-dark-blue-800 rounded-2.5xl p-3',
+        base: 'basis-100 relative bg-dark-blue-1400 rounded-2.5xl p-3',
       }}
       portalClassName=""
       htmlOpenClassName=""
