@@ -2,6 +2,8 @@ import { graphql } from "@/shared/api/graphql";
 import type {
   QuestsQuery,
   QuestsQueryVariables,
+  QuestUsersQuery,
+  QuestUsersQueryVariables,
 } from "@/shared/api/graphql/graphql";
 import { useQuery } from "@apollo/client";
 
@@ -23,6 +25,22 @@ const GET_QUESTS = graphql(`
   }
 `);
 
+const GET_QUEST_USERS = graphql(`
+  query QuestUsers($take: Int!, $skip: Int!) {
+    questUsers(take: $take, skip: $skip) {
+      id
+      progress
+      completed
+      completedAt
+      lastReset
+      userId
+      questId
+      createdAt
+      updatedAt
+    }
+  }
+`);
+
 export const useGetQuests = (args: QuestsQueryVariables) => {
   const { data, loading, error, refetch } = useQuery<
     QuestsQuery,
@@ -34,6 +52,23 @@ export const useGetQuests = (args: QuestsQueryVariables) => {
 
   return {
     quests: data?.quests ?? [],
+    loading,
+    error,
+    refetch,
+  };
+};
+
+export const useGetQuestUsers = (args: QuestUsersQueryVariables) => {
+  const { data, loading, error, refetch } = useQuery<
+    QuestUsersQuery,
+    QuestUsersQueryVariables
+  >(GET_QUEST_USERS, {
+    variables: args,
+    fetchPolicy: "network-only",
+  });
+
+  return {
+    questUsers: data?.questUsers ?? [],
     loading,
     error,
     refetch,

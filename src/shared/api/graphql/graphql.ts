@@ -734,7 +734,27 @@ export type MyScoreQuery = {
     userId: number;
     score?: number | null;
     rank?: number | null;
-    user: { __typename?: 'User'; username: string };
+    user: {
+      __typename?: 'User';
+      id: number;
+      tgId: string;
+      username: string;
+      lastName: string;
+      firstName: string;
+      tonAddress?: string | null;
+      image?: string | null;
+      referralCode: string;
+      referredBy?: string | null;
+      balance: number;
+      bonuses: number;
+      lastWonAmount?: number | null;
+      displayName: string;
+      wins?: number | null;
+      losses?: number | null;
+      winRate?: number | null;
+      createdAt: any;
+      updatedAt: any;
+    };
   };
 };
 
@@ -836,6 +856,70 @@ export type GetLobbyQuery = {
       }>;
     }>;
   };
+};
+
+export type ParticipantsQueryVariables = Exact<{
+  take: Scalars['Int']['input'];
+  skip: Scalars['Int']['input'];
+}>;
+
+export type ParticipantsQuery = {
+  __typename?: 'Query';
+  participants: Array<{
+    __typename?: 'Participant';
+    id: number;
+    amount: number;
+    userId: number;
+    lobbyId: number;
+    createdAt: any;
+    updatedAt: any;
+    gifts: Array<{
+      __typename?: 'Gift';
+      id: string;
+      title: string;
+      slug: string;
+      model: string;
+      symbol: string;
+      background: string;
+      blocked: boolean;
+      withdrawn: boolean;
+      withdrawable: boolean;
+      place?: Place | null;
+      isReward: boolean;
+      rewardWasTransferred: boolean;
+      price: number;
+      symbolPermille: number;
+      rarityPermille: number;
+      backgroundPermille: number;
+      msgId: string;
+      externalId: string;
+      userId?: string | null;
+      createdAt: any;
+      updatedAt: any;
+    }>;
+    lobby: {
+      __typename?: 'Lobby';
+      id: number;
+      title: string;
+      status: LobbyStatus;
+      minBet?: number | null;
+      maxBet?: number | null;
+      timeToStart: number;
+      winnerId?: number | null;
+      countdownExpiresAt?: any | null;
+      createdAt: any;
+      updatedAt: any;
+      participants: Array<{
+        __typename?: 'Participant';
+        id: number;
+        amount: number;
+        userId: number;
+        lobbyId: number;
+        createdAt: any;
+        updatedAt: any;
+      }>;
+    };
+  }>;
 };
 
 export type JoinToLobbyMutationVariables = Exact<{
@@ -967,6 +1051,27 @@ export type QuestsQuery = {
   }>;
 };
 
+export type QuestUsersQueryVariables = Exact<{
+  take: Scalars['Int']['input'];
+  skip: Scalars['Int']['input'];
+}>;
+
+export type QuestUsersQuery = {
+  __typename?: 'Query';
+  questUsers: Array<{
+    __typename?: 'QuestUser';
+    id: number;
+    progress: any;
+    completed: boolean;
+    completedAt?: any | null;
+    lastReset?: any | null;
+    userId: number;
+    questId: number;
+    createdAt: any;
+    updatedAt: any;
+  }>;
+};
+
 export type CreateConfirmTransactionMutationVariables = Exact<{
   data: ConfirmCreationTransactionInput;
 }>;
@@ -1045,6 +1150,36 @@ export type CreateWithdrawRequestMutation = {
       displayName: string;
     } | null;
   };
+};
+
+export type LiveQueryVariables = Exact<{
+  take: Scalars['Int']['input'];
+  skip: Scalars['Int']['input'];
+}>;
+
+export type LiveQuery = {
+  __typename?: 'Query';
+  live: Array<{
+    __typename?: 'User';
+    id: number;
+    tgId: string;
+    username: string;
+    lastName: string;
+    firstName: string;
+    tonAddress?: string | null;
+    image?: string | null;
+    referralCode: string;
+    referredBy?: string | null;
+    balance: number;
+    bonuses: number;
+    lastWonAmount?: number | null;
+    displayName: string;
+    wins?: number | null;
+    losses?: number | null;
+    winRate?: number | null;
+    createdAt: any;
+    updatedAt: any;
+  }>;
 };
 
 export const GetGiftsDocument = {
@@ -1446,9 +1581,65 @@ export const MyScoreDocument = {
                   selectionSet: {
                     kind: 'SelectionSet',
                     selections: [
+                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'tgId' } },
                       {
                         kind: 'Field',
                         name: { kind: 'Name', value: 'username' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'lastName' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'firstName' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'tonAddress' },
+                      },
+                      { kind: 'Field', name: { kind: 'Name', value: 'image' } },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'referralCode' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'referredBy' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'balance' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'bonuses' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'lastWonAmount' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'displayName' },
+                      },
+                      { kind: 'Field', name: { kind: 'Name', value: 'wins' } },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'losses' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'winRate' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'createdAt' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'updatedAt' },
                       },
                     ],
                   },
@@ -1790,6 +1981,220 @@ export const GetLobbyDocument = {
     },
   ],
 } as unknown as DocumentNode<GetLobbyQuery, GetLobbyQueryVariables>;
+export const ParticipantsDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'Participants' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'take' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'participants' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'take' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'take' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'skip' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'skip' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'amount' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'lobbyId' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'gifts' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'title' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'slug' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'model' } },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'symbol' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'background' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'blocked' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'withdrawn' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'withdrawable' },
+                      },
+                      { kind: 'Field', name: { kind: 'Name', value: 'place' } },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'isReward' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'rewardWasTransferred' },
+                      },
+                      { kind: 'Field', name: { kind: 'Name', value: 'price' } },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'symbolPermille' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'rarityPermille' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'backgroundPermille' },
+                      },
+                      { kind: 'Field', name: { kind: 'Name', value: 'msgId' } },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'externalId' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'userId' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'createdAt' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'updatedAt' },
+                      },
+                    ],
+                  },
+                },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'lobby' },
+                  selectionSet: {
+                    kind: 'SelectionSet',
+                    selections: [
+                      { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                      { kind: 'Field', name: { kind: 'Name', value: 'title' } },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'status' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'minBet' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'maxBet' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'timeToStart' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'winnerId' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'countdownExpiresAt' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'createdAt' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'updatedAt' },
+                      },
+                      {
+                        kind: 'Field',
+                        name: { kind: 'Name', value: 'participants' },
+                        selectionSet: {
+                          kind: 'SelectionSet',
+                          selections: [
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'id' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'amount' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'userId' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'lobbyId' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'createdAt' },
+                            },
+                            {
+                              kind: 'Field',
+                              name: { kind: 'Name', value: 'updatedAt' },
+                            },
+                          ],
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<ParticipantsQuery, ParticipantsQueryVariables>;
 export const JoinToLobbyDocument = {
   kind: 'Document',
   definitions: [
@@ -2160,6 +2565,75 @@ export const QuestsDocument = {
     },
   ],
 } as unknown as DocumentNode<QuestsQuery, QuestsQueryVariables>;
+export const QuestUsersDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'QuestUsers' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'take' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'questUsers' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'take' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'take' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'skip' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'skip' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'progress' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'completed' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'completedAt' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'lastReset' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'userId' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'questId' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<QuestUsersQuery, QuestUsersQueryVariables>;
 export const CreateConfirmTransactionDocument = {
   kind: 'Document',
   definitions: [
@@ -2408,3 +2882,87 @@ export const CreateWithdrawRequestDocument = {
   CreateWithdrawRequestMutation,
   CreateWithdrawRequestMutationVariables
 >;
+export const LiveDocument = {
+  kind: 'Document',
+  definitions: [
+    {
+      kind: 'OperationDefinition',
+      operation: 'query',
+      name: { kind: 'Name', value: 'Live' },
+      variableDefinitions: [
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'take' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          },
+        },
+        {
+          kind: 'VariableDefinition',
+          variable: { kind: 'Variable', name: { kind: 'Name', value: 'skip' } },
+          type: {
+            kind: 'NonNullType',
+            type: { kind: 'NamedType', name: { kind: 'Name', value: 'Int' } },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: 'SelectionSet',
+        selections: [
+          {
+            kind: 'Field',
+            name: { kind: 'Name', value: 'live' },
+            arguments: [
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'take' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'take' },
+                },
+              },
+              {
+                kind: 'Argument',
+                name: { kind: 'Name', value: 'skip' },
+                value: {
+                  kind: 'Variable',
+                  name: { kind: 'Name', value: 'skip' },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: 'SelectionSet',
+              selections: [
+                { kind: 'Field', name: { kind: 'Name', value: 'id' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'tgId' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'username' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'lastName' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'firstName' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'tonAddress' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'image' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'referralCode' },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'referredBy' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'balance' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'bonuses' } },
+                {
+                  kind: 'Field',
+                  name: { kind: 'Name', value: 'lastWonAmount' },
+                },
+                { kind: 'Field', name: { kind: 'Name', value: 'displayName' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'wins' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'losses' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'winRate' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'createdAt' } },
+                { kind: 'Field', name: { kind: 'Name', value: 'updatedAt' } },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<LiveQuery, LiveQueryVariables>;

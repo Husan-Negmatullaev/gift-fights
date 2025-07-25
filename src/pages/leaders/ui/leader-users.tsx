@@ -209,13 +209,13 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 			</div>
 			<div className="backdrop-blur-[20px] min-h-10.5 flex items-center gap-2 justify-between rounded-2xl px-3 py-2 border border-[#0098EA] mt-30">
 				<div className="flex items-center">
-					<span className="text-[#A8A8A8] w-14 text-center">
-						#{myScore?.rank}
+					<span className="text-[#A8A8A8] w-12 text-center">
+						{myScore?.rank ? `#${myScore.rank}` : ""}
 					</span>
 					<img
-						src={`https://t.me/i/userpic/320/${myScore?.user.username}.jpg`}
+						src={myScore?.user.image ?? "/assets/images/preloader.webp"}
 						alt={myScore?.user.username}
-						className="w-10 h-10 rounded-full border border-[#494A4A] mr-2"
+						className="w-10 h-10 rounded-full border border-[#494A4A] mx-2"
 					/>
 					<span>{myScore?.user.username}</span>
 					<span>(вы)</span>

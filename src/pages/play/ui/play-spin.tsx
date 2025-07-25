@@ -17,7 +17,6 @@ import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
 import { useToast } from '@/shared/hooks/use-toast';
 import { SafeAvatar } from '@/shared/ui/avatar/safe-avatar';
 import { Icons } from '@/shared/ui/icons/icons';
-import { Modal } from '@/shared/ui/modal/modal';
 import { Tabs, type TabsImperativeRef } from '@/shared/ui/tabs/tabs';
 import { shareURL } from '@telegram-apps/sdk-react';
 import clsx from 'clsx';
@@ -48,7 +47,6 @@ export const PlaySpin = () => {
   });
   const { showError } = useToast();
   const [giftsId, setGiftsId] = useState<string[]>([]);
-  const [isOpenModal, setIsOspenModal] = useState(false);
   const tabsRef = useRef<TabsImperativeRef | null>(null);
 
   function isTelegramWebApp() {
@@ -100,9 +98,9 @@ export const PlaySpin = () => {
     }
   };
 
-  const handleToggleModal = () => {
-    setIsOspenModal((prev) => !prev);
-  };
+  // const handleToggleModal = () => {
+  //   setIsOspenModal((prev) => !prev);
+  // };
 
   const selectedGifts = useMemo(
     () => gifts.filter((gift) => giftsId.includes(gift.id)),
@@ -121,14 +119,12 @@ export const PlaySpin = () => {
         tabsRef.current?.onForceTab(1);
         refetchLobby();
         refetchGifts();
-        handleToggleModal();
       });
     } else {
       joinToLobby(lobbyParamId, giftsId).then(() => {
         tabsRef.current?.onForceTab(1);
         refetchLobby();
         refetchGifts();
-        handleToggleModal();
       });
     }
 
@@ -155,7 +151,7 @@ export const PlaySpin = () => {
       );
       return;
     }
-    handleToggleModal();
+    handleJoinToLobby();
   };
 
   const filteredBlockedGifts = useMemo(
@@ -239,71 +235,67 @@ export const PlaySpin = () => {
       </div>
 
       <div className="mb-5 grid gap-4">
-        {filteredBlockedGifts.length === 0 && (
+        {/* {filteredBlockedGifts.length === 0 && (
           <BottomButton
             disabled
             className="w-full"
             variant="secondary"
             content="Добавьте гифты"
           />
-        )}
-        {!isAlreadyBetting && filteredBlockedGifts.length > 0 && (
+        )} */}
+        {!isAlreadyBetting && (
           <BottomButton
             withShadow
             variant="primary"
             className="w-full"
-            content={clsx(
-              selectedGifts.length === 0
-                ? 'Сделать ставку'
-                : `Сделать ставку ${totalPriceSelectedGifts.toFixed(2)} TON`,
-            )}
+            content={
+              <>
+                {loading || isLoadingAddGiftsToLobby ? (
+                  <Icons className="mx-auto animate-spin" name="loader" />
+                ) : (
+                  <>
+                    {selectedGifts.length === 0
+                      ? 'Сделать ставку'
+                      : `Сделать ставку ${totalPriceSelectedGifts.toFixed(
+                          2,
+                        )} TON`}
+                  </>
+                )}
+              </>
+            }
             onClick={handleCheckBeforeBetting}
             disabled={selectedGifts.length === 0}
           />
         )}
         {isAlreadyBetting && (
           <BottomButton
-            disabled={selectedGifts.length === 0}
             className="w-full"
             variant="secondary"
+            disabled={selectedGifts.length === 0}
             onClick={handleCheckBeforeBetting}
             content={
               <>
-                Ставка сделана {currentUserBetting?.amount}{' '}
-                <span className="text-blue-100">
-                  {totalPriceSelectedGifts
-                    ? '+ ' + totalPriceSelectedGifts.toFixed(2)
-                    : ''}{' '}
-                </span>
-                <span
-                  className={clsx(totalPriceSelectedGifts && 'text-blue-100')}>
-                  TON
-                </span>
+                {loading || isLoadingAddGiftsToLobby ? (
+                  <Icons className="mx-auto animate-spin" name="loader" />
+                ) : (
+                  <>
+                    Ставка сделана {currentUserBetting?.amount}{' '}
+                    <span className="text-blue-100">
+                      {totalPriceSelectedGifts
+                        ? '+ ' + totalPriceSelectedGifts.toFixed(2)
+                        : ''}{' '}
+                    </span>
+                    <span
+                      className={clsx(
+                        totalPriceSelectedGifts && 'text-blue-100',
+                      )}>
+                      TON
+                    </span>
+                  </>
+                )}
               </>
             }
           />
-          // <div
-          //   className={clsx(
-          //     'shadow-[0px_0px_19.6px_0px_--alpha(var(--color-blue-200)_/_50%)] px-5 py-2',
-          //     'min-h-13.5 rounded-2xl bg-linear-360 from-blue-50 from-0% to-blue-100 to-100 text-white grid items-center',
-          //     'disabled:bg-dark-blue-700 disabled:text-white/50 disabled:shadow-none disabled:bg-linear-[none]',
-          //   )}>
-          //   <dl className="grid grid-flow-col content-center justify-between gap-1 text-white">
-          //     <div className="text-left">
-          //       <dt className="font-thin mb-0.5 text-tiny/2.5">Ставка:</dt>
-          //       <dd className="font-medium text-lg/4.5">
-          //         {currentUserBetting?.amount} TON
-          //       </dd>
-          //     </div>
-
-          //     <div className="text-right">
-          //       <dt className="font-thin mb-0.5 text-tiny/2.5">Шанс победы:</dt>
-          //       <dd className="font-medium text-lg/4.5">
-          //         {winRate.toFixed(0)}%
-          //       </dd>
-          //     </div>
-          //   </dl>
-          // </div>
         )}
         <button
           type="button"
@@ -430,7 +422,7 @@ export const PlaySpin = () => {
         </div>
       </Tabs>
 
-      <Modal open={isOpenModal} onClose={handleToggleModal}>
+      {/* <Modal open={isOpenModal} onClose={handleToggleModal}>
         <p className="text-lg font-medium mb-7.5 text-center mt-2 mx-2">
           Вы хотите сделать ставку ? После подтверждения ее нельзя будет
           отменить !
@@ -458,7 +450,7 @@ export const PlaySpin = () => {
             )}
           </button>
         </div>
-      </Modal>
+      </Modal> */}
     </div>
   );
 };
