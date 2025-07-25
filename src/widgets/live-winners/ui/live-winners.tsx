@@ -1,3 +1,4 @@
+import { useTelegram } from "@/entities/telegram";
 import { useGetLive } from "@/entities/user";
 import { Icons } from "@/shared/ui/icons/icons";
 import { motion } from "framer-motion";
@@ -12,7 +13,7 @@ interface LiveWinnersProps {
 export const LiveWinners: React.FC<LiveWinnersProps> = memo(
 	({ take = 6, skip = 0 }) => {
 		const { live, loading, error } = useGetLive({ take, skip });
-
+		const t = useTelegram();
 		return (
 			<header className="w-full flex items-center overflow-x-auto scrollbar-hide pb-3 px-2 mb-4">
 				<div className="flex items-center justify-center gap-[4px] transform -rotate-90 w-[40px] mt-4">
@@ -36,12 +37,10 @@ export const LiveWinners: React.FC<LiveWinnersProps> = memo(
 								))}
 							</div>
 						) : error ? (
-							// Error state
 							<div className="text-red-500 text-sm">
 								Failed to load live data
 							</div>
 						) : (
-							// Live users data
 							live
 								?.slice(0, 6)
 								.filter((user: any) => user.lastWonAmount > 0)
@@ -49,6 +48,9 @@ export const LiveWinners: React.FC<LiveWinnersProps> = memo(
 									if (index === 0) {
 										return (
 											<motion.div
+												onClick={() => {
+													t.openTelegramLink(`https://t.me/${user.username}`);
+												}}
 												key={`user-animated-${user.id}`}
 												className="aspect-square w-[52px] h-[52px] flex-shrink-0 scrollbar-hide relative flex items-center justify-center"
 												initial={{ opacity: 0, y: 20 }}
@@ -78,6 +80,9 @@ export const LiveWinners: React.FC<LiveWinnersProps> = memo(
 									}
 									return (
 										<div
+											onClick={() => {
+												t.openTelegramLink(`https://t.me/${user.username}`);
+											}}
 											key={`user-${index}-${user.id}`}
 											className="aspect-square w-[52px] h-[52px] flex-shrink-0 scrollbar-hide relative flex items-center justify-center"
 										>
