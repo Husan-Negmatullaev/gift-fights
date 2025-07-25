@@ -16,7 +16,7 @@ export const LoadingSpinner = (props: LoadingSpinnerProps) => {
 				<img
 					alt="Loading"
 					style={styles}
-					src="/public/assets/images/flask.webp"
+					src="assets/images/flask.webp"
 					className="w-32 h-40 drop-shadow-lg"
 				/>
 			</div>
