@@ -83,7 +83,7 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
 						/>
 					) : (
 						<img
-							src={`/public/assets/images/main/pepe_heart.webp`}
+							src={`assets/images/main/pepe_heart.webp`}
 							alt={title}
 							className="size-42.5 rounded-t-[14px] rounded-b-[8px] z-0 bg-[#5B5B5B]"
 						/>
