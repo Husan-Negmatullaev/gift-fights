@@ -165,8 +165,8 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
           return `${state.gameTimer} сек`;
         case LobbyStatus.Completed:
           return state.selectedSegment !== null
-            ? state.segments[state.selectedSegment]?.playerName || 'Game Over'
-            : 'Game Over';
+            ? state.segments[state.selectedSegment]?.playerName || '00:00'
+            : '00:00';
         default:
           return 'Ready to start';
       }

@@ -64,7 +64,7 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
       case LobbyStatus.Completed:
         return selectedSegment !== null
           ? participants[selectedSegment].user.username
-          : 'Game Over';
+          : '00:00';
       default:
         return 'Ready to start';
     }
