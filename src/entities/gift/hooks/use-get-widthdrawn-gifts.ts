@@ -12,6 +12,29 @@ const GET_WITHDRAWN_GIFTS_QUERY = graphql(`
       transactionId
       userId
       giftId
+      gift {
+            id
+            title
+            slug
+            model
+            symbol
+            background
+            blocked
+            withdrawn
+            withdrawable
+            place
+            isReward
+            rewardWasTransferred
+            price
+            symbolPermille
+            rarityPermille
+            backgroundPermille
+            msgId
+            externalId
+            userId
+            createdAt
+            updatedAt
+        }
     }
   }
 `);

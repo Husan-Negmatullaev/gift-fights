@@ -107,6 +107,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 				image?: string | null;
 			} | null;
 			position: { top: string; left: number };
+			score: number;
 		}
 	> = {
 		1: {
@@ -116,6 +117,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 				top: "0px",
 				left: 50,
 			},
+			score: leaders[0]?.score ?? 0,
 		},
 		2: {
 			reward: rewards?.find((reward) => reward.place === Place.Second) ?? null,
@@ -124,6 +126,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 				top: "40px",
 				left: 0,
 			},
+			score: leaders[1]?.score ?? 0,
 		},
 		3: {
 			reward: rewards?.find((reward) => reward.place === Place.Third) ?? null,
@@ -132,6 +135,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 				top: "80px",
 				left: 100,
 			},
+			score: leaders[2]?.score ?? 0,
 		},
 	};
 
@@ -183,7 +187,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 									/>
 									<p className="mt-1">{leader.leaderboard?.username ?? ""}</p>
 									<div className="bg-[#FFFFFF1A] backdrop-blur-[20px] rounded-full px-2 py-1 flex items-center justify-center border border-[#FFFFFF14]">
-										<span className="font-bold">{2000}</span>
+										<span className="font-bold">{leader.score.toFixed(2)}</span>
 										<div className="bg-[#0088CC] rounded-full w-[16px] h-[16px] flex items-center justify-center ml-2">
 											<Icons name="ton" className="w-[14px] h-[14px]" />
 										</div>

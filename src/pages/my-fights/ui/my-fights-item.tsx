@@ -86,7 +86,7 @@ export const MyFightsItem = ({ fight }: MyFightsItemProps) => {
 
 	const formattedAmount = useMemo(() => {
 		const amount = fight?.amount;
-		return amount ? `${amount} TON` : "0 TON";
+		return amount ? `${amount.toFixed(2)} TON` : "0 TON";
 	}, [fight?.amount]);
 
 	if (!fight || !fight.lobby) {
