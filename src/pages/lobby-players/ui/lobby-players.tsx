@@ -1,13 +1,13 @@
-import { GiftHeaderCard } from '@/entities/gift';
-import { YourGifts } from '@/features/your-gifts';
-import { BlockTimer } from '@/shared/components/block-timer/block-timer';
-import { BottomButton } from '@/shared/components/bottom-button/bottom-button';
-import { useNavigate } from 'react-router';
+import { GiftHeaderCard } from "@/entities/gift";
+import { YourGifts } from "@/features/your-gifts";
+import { BlockTimer } from "@/shared/components/block-timer/block-timer";
+import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
+import { useNavigate } from "react-router";
 
 export const LobbyPlayers = () => {
   const navigate = useNavigate();
 
-  const handleNavigateToSpin = () => navigate('/spin');
+  const handleNavigateToSpin = () => navigate("/spin");
 
   return (
     <div>
@@ -43,8 +43,9 @@ export const LobbyPlayers = () => {
 
       <div className="grid gap-6 px-6 pb-5">
         <BottomButton
+          variant="primary"
           className="w-full"
-          content={'Поделиться лобби'}
+          content={"Поделиться лобби"}
           onClick={handleNavigateToSpin}
         />
 

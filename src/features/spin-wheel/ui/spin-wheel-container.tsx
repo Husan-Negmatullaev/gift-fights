@@ -6,6 +6,7 @@ import { useLobbyCountdownSubscription } from '../../spin-gifts/hooks/use-lobby-
 import { useUserJoinedToLobbySocket } from '../../spin-gifts/hooks/use-user-joined-to-lobby-subscription';
 import { useLobbyProcessSubscription } from '../../spin-gifts/hooks/use-lobby-process-subscription';
 import { useLobbyWinnerSubscription } from '../../spin-gifts/hooks/use-lobby-winner-subscription';
+import { useUserAddedGiftsToLobbySubscription } from '../../spin-gifts/hooks/use-user-added-gifts-to-lobby-subscription';
 import { useLobbyCacheUpdater } from '../hooks/use-lobby-cache-updater';
 
 interface SpinWheelContainerProps {
@@ -42,20 +43,12 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
   const { updateLobbyCache } = useLobbyCacheUpdater();
 
   // Socket.io подписки (аналогично spin-carousel.tsx)
-  useUserJoinedToLobbySocket(lobby.id, (payload) => {
-    console.log('Кто-то присоединился к лобби!', payload);
+  useUserJoinedToLobbySocket(lobby.id, () => {
     onRefreshAfterJoining();
   });
 
-  useLobbyCountdownSubscription(lobby.id, (payload) => {
-    console.log(
-      '🔌 SpinWheelContainer: useLobbyCountdownSubscription вызван:',
-      {
-        payload,
-        gameStarted,
-        lobbyTimeToStart: lobby.timeToStart,
-      },
-    );
+  useLobbyCountdownSubscription(lobby.id, () => {
+    console.log('🔌 SpinWheelContainer: useLobbyCountdownSubscription вызван:');
 
     if (gameStarted) {
       return;
@@ -77,21 +70,14 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
 
     handleAutoSpin(payload.payload.winnerId);
 
-    // Обновляем кеш лобби в главной странице
     updateLobbyCache();
   });
 
-  // console.log(
-  //   lobby,
-  //   segments,
-  //   gamePhase,
-  //   getPhaseText,
-  //   hasEnoughPlayers,
-  //   isSpinning,
-  //   isSlowingDown,
-  //   targetRotation,
-  //   rotation,
-  // );
+  useUserAddedGiftsToLobbySubscription(lobby.id, (payload) => {
+    console.log('🎁 Пользователь добавил подарки в лобби:', payload);
+    // Обновляем данные лобби после добавления подарков
+    onRefetchLobby();
+  });
 
   return (
     <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -102,7 +88,9 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
         phaseText={getPhaseText()}
         hasEnoughPlayers={hasEnoughPlayers}
         isSpinning={isSpinning || isSlowingDown}
-        targetRotation={targetRotation || rotation}
+        targetRotation={
+          targetRotation !== undefined ? targetRotation : rotation
+        }
       />
     </div>
   );

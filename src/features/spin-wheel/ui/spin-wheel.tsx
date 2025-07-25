@@ -108,17 +108,37 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
   // Синхронизируем targetRotation с internalRotation
   useEffect(() => {
     if (!isSpinning && targetRotation !== undefined) {
-      setInternalRotation(targetRotation);
+      // Добавляем tolerance для предотвращения бесконечных обновлений из-за floating-point неточности
+      const tolerance = 0.001;
+      const difference = Math.abs(targetRotation - internalRotation);
+
+      if (difference > tolerance) {
+        console.log('🔄 SpinWheel: Синхронизация targetRotation:', {
+          targetRotation,
+          internalRotation,
+          difference,
+        });
+        setInternalRotation(targetRotation);
+      }
     }
-  }, [targetRotation, isSpinning]);
+  }, [targetRotation, isSpinning]); // Убираем internalRotation из зависимостей!
 
   // Animate to target rotation when spinning (только для финальной анимации)
   useEffect(() => {
+    // Проверяем что нужна анимация и она еще не запущена
     if (
       isSpinning &&
       targetRotation !== undefined &&
-      targetRotation !== internalRotation
+      Math.abs(targetRotation - internalRotation) > 0.1 &&
+      !animationRef.current
     ) {
+      console.log('🎯 SpinWheel: Начинаем финальную анимацию:', {
+        startRotation: internalRotation,
+        targetRotation,
+        totalRotation: targetRotation - internalRotation,
+        targetDegreesNormalized: targetRotation % 360,
+      });
+
       const duration = 1000; // 1 секунда для финальной анимации
       const startTime = Date.now();
       const startRotation = internalRotation;
@@ -136,6 +156,43 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
 
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
+        } else {
+          console.log('✅ SpinWheel: Финальная анимация завершена:', {
+            finalRotation: currentRotation,
+            finalDegreesNormalized: currentRotation % 360,
+            targetWas: targetRotation,
+            targetNormalizedWas: targetRotation % 360,
+          });
+
+          // Дополнительная проверка: какой сегмент теперь находится под стрелкой
+          const arrowPosition = 270; // стрелка всегда вверху на 270°
+          const normalizedFinalRotation = ((currentRotation % 360) + 360) % 360;
+          const adjustedArrowPosition =
+            (arrowPosition - normalizedFinalRotation + 360) % 360;
+          const adjustedArrowRadians = (adjustedArrowPosition * Math.PI) / 180;
+
+          // Находим сегмент под стрелкой
+          const segmentUnderArrow = segmentsWithAngles.find(
+            (segment) =>
+              adjustedArrowRadians >= segment.startAngle &&
+              adjustedArrowRadians <= segment.endAngle,
+          );
+
+          console.log('🎯 Проверка финального положения:', {
+            arrowPosition,
+            normalizedFinalRotation,
+            adjustedArrowPosition,
+            segmentUnderArrow: segmentUnderArrow
+              ? {
+                  playerName: segmentUnderArrow.playerName,
+                  userId: segmentUnderArrow.userId,
+                  startAngleDeg: (segmentUnderArrow.startAngle * 180) / Math.PI,
+                  endAngleDeg: (segmentUnderArrow.endAngle * 180) / Math.PI,
+                }
+              : 'НЕ НАЙДЕН',
+          });
+
+          animationRef.current = null; // Сбрасываем флаг анимации
         }
       };
 
@@ -146,9 +203,10 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
       }
     };
-  }, [isSpinning, targetRotation, internalRotation]);
+  }, [isSpinning, targetRotation]); // Убираем internalRotation из зависимостей!
 
   const drawWheel = useCallback((g: PIXI.Graphics) => {
     g.clear();
@@ -338,19 +396,6 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
 
             <pixiContainer>
               <pixiGraphics draw={drawWheel} />
-              {/* <pixiText
-                x={0}
-                y={-20}
-                anchor={0.5}
-                text={phaseLabel}
-                style={
-                  new PIXI.TextStyle({
-                    fontSize: 12,
-                    fill: 0xffffff,
-                    fontWeight: '500',
-                  })
-                }
-              /> */}
               <pixiText
                 x={0}
                 y={0}
@@ -358,22 +403,17 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
                 text={formatTimer(phaseText)}
                 style={
                   new PIXI.TextStyle({
-                    fontSize: [
-                      LobbyStatus.InProcess,
-                      LobbyStatus.WaitingForPlayers,
-                    ].includes(gamePhase)
+                    fontSize: [LobbyStatus.WaitingForPlayers].includes(
+                      gamePhase,
+                    )
                       ? 16
                       : 32,
-                    fill: [
-                      LobbyStatus.InProcess,
-                      LobbyStatus.WaitingForPlayers,
-                    ].includes(gamePhase)
+                    fill: [LobbyStatus.WaitingForPlayers].includes(gamePhase)
                       ? 0x808080
                       : 0xffffff,
-                    fontWeight: [
-                      LobbyStatus.InProcess,
-                      LobbyStatus.WaitingForPlayers,
-                    ].includes(gamePhase)
+                    fontWeight: [LobbyStatus.WaitingForPlayers].includes(
+                      gamePhase,
+                    )
                       ? '400'
                       : '700',
                   })
