@@ -1,10 +1,15 @@
 import { lobbyImagesByBets, useGetLobbies } from "@/entities/lobby";
-import { useGetQuests, useGetQuestUsers } from "@/entities/quest";
+import {
+	useClaimReward,
+	useGetQuests,
+	useGetQuestUsers,
+} from "@/entities/quest";
 
 import { useTelegram } from "@/entities/telegram";
 import { LobbyStatus, type QuestUser } from "@/shared/api/graphql/graphql";
 import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
 import { LoadingSpinner } from "@/shared/components/loading-spinner/loading-spinner";
+import { useToast } from "@/shared/hooks/use-toast";
 import { Icons } from "@/shared/ui/icons/icons";
 import { Modal } from "@/shared/ui/modal/modal";
 import { LiveWinners } from "@/widgets/live-winners";
@@ -46,7 +51,16 @@ export const Main = () => {
 	]);
 	const { quests } = useGetQuests({ take: 10, skip: 0 });
 	const { questUsers } = useGetQuestUsers({ take: 1, skip: 0 });
+	const { claimReward } = useClaimReward();
+
+	// Helper function to remove @ symbol from channelId
+	const getCleanChannelId = (channelId: string | null | undefined) => {
+		if (!channelId) return "";
+		return channelId.replace(/^@/, "");
+	};
+
 	const handleToggleModal = () => {
+		setSubscribeClicked(false);
 		setOpen((prev) => !prev);
 	};
 	if (loading) {
@@ -103,7 +117,8 @@ export const Main = () => {
 
 		return timeLeft;
 	};
-	const countdownTime = useCountdownTimer(questUsers?.[0]?.lastReset);
+	const countdownTime = useCountdownTimer(questUsers?.[0]?.completedAt);
+	const { showError, showSuccess } = useToast();
 	return (
 		<div>
 			<LiveWinners />
@@ -171,7 +186,9 @@ export const Main = () => {
 					<p className="text-[#A8A8A8]">
 						Подпишитесь на наш канал{" "}
 						<a
-							href={`https://t.me/${quests[0]?.requirements?.channelId}`}
+							href={`https://t.me/${getCleanChannelId(
+								quests[0]?.requirements?.channelId,
+							)}`}
 							target="_blank"
 							rel="noopener noreferrer"
 							className="text-[#1AC9FF] underline"
@@ -188,10 +205,15 @@ export const Main = () => {
 						/>
 					</div>
 					<p className="text-[#A8A8A8] text-xs mt-2 mb-6">{"0.5 TON"}</p>
-					<button className="bg-[#FFCA38] text-black text-sm font-bold px-2 py-1 rounded-lg flex items-center gap-2 mb-4">
-						<Icons name="clock" className="w-[10px] h-[10px] text-[#1D1D1D]" />
-						{countdownTime}
-					</button>
+					{countdownTime != "00:00:00" && (
+						<button className="bg-[#FFCA38] text-black text-sm font-bold px-2 py-1 rounded-lg flex items-center gap-2 mb-4">
+							<Icons
+								name="clock"
+								className="w-[10px] h-[10px] text-[#1D1D1D]"
+							/>
+							{countdownTime}
+						</button>
+					)}
 
 					<BottomButton
 						withShadow
@@ -202,9 +224,28 @@ export const Main = () => {
 						}
 						className="px-4 mt-4 w-full"
 						onClick={() => {
-							tg.openTelegramLink(
-								`https://t.me/${quests[0]?.requirements?.channelId}`,
-							);
+							if (!subscribeClicked) {
+								setSubscribeClicked(true);
+								tg.openTelegramLink(
+									`https://t.me/${getCleanChannelId(
+										quests[0]?.requirements?.channelId,
+									)}`,
+								);
+							} else {
+								claimReward(quests[0]?.id)
+									.then((res) => {
+										setSubscribeClicked(false);
+										showSuccess("Подарок получен!");
+										handleToggleModal();
+										console.log("RES: ", res);
+									})
+									.catch((err) => {
+										if (err.message == "Quest not completed") {
+											setSubscribeClicked(false);
+											showError("Условия не выполнены!");
+										}
+									});
+							}
 						}}
 						// onClick={handleSubmit((penis) => penis.gifts)}
 					/>
