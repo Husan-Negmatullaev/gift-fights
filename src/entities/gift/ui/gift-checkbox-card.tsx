@@ -16,10 +16,21 @@ type GiftCheckboxCardProps = {
 	price: number;
 	status?: string;
 	id: number;
+	withdrawable: boolean;
 };
 
 export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
-	const { className, size, checkbox, slug, title, price, status, id } = props;
+	const {
+		className,
+		size,
+		checkbox,
+		slug,
+		title,
+		price,
+		status,
+		id,
+		withdrawable,
+	} = props;
 
 	const giftUrl = `https://nft.fragment.com/gift/${slug}.lottie.json`;
 
@@ -65,10 +76,18 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
 						"relative rounded-t-[14px] rounded-b-[8px] overflow-hidden",
 					)}
 				>
-					<TouchableLottie
-						animation={animationData}
-						className="size-42.5 rounded-t-[14px] rounded-b-[8px] z-0 "
-					/>
+					{withdrawable ? (
+						<TouchableLottie
+							animation={animationData}
+							className="size-42.5 rounded-t-[14px] rounded-b-[8px] z-0 "
+						/>
+					) : (
+						<img
+							src={`/public/assets/images/main/pepe_heart.webp`}
+							alt={title}
+							className="size-42.5 rounded-t-[14px] rounded-b-[8px] z-0 bg-[#5B5B5B]"
+						/>
+					)}
 					<Checkbox
 						variant="bordered"
 						wrapperClassName="absolute top-2 left-2"
@@ -89,7 +108,7 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
 					)}
 				>
 					<h5>{title}</h5>
-					<h5>#{id}</h5>
+					<h5>#{id || 0}</h5>
 					{/* <p>#{slug}</p> */}
 				</header>
 				<div className="px-2">

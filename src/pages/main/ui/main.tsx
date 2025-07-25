@@ -50,11 +50,19 @@ export const Main = () => {
 		LobbyStatus.InProcess,
 		LobbyStatus.WaitingForPlayers,
 	]);
-	const { quests, refetch: refetchQuests } = useGetQuests({
+	const {
+		quests,
+		refetch: refetchQuests,
+		loading: questsLoading,
+	} = useGetQuests({
 		take: 10,
 		skip: 0,
 	});
-	const { questUsers, refetch: refetchQuestUsers } = useGetQuestUsers({
+	const {
+		questUsers,
+		refetch: refetchQuestUsers,
+		loading: questUsersLoading,
+	} = useGetQuestUsers({
 		take: 1,
 		skip: 0,
 	});
@@ -143,13 +151,17 @@ export const Main = () => {
 	return (
 		<div>
 			<LiveWinners />
+
 			<MainBanner
 				onOpenModal={handleClaimReward}
 				quests={quests}
 				questUser={questUsers as QuestUser[]}
 				countdownTime={countdownTime}
 				claimReward={handleToggleModal}
+				questsLoading={questsLoading}
+				questUsersLoading={questUsersLoading}
 			/>
+
 			<div className="px-6 mb-4">
 				<p className="font-bold text-[24px]">Лобби</p>
 				<p className="text-[#A8A8A8] text-[16px] font-regular">
