@@ -57,6 +57,14 @@ const GET_PARTICIPANTS = graphql(`
         countdownExpiresAt
         createdAt
         updatedAt
+        participants {
+                id
+                amount
+                userId
+                lobbyId
+                createdAt
+                updatedAt
+            }
       }
     }
   }

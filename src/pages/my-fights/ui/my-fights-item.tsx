@@ -37,13 +37,12 @@ const RESULT_CONFIG = {
 	},
 } as const;
 
-const MAX_PARTICIPANTS = 9;
-
 interface MyFightsItemProps {
 	fight: ParticipantWithRelations;
 }
 
 export const MyFightsItem = ({ fight }: MyFightsItemProps) => {
+	console.log("FIGHT: ", fight?.lobby);
 	const statusConfig = useMemo(() => {
 		if (!fight?.lobby?.status) {
 			return { color: "", text: "" };
