@@ -24,66 +24,10 @@ interface IFormInput {
 	gifts: string[];
 }
 
-// const mockGifts = [
-// 	{
-// 		id: "gift-1",
-// 		slug: "swisswatch-13036",
-// 		msgId: 1,
-// 		title: "Pepe Gift",
-// 		model: "pepe-model",
-// 		price: 10.5,
-// 		symbol: "PEPE",
-// 		userId: "user-1",
-// 		blocked: false,
-// 		externalId: "ext-1",
-// 		symbolPermille: 1000,
-// 		rarityPermille: 500,
-// 		backgroundPermille: 200,
-// 		status: "Withdrawing",
-// 	},
-// 	{
-// 		id: "gift-2",
-// 		slug: "swisswatch-13036",
-// 		msgId: 2,
-// 		title: "Froggy Gift",
-// 		model: "froggy-model",
-// 		price: 15.0,
-// 		symbol: "FROG",
-// 		userId: "user-1",
-// 		blocked: false,
-// 		externalId: "ext-2",
-// 		symbolPermille: 1200,
-// 		rarityPermille: 600,
-// 		backgroundPermille: 300,
-// 		status: "Available",
-// 	},
-// 	{
-// 		id: "gift-3",
-// 		slug: "swisswatch-13036",
-// 		msgId: 3,
-// 		title: "Cap Gift",
-// 		model: "cap-model",
-// 		price: 8.75,
-// 		symbol: "CAP",
-// 		userId: "user-1",
-// 		blocked: false,
-// 		externalId: "ext-3",
-// 		symbolPermille: 800,
-// 		rarityPermille: 400,
-// 		backgroundPermille: 150,
-// 		status: "Available",
-// 	},
-// ];
-
 export const Inventory = () => {
-	// const { gifts, refetch, loading } = useGetGifts({
-	// 	take: 25,
-	// 	skip: 0,
-	// });
 	const { profile, refetch, loading } = useProfileContext();
 	const gifts = profile?.gifts;
 	const { data: withdrawnGifts } = useGetWithdrawnGifts(50, 0);
-	// const loading = true;
 	const [open, setOpen] = useState(false);
 	const [tonConnectUI] = useTonConnectUI();
 	const { withdrawGifts } = useWithdrawGifts();
@@ -192,52 +136,63 @@ export const Inventory = () => {
 				)}
 
 				<ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
-					{withdrawnGifts?.map((gift) => (
-						<li key={gift.giftId} className="relative ">
-							<div className="relative">
+					{filteredBlockedGifts.map((gift) => {
+						const isGiftWithdrawn = withdrawnGifts?.some(
+							(withdrawnGift) =>
+								withdrawnGift.giftId === gift.id &&
+								withdrawnGift.status !== "Completed",
+						);
+						if (isGiftWithdrawn) {
+							return (
+								<li key={gift.id} className="relative ">
+									<div className="relative">
+										<GiftCheckboxCard
+											size="lg"
+											key={gift.id}
+											slug={gift.slug}
+											title={gift.title}
+											price={gift.price}
+											id={Number(gift.id)}
+											// status={gift.status}
+											checkbox={{
+												value: gift.id,
+												...register("gifts", {
+													required: true,
+												}),
+											}}
+											withdrawable={gift.withdrawable}
+										/>
+										<div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] rounded-[16px] flex items-center justify-center">
+											<Icons
+												name="loader"
+												className="animate-spin size-8 text-white"
+											/>
+										</div>
+									</div>
+								</li>
+							);
+						}
+						return (
+							<li key={gift.id}>
 								<GiftCheckboxCard
 									size="lg"
-									key={gift.giftId}
-									slug={gift.gift.slug}
-									title={gift.gift.title}
-									price={gift.gift.price}
-									id={Number(gift.gift.msgId)}
+									key={gift.id}
+									slug={gift.slug}
+									title={gift.title}
+									price={gift.price}
+									id={Number(gift.msgId)}
 									// status={gift.status}
 									checkbox={{
-										value: gift.giftId,
+										value: gift.id,
 										...register("gifts", {
 											required: true,
 										}),
 									}}
+									withdrawable={gift.withdrawable}
 								/>
-								<div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] rounded-[16px] flex items-center justify-center">
-									<Icons
-										name="loader"
-										className="animate-spin size-8 text-white"
-									/>
-								</div>
-							</div>
-						</li>
-					))}
-					{filteredBlockedGifts.map((gift) => (
-						<li key={gift.id}>
-							<GiftCheckboxCard
-								size="lg"
-								key={gift.id}
-								slug={gift.slug}
-								title={gift.title}
-								price={gift.price}
-								id={Number(gift.msgId)}
-								// status={gift.status}
-								checkbox={{
-									value: gift.id,
-									...register("gifts", {
-										required: true,
-									}),
-								}}
-							/>
-						</li>
-					))}
+							</li>
+						);
+					})}
 				</ul>
 				{loading && (
 					<div className="mt-10 mx-auto flex justify-center">

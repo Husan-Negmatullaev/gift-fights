@@ -1,3 +1,4 @@
+import { useTelegram } from "@/entities/telegram";
 import type { Quest, QuestUser } from "@/shared/api/graphql/graphql";
 import { Icons } from "@/shared/ui/icons/icons";
 
@@ -8,21 +9,45 @@ export const MainBanner = ({
 	quests,
 	questUser,
 	countdownTime,
+	questsLoading,
+	questUsersLoading,
 }: {
 	onOpenModal: () => void;
 	quests: Quest[];
 	questUser: QuestUser[];
 	countdownTime: string;
 	claimReward: () => void;
+	questsLoading: boolean;
+	questUsersLoading: boolean;
 }) => {
 	const currentQuest = quests[0];
 	const currentQuestUser = questUser?.[0];
+	const tg = useTelegram();
+
+	// Helper function to remove @ symbol from channelId
+	const getCleanChannelId = (channelId: string | null | undefined) => {
+		if (!channelId) return "";
+		return channelId.replace(/^@/, "");
+	};
 
 	// const {
 	// 	claimReward,
 	// 	loading: claimRewardLoading,
 	// 	error: claimRewardError,
 	// } = useClaimReward();
+	if (questsLoading || questUsersLoading) {
+		return (
+			<div
+				className="relative text-white mb-8 mx-4 rounded-[16px] border border-[#FFFFFF33] overflow-hidden flex items-center justify-center h-37"
+				style={{
+					background:
+						"linear-gradient(90deg, #5B5B5B70 0%, #B0B0B070 100%), linear-gradient(270deg, #526C8A70 10%, #2E3D4B70 100%)",
+				}}
+			>
+				<Icons name="loader" className="animate-spin size-8" />
+			</div>
+		);
+	}
 	return (
 		<article
 			className="relative text-white mb-8 mx-4 rounded-[16px] border border-[#FFFFFF33] overflow-hidden"
@@ -36,8 +61,21 @@ export const MainBanner = ({
 					<h2 className="text-lg/5 font-bold mb-1.5 text-[18px]">
 						{"Бесплатный подарок 🎁"}
 					</h2>
-					<p className="font-regular mb-2 text-[12px]">
-						Подпишитесь на {currentQuest?.requirements?.channelId} и получи Пепу
+					<p className="font-regular mb-2 text-[12px] ">
+						Подпишитесь на{" "}
+						<button
+							onClick={() => {
+								tg.openTelegramLink(
+									`https://t.me/${getCleanChannelId(
+										currentQuest?.requirements?.channelId,
+									)}`,
+								);
+							}}
+							className="text-[#1AC9FF] underline cursor-pointer font-bold"
+						>
+							{currentQuest?.requirements?.channelId}
+						</button>{" "}
+						и получи Пепу
 					</p>
 				</div>
 				<div className="flex items-center gap-2">
@@ -47,13 +85,22 @@ export const MainBanner = ({
 						// }}
 						className="border border-[#FFFFFF33] rounded-[8px] text-[12px] font-regular bg-[#FFFFFFB2] w-fit p-1  flex items-center"
 					>
-						{countdownTime != "00:00:00" && (
-							<div className="flex items-center gap-1 mr-2 ml-2">
-								<Icons name="clock" className="w-[18px] h-[18px] text-black" />
-								<p className="text-[18px] font-bold text-black">
-									{countdownTime}
-								</p>
+						{questsLoading || questUsersLoading ? (
+							<div className=" flex items-center justify-center bg-black/20 rounded-2xl mr-2">
+								<Icons name="loader" className="animate-spin size-8" />
 							</div>
+						) : (
+							countdownTime != "00:00:00" && (
+								<div className="flex items-center gap-1 mr-2 ml-2">
+									<Icons
+										name="clock"
+										className="w-[18px] h-[18px] text-black"
+									/>
+									<p className="text-[18px] font-bold text-black">
+										{countdownTime}
+									</p>
+								</div>
+							)
 						)}
 						{!currentQuestUser?.completed && (
 							<button
