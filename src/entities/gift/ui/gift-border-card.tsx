@@ -18,7 +18,7 @@ type GiftBorderCardProps = {
 export const GiftBorderCard = (props: GiftBorderCardProps) => {
 	const { size, className, slug, title, price, status } = props;
 
-	if (status === "Pending") {
+	if (status !== "Completed") {
 		return (
 			<article
 				className={clsx(

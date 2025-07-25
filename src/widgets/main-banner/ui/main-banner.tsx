@@ -13,6 +13,7 @@ export const MainBanner = ({
 	quests: Quest[];
 	questUser: QuestUser[];
 	countdownTime: string;
+	claimReward: () => void;
 }) => {
 	const currentQuest = quests[0];
 	const currentQuestUser = questUser?.[0];

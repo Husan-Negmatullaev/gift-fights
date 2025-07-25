@@ -5,7 +5,6 @@ import { ReferralBalanceOutput } from "@/features/refferal-balance-output";
 import { useCopy } from "@/shared/hooks/use-copy";
 import { RefStatItem } from "@/widgets/ref-stat-item";
 import { useEffect, useState } from "react";
-// import { shareURL } from '@telegram-apps/sdk-react';
 
 type TabType = "profile" | "referrals";
 
@@ -136,7 +135,6 @@ export const Profile = () => {
 
 							<ul className="flex flex-col gap-2 peer">
 								{profile.withdrawnGifts.map((gift) => (
-									// {mockWithdrawnGifts.map((gift) => (
 									<li key={gift.giftId}>
 										<GiftBorderCard
 											size="lg"

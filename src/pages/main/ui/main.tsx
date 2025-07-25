@@ -1,4 +1,5 @@
 import { lobbyImagesByBets, useGetLobbies } from "@/entities/lobby";
+import { useProfile } from "@/entities/profile";
 import {
 	useClaimReward,
 	useGetQuests,
@@ -49,9 +50,16 @@ export const Main = () => {
 		LobbyStatus.InProcess,
 		LobbyStatus.WaitingForPlayers,
 	]);
-	const { quests } = useGetQuests({ take: 10, skip: 0 });
-	const { questUsers } = useGetQuestUsers({ take: 1, skip: 0 });
+	const { quests, refetch: refetchQuests } = useGetQuests({
+		take: 10,
+		skip: 0,
+	});
+	const { questUsers, refetch: refetchQuestUsers } = useGetQuestUsers({
+		take: 1,
+		skip: 0,
+	});
 	const { claimReward } = useClaimReward();
+	const { refetch: refetchProfile } = useProfile();
 
 	// Helper function to remove @ symbol from channelId
 	const getCleanChannelId = (channelId: string | null | undefined) => {
@@ -59,8 +67,21 @@ export const Main = () => {
 		return channelId.replace(/^@/, "");
 	};
 
+	const handleClaimReward = () => {
+		claimReward(quests[0]?.id)
+			.then(() => {
+				setSubscribeClicked(false);
+				showSuccess("Подарок получен!");
+				refetchProfile();
+				refetchQuests();
+				refetchQuestUsers();
+			})
+			.catch(() => {
+				setSubscribeClicked(false);
+				setOpen((prev) => !prev);
+			});
+	};
 	const handleToggleModal = () => {
-		setSubscribeClicked(false);
 		setOpen((prev) => !prev);
 	};
 	if (loading) {
@@ -123,10 +144,11 @@ export const Main = () => {
 		<div>
 			<LiveWinners />
 			<MainBanner
-				onOpenModal={handleToggleModal}
+				onOpenModal={handleClaimReward}
 				quests={quests}
 				questUser={questUsers as QuestUser[]}
 				countdownTime={countdownTime}
+				claimReward={handleToggleModal}
 			/>
 			<div className="px-6 mb-4">
 				<p className="font-bold text-[24px]">Лобби</p>
@@ -233,11 +255,13 @@ export const Main = () => {
 								);
 							} else {
 								claimReward(quests[0]?.id)
-									.then((res) => {
+									.then(() => {
 										setSubscribeClicked(false);
 										showSuccess("Подарок получен!");
 										handleToggleModal();
-										console.log("RES: ", res);
+										refetchProfile();
+										refetchQuests();
+										refetchQuestUsers();
 									})
 									.catch((err) => {
 										if (err.message == "Quest not completed") {
