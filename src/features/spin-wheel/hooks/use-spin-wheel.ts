@@ -121,6 +121,19 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
   useEffect(() => {
     const segments = transformParticipantsToSegments(lobby.participants);
 
+    console.log(
+      '🔄 Segments updated:',
+      segments.map((s, index) => ({
+        index,
+        userId: s.userId,
+        playerName: s.playerName,
+        startAngle: s.startAngle,
+        endAngle: s.endAngle,
+        startDegrees: (s.startAngle * 180) / Math.PI,
+        endDegrees: (s.endAngle * 180) / Math.PI,
+      })),
+    );
+
     setState((prev) => ({
       ...prev,
       segments,
@@ -134,9 +147,9 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
         return 'Ожидание';
       }
 
-      // Если ищем победителя, показываем это
+      // Если ищем победителя, показываем таймер 00:00
       if (state.isSearchingWinner) {
-        return 'Ищем победителя';
+        return '00:00';
       }
 
       switch (state.gamePhase) {
@@ -197,24 +210,88 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
   const calculateWinnerRotation = useCallback(
     (winnerId: string) => {
       const activeParticipants = lobby.participants;
+
+      console.log('🔍 Looking for winner:', {
+        winnerId,
+        participants: activeParticipants.map((p) => ({
+          userId: p.userId,
+          username: p.user.username,
+        })),
+      });
+
       let selectedIndex = activeParticipants.findIndex(
         (participant) => participant.userId === Number(winnerId),
       );
 
       if (selectedIndex === -1) {
+        console.warn('⚠️ Winner not found, selecting random participant');
         selectedIndex = Math.floor(Math.random() * activeParticipants.length);
+      } else {
+        console.log(
+          '✅ Winner found at index:',
+          selectedIndex,
+          activeParticipants[selectedIndex].user.username,
+        );
       }
 
-      const currentSegmentAngle = 360 / activeParticipants.length;
-      const targetAngle =
-        selectedIndex * currentSegmentAngle + currentSegmentAngle / 2;
+      // Используем реальные углы сегментов из state.segments
+      const winnerSegment = state.segments[selectedIndex];
+      if (!winnerSegment) {
+        console.error('Winner segment not found for index:', selectedIndex);
+        console.error(
+          'Available segments:',
+          state.segments.map((s) => ({
+            id: s.id,
+            playerName: s.playerName,
+            userId: s.userId,
+          })),
+        );
+        return { finalTargetRotation: state.rotation, selectedIndex };
+      }
+
+      console.log('🎯 Winner segment found:', {
+        segmentId: winnerSegment.id,
+        segmentPlayerName: winnerSegment.playerName,
+        segmentUserId: winnerSegment.userId,
+        participantUsername: activeParticipants[selectedIndex].user.username,
+      });
+
+      // Вычисляем середину сегмента победителя в радианах
+      const segmentMidAngle =
+        (winnerSegment.startAngle + winnerSegment.endAngle) / 2;
+
+      // Конвертируем радианы в градусы
+      const segmentMidDegrees = (segmentMidAngle * 180) / Math.PI;
+
+      // Стрелка находится вверху в позиции 270° (или -90°)
+      // Сегменты рисуются начиная с правой стороны (0°)
+      // Нужно повернуть колесо так, чтобы середина сегмента оказалась под стрелкой вверху
+      // Формула: targetAngle = 270° - позиция_сегмента
+      const targetAngle = 270 - segmentMidDegrees;
+
       const extraSpins = 2 + Math.random() * 2;
       const finalTargetRotation =
-        state.rotation + extraSpins * 360 + (360 - targetAngle);
+        state.rotation + extraSpins * 360 + targetAngle;
+
+      console.log('🎯 Winner calculation:', {
+        winnerId,
+        selectedIndex,
+        segmentMidAngle,
+        segmentMidDegrees,
+        targetAngle,
+        finalTargetRotation,
+        currentRotation: state.rotation,
+        // Дополнительная отладка
+        segmentStartDegrees: (winnerSegment.startAngle * 180) / Math.PI,
+        segmentEndDegrees: (winnerSegment.endAngle * 180) / Math.PI,
+        expectedFinalPosition:
+          (state.rotation + extraSpins * 360 + targetAngle) % 360,
+        arrowPosition: 270, // стрелка всегда вверху на 270°
+      });
 
       return { finalTargetRotation, selectedIndex };
     },
-    [lobby.participants, state.rotation],
+    [lobby.participants, state.rotation, state.segments],
   );
 
   const stopSpinAndSelectWinner = useCallback(
@@ -453,8 +530,8 @@ export const useSpinWheel = ({ lobby, onSelected }: SpinWheelProps) => {
         const demoWinnerId =
           lobby.participants.length > 0
             ? lobby.participants[
-              Math.floor(Math.random() * lobby.participants.length)
-            ].userId.toString()
+                Math.floor(Math.random() * lobby.participants.length)
+              ].userId.toString()
             : '1';
         handleAutoSpin(demoWinnerId);
       }, 1000);

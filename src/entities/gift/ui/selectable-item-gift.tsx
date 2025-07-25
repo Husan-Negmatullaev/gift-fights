@@ -21,6 +21,9 @@ type SelectableItemGiftProps = {
 export const SelectableItemGift = (props: SelectableItemGiftProps) => {
   const { slug, title, price, size, active, onClick, className } = props;
 
+  // Извлекаем все цифры из slug
+  const id = slug?.match(/\d+/)?.[0] || '0';
+
   return (
     <button
       onClick={onClick}
@@ -55,7 +58,7 @@ export const SelectableItemGift = (props: SelectableItemGiftProps) => {
             'flex items-center justify-between',
           )}>
           <h5>{title}</h5>
-          {/* <p>#{slug}</p> */}
+          <p>#{id}</p>
         </header>
         <div
           className={clsx(

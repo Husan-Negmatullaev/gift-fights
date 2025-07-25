@@ -51,6 +51,7 @@ export const CreateLobbyForm = (props: CreateLobbyFormProps) => {
       <div className="fixed w-full bottom-safe-app-bottom left-1/2 -translate-x-1/2 px-6 pb-4.5">
         <BottomButton
           withShadow
+          variant="primary"
           className="w-full"
           disabled={!isDirty}
           content="Создать лобби"
