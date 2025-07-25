@@ -1,14 +1,22 @@
-import type { Quest } from "@/shared/api/graphql/graphql";
+import type { Quest, QuestUser } from "@/shared/api/graphql/graphql";
 import { Icons } from "@/shared/ui/icons/icons";
+
+// Custom hook for countdown timer
 
 export const MainBanner = ({
 	onOpenModal,
 	quests,
+	questUser,
+	countdownTime,
 }: {
 	onOpenModal: () => void;
 	quests: Quest[];
+	questUser: QuestUser[];
+	countdownTime: string;
 }) => {
 	const currentQuest = quests[0];
+	const currentQuestUser = questUser?.[0];
+
 	// const {
 	// 	claimReward,
 	// 	loading: claimRewardLoading,
@@ -31,25 +39,37 @@ export const MainBanner = ({
 						Подпишитесь на {currentQuest?.requirements?.channelId} и получи Пепу
 					</p>
 				</div>
-				<div
-					// onClick={() => {
-					// 	tg.openTelegramLink("https://t.me/labs_relayer");
-					// }}
-					className="border border-[#FFFFFF33] rounded-[8px] text-[12px] font-regular bg-[#FFFFFFB2] max-w-[193px] h-[40px] flex items-center"
-				>
-					<div className="flex items-center gap-1 mr-2 ml-2">
-						<Icons name="clock" className="w-[18px] h-[18px] text-black" />
-						<p className="text-[18px] font-bold text-black">22:12:45</p>
-					</div>
-					<button
-						onClick={onOpenModal}
-						className="rounded-[8px] w-[78px] border-none outline-none h-[32px] mr-1"
-						style={{
-							background: "linear-gradient(360deg, #2D83EC 0%, #1AC9FF 100%)",
-						}}
+				<div className="flex items-center gap-2">
+					<div
+						// onClick={() => {
+						// 	tg.openTelegramLink("https://t.me/labs_relayer");
+						// }}
+						className="border border-[#FFFFFF33] rounded-[8px] text-[12px] font-regular bg-[#FFFFFFB2] w-fit p-1  flex items-center"
 					>
-						<p className="text-[14px] font-bold">ЗАБРАТЬ</p>
-					</button>
+						{countdownTime != "00:00:00" && (
+							<div className="flex items-center gap-1 mr-2 ml-2">
+								<Icons name="clock" className="w-[18px] h-[18px] text-black" />
+								<p className="text-[18px] font-bold text-black">
+									{countdownTime}
+								</p>
+							</div>
+						)}
+						{!currentQuestUser?.completed && (
+							<button
+								onClick={onOpenModal}
+								className="rounded-[8px] w-[78px] border-none outline-none h-[32px]"
+								style={{
+									background:
+										"linear-gradient(360deg, #2D83EC 0%, #1AC9FF 100%)",
+								}}
+							>
+								<p className="text-[14px] font-bold">ЗАБРАТЬ</p>
+							</button>
+						)}
+					</div>
+					{currentQuestUser?.completed && (
+						<p className="text-[12px] text-[#A8A8A8]">УЖЕ ЗАБРАЛ</p>
+					)}
 				</div>
 			</div>
 			<img

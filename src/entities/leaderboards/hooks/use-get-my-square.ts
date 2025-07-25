@@ -1,6 +1,6 @@
 import { graphql } from '@/shared/api/graphql';
-import { useQuery } from '@apollo/client';
 import type { MyScoreQuery } from '@/shared/api/graphql/graphql';
+import { useQuery } from '@apollo/client';
 
 const GET_MY_SCORE_QUERY = graphql(`
   query MyScore {
@@ -9,8 +9,25 @@ const GET_MY_SCORE_QUERY = graphql(`
       score
       rank
       user {
-        username
-      }
+            id
+            tgId
+            username
+            lastName
+            firstName
+            tonAddress
+            image
+            referralCode
+            referredBy
+            balance
+            bonuses
+            lastWonAmount
+            displayName
+            wins
+            losses
+            winRate
+            createdAt
+            updatedAt
+        }
     }
   }
 `);

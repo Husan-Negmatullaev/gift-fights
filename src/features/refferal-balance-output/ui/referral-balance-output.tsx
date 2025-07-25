@@ -1,4 +1,5 @@
 import { useProfileContext } from "@/entities/profile";
+import { useTelegram } from "@/entities/telegram";
 import { useCreateWithdrawBonus } from "@/entities/user";
 import { useNavigationContext } from "@/shared/contexts/navigation-context";
 import { useToast } from "@/shared/hooks/use-toast";
@@ -17,8 +18,9 @@ export const ReferralBalanceOutput = () => {
 	const handleToggleModal = () => {
 		setIsModalOpen((prev) => !prev);
 	};
-
+	const tg = useTelegram();
 	const handleInputFocus = () => {
+		if (tg.platform !== "android" && tg.platform !== "ios") return;
 		hideNavBar();
 		// Scroll down by 20px when input is focused with delay
 		setTimeout(() => {
@@ -30,6 +32,7 @@ export const ReferralBalanceOutput = () => {
 	};
 
 	const handleInputBlur = () => {
+		if (tg.platform !== "android" && tg.platform !== "ios") return;
 		showNavBar();
 	};
 
