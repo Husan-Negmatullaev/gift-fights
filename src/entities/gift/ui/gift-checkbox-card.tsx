@@ -28,7 +28,6 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
 		title,
 		price,
 		status,
-		id,
 		withdrawable,
 	} = props;
 
