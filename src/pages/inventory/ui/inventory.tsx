@@ -14,6 +14,7 @@ import { BottomButton } from "@/shared/components/bottom-button/bottom-button";
 import { LoadingSpinner } from "@/shared/components/loading-spinner/loading-spinner";
 import { LoadableLottie } from "@/shared/components/lottie/loadable-lottie";
 import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
+import { useToast } from "@/shared/hooks/use-toast";
 import { Icons } from "@/shared/ui/icons/icons";
 import { Modal } from "@/shared/ui/modal/modal";
 import { useTonConnectUI } from "@tonconnect/ui-react";
@@ -73,8 +74,12 @@ export const Inventory = () => {
 	}, [selectedGifts]);
 
 	const amountWithCommission = selectedGifts.length * 0.5;
-
+	const { showError } = useToast();
 	const handleConfirm = () => {
+		if (selectedGifts.some((gift) => gift.withdrawable === false)) {
+			showError("Нельзя выводить бесплатные подарки");
+			return;
+		}
 		handleToggleModal();
 	};
 

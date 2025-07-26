@@ -1,12 +1,10 @@
-import { TelegramBackHandler, useTelegram } from "@/entities/telegram";
+import { TelegramBackHandler } from "@/entities/telegram";
 import { LoadUserProfile } from "@/widgets/loader-user-profile";
 import { Outlet, ScrollRestoration } from "react-router";
 import { Header } from "./header";
 import { NavBar } from "./nav-bar";
 
 export const Layout = () => {
-	const telegram = useTelegram();
-	console.log("TEST: ", telegram.initDataUnsafe.start_param);
 	return (
 		<LoadUserProfile>
 			<div className="fixed inset-0 size-full pt-safe-app-top pb-safe-app-bottom container-safe pointer-events-none">
