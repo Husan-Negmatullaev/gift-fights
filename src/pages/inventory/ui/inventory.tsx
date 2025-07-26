@@ -141,11 +141,15 @@ export const Inventory = () => {
 				)}
 				<ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
 					{filteredBlockedGifts.map((gift) => {
-						const isGiftWithdrawn = withdrawnGifts?.some(
-							(withdrawnGift) =>
-								withdrawnGift.giftId === gift.id &&
-								withdrawnGift.status !== "Completed",
+						const withdrawnGift = withdrawnGifts?.find(
+							(withdrawnGift) => withdrawnGift.giftId === gift.id,
 						);
+						if (withdrawnGift?.status === "Completed") {
+							return null;
+						}
+						const isGiftWithdrawn =
+							withdrawnGift && (withdrawnGift.status as string) !== "Completed";
+
 						if (isGiftWithdrawn) {
 							return (
 								<li key={gift.id} className="relative ">
@@ -184,7 +188,7 @@ export const Inventory = () => {
 									slug={gift.slug}
 									title={gift.title}
 									price={gift.price}
-									id={Number(gift.msgId)}
+									id={Number(gift.id)}
 									// status={gift.status}
 									checkbox={{
 										value: gift.id,
