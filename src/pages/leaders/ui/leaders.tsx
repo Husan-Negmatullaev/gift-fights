@@ -30,9 +30,16 @@ export const Leaders = () => {
 										#{leaderboard.rank}
 									</span>
 									<img
-										src={leaderboard?.user.image || ""}
+										src={
+											leaderboard?.user.image ||
+											"/assets/images/main/pepe_heart.webp"
+										}
 										alt={leaderboard.user.username}
 										className="w-10 h-10 rounded-full border border-[#494A4A]"
+										onError={(e) => {
+											e.currentTarget.src =
+												"/assets/images/main/pepe_heart.webp";
+										}}
 									/>
 									<span>{leaderboard.user.username}</span>
 								</div>

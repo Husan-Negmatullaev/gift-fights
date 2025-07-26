@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { useState } from "react";
 
 type AvatarProps = {
 	url: string;
@@ -9,6 +10,11 @@ type AvatarProps = {
 
 export const Avatar = (props: AvatarProps) => {
 	const { url, className, style } = props;
+	const [imageError, setImageError] = useState(false);
+
+	const handleImageError = () => {
+		setImageError(true);
+	};
 
 	return (
 		<div
@@ -19,11 +25,21 @@ export const Avatar = (props: AvatarProps) => {
 				"rounded-full overflow-hidden",
 			)}
 		>
-			<img
-				src={url}
-				alt="user avatar"
-				className="size-full border border-[#494A4A] border-[2.5px] rounded-full"
-			/>
+			{!imageError ? (
+				<img
+					src={url}
+					alt="user avatar"
+					className="size-full border border-[#494A4A] border-[2.5px] rounded-full"
+					onError={handleImageError}
+				/>
+			) : (
+				<img
+					src="assets/images/main/pepe_heart.webp"
+					alt="user avatar"
+					className="size-full border border-[#494A4A] border-[2.5px] rounded-full bg-[#5B5B5B]"
+					onError={handleImageError}
+				/>
+			)}
 		</div>
 	);
 };
