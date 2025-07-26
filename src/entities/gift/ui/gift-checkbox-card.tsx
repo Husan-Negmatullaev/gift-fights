@@ -28,7 +28,6 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
 		title,
 		price,
 		status,
-		id,
 		withdrawable,
 	} = props;
 
@@ -107,8 +106,8 @@ export const GiftCheckboxCard = (props: GiftCheckboxCardProps) => {
 						"flex items-center justify-between font-regular px-2 mt-2",
 					)}
 				>
-					<h5>{title}</h5>
-					<h5>#{id || 0}</h5>
+					<h5 className="truncate">{title}</h5>
+					<h5>#{slug.match(/-(\d+)$/)?.[1] || 0}</h5>
 					{/* <p>#{slug}</p> */}
 				</header>
 				<div className="px-2">
