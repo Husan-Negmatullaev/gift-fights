@@ -333,6 +333,7 @@ export const PlaySpin = () => {
 									price={gift.price}
 									title={gift.title}
 									active={giftsId.includes(gift.id)}
+									withdrawable={gift.withdrawable}
 									onClick={() =>
 										handleSelectGift(gift.id, giftsId.includes(gift.id))
 									}
@@ -408,16 +409,23 @@ export const PlaySpin = () => {
 									</div>
 								</div>
 								<div className="grid grid-flow-col auto-cols-[60px] gap-1.5 overflow-auto">
-									{participant.gifts.map((gift) => (
-										<LoadableLottie key={gift.id} slug={gift.slug}>
-											{(animationData) => (
-												<TouchableLottie
-													animation={animationData}
-													className="rounded-four overflow-hidden border border-white/10"
-												/>
-											)}
-										</LoadableLottie>
-									))}
+									{participant.gifts.map((gift) =>
+										gift.withdrawable ? (
+											<LoadableLottie key={gift.id} slug={gift.slug}>
+												{(animationData) => (
+													<TouchableLottie
+														animation={animationData}
+														className="rounded-four overflow-hidden border border-white/10"
+													/>
+												)}
+											</LoadableLottie>
+										) : (
+											<img
+												src={`/assets/images/main/pepe_heart.webp`}
+												className="rounded-four overflow-hidden border border-white/10"
+											/>
+										),
+									)}
 								</div>
 							</div>
 						))}

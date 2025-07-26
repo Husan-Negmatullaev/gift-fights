@@ -100,7 +100,7 @@ export const MyFightsItem = ({ fight }: MyFightsItemProps) => {
 					Битва "{fight.lobby.title ?? "Без названия"}"
 				</p>
 				<div
-					className={`${statusConfig.color} text-black px-1 rounded-full text-[10px] font-bold uppercase items-center justify-center flex`}
+					className={`${statusConfig.color} text-black px-1 rounded-full text-[10px] font-bold uppercase items-center justify-center flex text-center`}
 				>
 					{statusConfig.text}
 				</div>

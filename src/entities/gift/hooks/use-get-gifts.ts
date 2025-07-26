@@ -35,6 +35,7 @@ const GET_GIFTS = graphql(`
       symbolPermille
       rarityPermille
       backgroundPermille
+      withdrawable
     }
   }
 `);
