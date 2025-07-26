@@ -1,9 +1,9 @@
 import {
 	GiftCheckboxCard,
+	useGetGifts,
 	useGetWithdrawnGifts,
 	useWithdrawGifts,
 } from "@/entities/gift";
-import { useProfileContext } from "@/entities/profile";
 import {
 	useConfirmTransaction,
 	useCreateTransaction,
@@ -26,10 +26,20 @@ interface IFormInput {
 }
 
 export const Inventory = () => {
-	const { profile, refetch, loading } = useProfileContext();
-	const gifts = profile?.gifts;
-	const { data: withdrawnGifts, loading: withdrawnGiftsLoading } =
-		useGetWithdrawnGifts(50, 0);
+	const {
+		gifts,
+		refetch: refetchGifts,
+		loading: isLoadingGifts,
+	} = useGetGifts({
+		take: 50,
+		skip: 0,
+		blocked: false,
+	});
+	const {
+		data: withdrawnGifts,
+		loading: withdrawnGiftsLoading,
+		refetch: refetchWithdrawnGifts,
+	} = useGetWithdrawnGifts(50, 0);
 	const [open, setOpen] = useState(false);
 	const [tonConnectUI] = useTonConnectUI();
 	const { withdrawGifts } = useWithdrawGifts();
@@ -118,7 +128,8 @@ export const Inventory = () => {
 							transactionId: data.data?.createTransaction.id as string,
 						}).then(() => {
 							handleToggleModal();
-							refetch();
+							refetchGifts();
+							refetchWithdrawnGifts();
 						}),
 					)
 					.catch((error) => console.error("error", error));
@@ -127,7 +138,7 @@ export const Inventory = () => {
 				console.log("Err", err);
 			});
 	};
-	if (loading || withdrawnGiftsLoading) {
+	if (isLoadingGifts || withdrawnGiftsLoading) {
 		return (
 			<div className="fixed inset-0 flex items-center justify-center z-50">
 				<LoadingSpinner />
@@ -141,8 +152,8 @@ export const Inventory = () => {
 					<div className="flex flex-col justify-between mb-4">
 						<h5 className="font-bold text-[24px]">Ваши Gift's:</h5>
 						<p className="text-[#A8A8A8]">
-							Выберите подарки, которые хотите вывести. Комиссия за вывод 20% от
-							суммы.
+							Выберите подарки, которые хотите вывести. Комиссия за вывод 0.5
+							тон за каждый подарок.
 						</p>
 					</div>
 				)}
@@ -212,7 +223,7 @@ export const Inventory = () => {
 				</ul>
 
 				<div
-					aria-busy={loading}
+					aria-busy={isLoadingGifts}
 					className="aria-busy:hidden peer-empty:block hidden text-center"
 				>
 					<img
@@ -222,9 +233,7 @@ export const Inventory = () => {
 					/>
 					<p className=" font-bold text-lg">Инвентарь пуст</p>
 					<p className="font-regular text-lg text-[#A8A8A8]">
-						{"Хотите начать игру?"}
-						<br />
-						{"Отправь NFT подарок "}
+						Чтобы пополнить инвентарь отправьте подарок нашему боту{" "}
 						<a
 							target="_blank"
 							rel="noopener noreferrer"
@@ -234,7 +243,6 @@ export const Inventory = () => {
 							@labs_relayer,
 						</a>
 						<br />
-						{" и начните битву"}
 					</p>
 				</div>
 			</div>
