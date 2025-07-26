@@ -17,7 +17,7 @@ export const MyFights = () => {
 				)}
 
 				{loading && (
-					<div className="mt-10 mx-auto flex justify-center">
+					<div className="absolute inset-0 flex items-center justify-center">
 						<LoadingSpinner />
 					</div>
 				)}

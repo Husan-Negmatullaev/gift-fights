@@ -134,7 +134,11 @@ export const Inventory = () => {
 						</p>
 					</div>
 				)}
-
+				{loading && (
+					<div className="fixed inset-0 flex items-center justify-center z-50">
+						<LoadingSpinner />
+					</div>
+				)}
 				<ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
 					{filteredBlockedGifts.map((gift) => {
 						const isGiftWithdrawn = withdrawnGifts?.some(
@@ -194,11 +198,7 @@ export const Inventory = () => {
 						);
 					})}
 				</ul>
-				{loading && (
-					<div className="mt-10 mx-auto flex justify-center">
-						<LoadingSpinner />
-					</div>
-				)}
+
 				<div
 					aria-busy={loading}
 					className="aria-busy:hidden peer-empty:block hidden text-center"
