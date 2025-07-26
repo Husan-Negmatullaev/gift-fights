@@ -100,7 +100,6 @@ export const Main = () => {
 		);
 	}
 	const tg = useTelegram();
-	console.log("TEST: ", tg.initDataUnsafe.start_param);
 	const useCountdownTimer = (lastReset: string | null | undefined) => {
 		const [timeLeft, setTimeLeft] = useState<string>("00:00:00");
 
