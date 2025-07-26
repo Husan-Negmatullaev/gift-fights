@@ -88,6 +88,10 @@ export const LiveWinners: React.FC<LiveWinnersProps> = memo(
 										>
 											<img
 												src={user.image || ""}
+												onError={(e) => {
+													e.currentTarget.src =
+														"/assets/images/main/pepe_heart.webp";
+												}}
 												alt={user.displayName || user.username}
 												className="object-cover rounded-full w-[40px] h-[40px] border border-[#494A4A] border-[1px]"
 											/>

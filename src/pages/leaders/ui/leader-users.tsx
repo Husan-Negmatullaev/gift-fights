@@ -266,7 +266,10 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 						{myScore?.rank ? `#${myScore.rank}` : ""}
 					</span>
 					<img
-						src={myScore?.user.image ?? "/assets/images/preloader.webp"}
+						src={myScore?.user.image || "/assets/images/main/pepe_heart.webp"}
+						onError={(e) => {
+							e.currentTarget.src = "/assets/images/main/pepe_heart.webp";
+						}}
 						alt={myScore?.user.username}
 						className="w-10 h-10 rounded-full border border-[#494A4A] mx-2"
 					/>
