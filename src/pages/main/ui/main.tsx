@@ -100,7 +100,8 @@ export const Main = () => {
 		);
 	}
 	const tg = useTelegram();
-	const useCountdownTimer = (lastReset: string | null | undefined) => {
+	const useCountdownTimer = (lastReset: string) => {
+		if (!lastReset) return "00:00:00";
 		const [timeLeft, setTimeLeft] = useState<string>("00:00:00");
 
 		useEffect(() => {
