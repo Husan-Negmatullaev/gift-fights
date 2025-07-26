@@ -28,7 +28,8 @@ interface IFormInput {
 export const Inventory = () => {
 	const { profile, refetch, loading } = useProfileContext();
 	const gifts = profile?.gifts;
-	const { data: withdrawnGifts } = useGetWithdrawnGifts(50, 0);
+	const { data: withdrawnGifts, loading: withdrawnGiftsLoading } =
+		useGetWithdrawnGifts(50, 0);
 	const [open, setOpen] = useState(false);
 	const [tonConnectUI] = useTonConnectUI();
 	const { withdrawGifts } = useWithdrawGifts();
@@ -126,7 +127,13 @@ export const Inventory = () => {
 				console.log("Err", err);
 			});
 	};
-
+	if (loading || withdrawnGiftsLoading) {
+		return (
+			<div className="fixed inset-0 flex items-center justify-center z-50">
+				<LoadingSpinner />
+			</div>
+		);
+	}
 	return (
 		<div className="pb-16">
 			<div className="px-6 pb-6">
@@ -139,11 +146,7 @@ export const Inventory = () => {
 						</p>
 					</div>
 				)}
-				{loading && (
-					<div className="fixed inset-0 flex items-center justify-center z-50">
-						<LoadingSpinner />
-					</div>
-				)}
+
 				<ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
 					{filteredBlockedGifts.map((gift) => {
 						const withdrawnGift = withdrawnGifts?.find(

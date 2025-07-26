@@ -8,14 +8,14 @@ import { AppLottie } from "@/shared/components/lottie/app-lottie";
 import { LoadableLottie } from "@/shared/components/lottie/loadable-lottie";
 import { Avatar } from "@/shared/ui/avatar/avatar";
 import { Icons } from "@/shared/ui/icons/icons";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type LeaderUsersProps = {
 	leaders: GetLeaderboardQuery["leaderboard"];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function removeLastBackgroundLayers(lottieJson: any, count = 1) {
+function removeBackgroundLayers(lottieJson: any) {
 	// Handle null, undefined, or invalid animation data
 	if (!lottieJson || typeof lottieJson !== "object") {
 		return lottieJson;
@@ -29,11 +29,64 @@ function removeLastBackgroundLayers(lottieJson: any, count = 1) {
 		return lottieJson;
 	}
 
+	// Background layer filtering logic
+	const backgroundNames = [
+		"Background",
+		"bg",
+		"background",
+		"BG",
+		"Back",
+		"back",
+		"Background 1",
+		"Background 2",
+		"bg 1",
+		"bg 2",
+		"Solid",
+		"solid",
+		"Color",
+		"color",
+	];
+
+	const filteredLayers = lottieJson.layers.filter((layer: any) => {
+		const hasBackgroundName = backgroundNames.some((name) =>
+			layer.nm?.toLowerCase().includes(name.toLowerCase()),
+		);
+		const isSolidLayer = layer.ty === 1;
+		const hasBackgroundProperties = layer.bg || layer.bgColor;
+		const isBackgroundShape =
+			layer.ty === 4 &&
+			(layer.nm?.toLowerCase().includes("background") ||
+				layer.nm?.toLowerCase().includes("bg"));
+
+		return !(
+			hasBackgroundName ||
+			isSolidLayer ||
+			hasBackgroundProperties ||
+			isBackgroundShape
+		);
+	});
+
 	// Create a copy to avoid mutating the original
 	const modifiedJson = { ...lottieJson };
-	modifiedJson.layers = modifiedJson.layers.slice(0, -count);
+	modifiedJson.layers = filteredLayers;
 	return modifiedJson;
 }
+
+// Separate component to handle processed animation with useMemo
+const ProcessedLottieAnimation = ({ animation }: { animation: any }) => {
+	const processedAnimation = useMemo(
+		() => removeBackgroundLayers(animation),
+		[animation],
+	);
+
+	return (
+		<AppLottie
+			style={lottieSizes}
+			animation={processedAnimation}
+			className="absolute inset-0 object-cover mx-4"
+		/>
+	);
+};
 
 const useLeaderboardTimer = (endDate: string | null) => {
 	const [timeRemaining, setTimeRemaining] = useState<string>("");
@@ -170,11 +223,7 @@ export const LeaderUsers = (props: LeaderUsersProps) => {
 											return loading ? (
 												<div className="size-full" />
 											) : (
-												<AppLottie
-													style={lottieSizes}
-													animation={removeLastBackgroundLayers(animation)}
-													className="absolute inset-0 object-cover mx-4"
-												/>
+												<ProcessedLottieAnimation animation={animation} />
 											);
 										}}
 									</LoadableLottie>
