@@ -133,7 +133,7 @@ export const PlaySpin = () => {
 
 	const handleShareLinkToGame = () => {
 		shareURL(
-			`https://t.me/test_fight_gifts_bot/app?startapp=${profile.referralCode}&${lobby?.id}`,
+			`https://t.me/test_fight_gifts_bot/app?startapp=${profile.referralCode}=${lobby?.id}`,
 		);
 	};
 
