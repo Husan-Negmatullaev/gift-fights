@@ -11,7 +11,6 @@ type TabType = "profile" | "referrals";
 export const Profile = () => {
 	const { onCopy } = useCopy();
 	const { profile, refetch } = useProfileContext();
-	const gifts = profile?.gifts;
 	// const { data: withdrawnGifts } = useGetWithdrawnGifts(15, 0);
 	const [activeTab, setActiveTab] = useState<TabType>("profile");
 
@@ -138,15 +137,9 @@ export const Profile = () => {
 									<li key={gift.giftId}>
 										<GiftBorderCard
 											size="lg"
-											slug={
-												gifts?.find((g) => g.id === gift.giftId)?.slug ?? ""
-											}
-											title={
-												gifts?.find((g) => g.id === gift.giftId)?.title ?? ""
-											}
-											price={
-												gifts?.find((g) => g.id === gift.giftId)?.price ?? 0
-											}
+											slug={gift.gift.slug}
+											title={gift.gift.title}
+											price={gift.gift.price}
 											status={gift.status}
 										/>
 									</li>
