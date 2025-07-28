@@ -13,6 +13,7 @@ type GiftBorderCardProps = {
 	title: string;
 	price: number;
 	status: string;
+	blocked: boolean;
 };
 
 export const GiftBorderCard = (props: GiftBorderCardProps) => {

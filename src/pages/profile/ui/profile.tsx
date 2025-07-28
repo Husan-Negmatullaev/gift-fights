@@ -141,6 +141,7 @@ export const Profile = () => {
 											title={gift.gift.title}
 											price={gift.gift.price}
 											status={gift.status}
+											blocked={gift.gift.blocked}
 										/>
 									</li>
 								))}
