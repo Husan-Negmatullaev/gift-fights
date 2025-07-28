@@ -11,7 +11,6 @@ type TabType = "profile" | "referrals";
 export const Profile = () => {
 	const { onCopy } = useCopy();
 	const { profile, refetch } = useProfileContext();
-	const gifts = profile?.gifts;
 	// const { data: withdrawnGifts } = useGetWithdrawnGifts(15, 0);
 	const [activeTab, setActiveTab] = useState<TabType>("profile");
 
