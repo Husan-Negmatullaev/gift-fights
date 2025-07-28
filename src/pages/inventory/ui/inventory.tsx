@@ -148,7 +148,7 @@ export const Inventory = () => {
 	return (
 		<div className="pb-16">
 			<div className="px-6 pb-6">
-				{filteredBlockedGifts.length > 0 && (
+				{gifts.length > 0 && (
 					<div className="flex flex-col justify-between mb-4">
 						<h5 className="font-bold text-[24px]">Ваши Gift's:</h5>
 						<p className="text-[#A8A8A8]">
@@ -159,7 +159,7 @@ export const Inventory = () => {
 				)}
 
 				<ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
-					{filteredBlockedGifts.map((gift) => {
+					{gifts.map((gift) => {
 						const withdrawnGift = withdrawnGifts?.find(
 							(withdrawnGift) => withdrawnGift.giftId === gift.id,
 						);
