@@ -154,7 +154,13 @@ export const Inventory = () => {
 						<p className="text-[#A8A8A8]">
 							Выберите подарки, которые хотите вывести. Комиссия за вывод 0.5
 							тон за каждый подарок.Чтобы пополнить инвентарь отправьте подарок
-							нашему боту
+							нашему боту{" "}
+							<a
+								className="text-blue-100 underline"
+								href="https://t.me/labs_relayer"
+							>
+								@labs_relayer
+							</a>
 						</p>
 					</div>
 				)}
