@@ -166,7 +166,7 @@ export const Inventory = () => {
 						if (withdrawnGift?.status === "Completed") {
 							return null;
 						}
-						const isGiftWithdrawn = withdrawnGift && withdrawnGift.gift.blocked;
+						const isGiftWithdrawn = withdrawnGift?.gift.blocked;
 
 						if (isGiftWithdrawn) {
 							return (
