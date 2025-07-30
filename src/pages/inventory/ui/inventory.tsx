@@ -254,7 +254,7 @@ export const Inventory = () => {
 					<h2 className="mb-2 font-medium text-lg/4.5">Вывод Gift's</h2>
 					<p className="mb-4 text-xs">Вы хотите вывести gift's на сумму:</p>
 					<span className="font-medium text-base text-blue-100">
-						{totalAmount} TON
+						{totalAmount.toFixed(2)} TON
 					</span>
 				</div>
 
