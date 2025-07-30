@@ -431,36 +431,6 @@ export const PlaySpin = () => {
           </div>
         </div>
       </Tabs>
-
-      {/* <Modal open={isOpenModal} onClose={handleToggleModal}>
-        <p className="text-lg font-medium mb-7.5 text-center mt-2 mx-2">
-          Вы хотите сделать ставку ? После подтверждения ее нельзя будет
-          отменить !
-        </p>
-        <div className="grid grid-cols-2 gap-2 text-base">
-          <button
-            type="button"
-            onClick={handleToggleModal}
-            className="cursor-pointer min-h-12 grid place-content-center border border-white/30 rounded-2xl">
-            Не буду ставить
-          </button>
-
-          <button
-            type="button"
-            onClick={handleJoinToLobby}
-            className={clsx(
-              'shadow-[0px_0px_19.6px_0px_--alpha(var(--color-blue-200)_/_50%)]',
-              'min-h-12 rounded-2xl bg-linear-360 from-blue-50 from-0% to-blue-100 to-100% cursor-pointer text-white',
-              'disabled:bg-dark-blue-700 disabled:text-white/50 disabled:shadow-none disabled:bg-linear-[none] disabled:cursor-not-allowed',
-            )}>
-            {loading || isLoadingAddGiftsToLobby ? (
-              <Icons className="mx-auto animate-spin" name="loader" />
-            ) : (
-              'Сделать ставку'
-            )}
-          </button>
-        </div>
-      </Modal> */}
     </div>
   );
 };

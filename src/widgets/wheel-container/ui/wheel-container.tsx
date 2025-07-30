@@ -103,7 +103,7 @@ export const WheelContainer = (props: WheelContainerProps) => {
     }
 
     const updateCountdown = () => {
-      const expiresAt = new Date(lobby.countdownExpiresAt!).getTime() + 8000;
+      const expiresAt = new Date(lobby.countdownExpiresAt!).getTime() + 10000;
       const now = Date.now();
       const remaining = Math.max(0, Math.floor((expiresAt - now) / 1000));
       setCountdownTime(remaining);

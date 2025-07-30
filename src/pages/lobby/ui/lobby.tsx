@@ -296,7 +296,7 @@ export const Lobby = () => {
         lobby={lobby}
         gifts={gifts}
         giftsId={giftsId}
-        totalAmount={0}
+        totalAmount={totalAmount}
         tabsRef={tabsRef}
         isLoadingGifts={isLoadingGifts}
         isLoadingLobby={isLoadingLobby}

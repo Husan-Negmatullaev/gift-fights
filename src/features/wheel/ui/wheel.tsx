@@ -175,7 +175,7 @@ export const Wheel: React.FC<SpinWheelProps> = ({
 
   // const reverseInternalRotation = -internalRotation - 200;
   // const reverseInternalRotation = -(internalRotation * internalRotation);
-  const reverseInternalRotation = internalRotation;
+  const reverseInternalRotation = -internalRotation;
 
   // Отладка значений вращения
   // console.log('🔄 Rotation debug:', {
