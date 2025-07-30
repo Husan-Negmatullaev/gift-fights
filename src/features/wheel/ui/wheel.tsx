@@ -190,7 +190,7 @@ export const Wheel: React.FC<SpinWheelProps> = ({
   // });
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center pointer-events-none">
       <div className="relative">
         <Application
           antialias
