@@ -36,7 +36,6 @@ export const Wheel: React.FC<SpinWheelProps> = ({
   winner,
   segments,
   gamePhase,
-  // radius = 200,
   onSpinComplete,
   isSpinning = false,
   targetRotation = 0,
@@ -74,7 +73,6 @@ export const Wheel: React.FC<SpinWheelProps> = ({
 
   const segmentsWithAngles = calculateSegmentAngles();
 
-  // Сбрасываем показ имени победителя при новом спине
   useEffect(() => {
     if (isSpinning) {
       setShowWinnerName(false);
@@ -95,7 +93,6 @@ export const Wheel: React.FC<SpinWheelProps> = ({
       const startRotation = internalRotation;
       const totalRotation = targetRotation - startRotation;
 
-      // Анимация вращения
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / WHEEL_ANIMATION.SPIN_DURATION, 1);
@@ -114,18 +111,15 @@ export const Wheel: React.FC<SpinWheelProps> = ({
 
       animationRef.current = requestAnimationFrame(animate);
 
-      // Показываем имя победителя после завершения анимации вращения
       winnerTimer = setTimeout(() => {
         setShowWinnerName(true);
       }, WHEEL_ANIMATION.SPIN_DURATION);
 
-      // Вызываем onSpinComplete после показа имени победителя
       completeTimer = setTimeout(() => {
         onSpinComplete?.();
       }, WHEEL_ANIMATION.TOTAL_ANIMATION_TIME);
     }
 
-    // Cleanup function
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
@@ -139,16 +133,13 @@ export const Wheel: React.FC<SpinWheelProps> = ({
   const drawWheel = useCallback((g: PIXI.Graphics) => {
     g.clear();
 
-    // Add center ring (кольцо с отверстием)
     const centerOuterRadius = 70;
-    const centerInnerRadius = 35; // Половина от внешнего радиуса
+    const centerInnerRadius = 35;
 
     g.beginFill(0x10151a, 0);
 
-    // Рисуем кольцо через построение пути
     const segments = 32;
 
-    // Внешний контур
     for (let i = 0; i <= segments; i++) {
       const angle = (i / segments) * Math.PI * 2;
       const x = Math.cos(angle) * centerOuterRadius;
@@ -173,21 +164,7 @@ export const Wheel: React.FC<SpinWheelProps> = ({
     g.endFill();
   }, []);
 
-  // const reverseInternalRotation = -internalRotation - 200;
-  // const reverseInternalRotation = -(internalRotation * internalRotation);
   const reverseInternalRotation = -internalRotation;
-
-  // Отладка значений вращения
-  // console.log('🔄 Rotation debug:', {
-  //   internalRotation,
-  //   internalRotationDegrees: (internalRotation * 180) / Math.PI,
-  //   reverseInternalRotation,
-  //   reverseInternalRotationDegrees: (reverseInternalRotation * 180) / Math.PI,
-  //   targetRotation,
-  //   targetRotationDegrees: targetRotation
-  //     ? (targetRotation * 180) / Math.PI
-  //     : 'undefined',
-  // });
 
   return (
     <div className="flex flex-col items-center pointer-events-none">
