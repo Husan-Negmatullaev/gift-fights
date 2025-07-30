@@ -162,7 +162,7 @@ export const Inventory = () => {
 						}
 						if (isGiftWithdrawn) {
 							return (
-								<li key={gift.id} className="relative ">
+								<li key={gift.id} className="relative">
 									<div className="relative">
 										<GiftCheckboxCard
 											size="lg"
@@ -174,8 +174,8 @@ export const Inventory = () => {
 											checkbox={{
 												value: gift.id,
 												checked: isSelected,
-												onChange: (e) =>
-													handleGiftSelection(gift.id, e.target.checked),
+												onClick: () => {},
+												onChange: () => {},
 											}}
 											withdrawable={gift.withdrawable}
 										/>
@@ -190,7 +190,10 @@ export const Inventory = () => {
 							);
 						}
 						return (
-							<li key={gift.id}>
+							<li
+								key={gift.id}
+								onClick={() => handleGiftSelection(gift.id, !isSelected)}
+							>
 								<GiftCheckboxCard
 									size="lg"
 									key={gift.id}
@@ -201,8 +204,12 @@ export const Inventory = () => {
 									checkbox={{
 										value: gift.id,
 										checked: isSelected,
-										onChange: (e) =>
-											handleGiftSelection(gift.id, e.target.checked),
+										onClick: (e) => {
+											e.stopPropagation();
+										},
+										onChange: (e) => {
+											e.stopPropagation();
+										},
 									}}
 									withdrawable={gift.withdrawable}
 								/>
