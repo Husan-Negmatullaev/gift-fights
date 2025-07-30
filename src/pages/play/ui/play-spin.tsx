@@ -418,7 +418,7 @@ export const PlaySpin = () => {
 
 									<div className="flex items-center gap-1.5">
 										<div className="grid place-content-center items-center gap-1 grid-flow-col bg-blue-100 text-white rounded-four min-h-7 basis-14 text-base font-bold px-1">
-											<span>{participant.amount}</span>
+											<span>{participant.amount.toFixed(2)}</span>
 											<span>TON</span>
 										</div>
 
