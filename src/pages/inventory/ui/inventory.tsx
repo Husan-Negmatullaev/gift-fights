@@ -148,9 +148,6 @@ export const Inventory = () => {
 
 				<ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
 					{gifts.map((gift) => {
-						if (gift.blocked) {
-							return null;
-						}
 						const withdrawnGift = withdrawnGifts?.find(
 							(withdrawnGift) => withdrawnGift.giftId === gift.id,
 						);
@@ -160,7 +157,9 @@ export const Inventory = () => {
 						const isGiftWithdrawn = withdrawnGift?.gift.blocked;
 
 						const isSelected = selectedGiftIds.includes(gift.id);
-
+						if (gift.blocked && !isGiftWithdrawn) {
+							return null;
+						}
 						if (isGiftWithdrawn) {
 							return (
 								<li key={gift.id} className="relative ">
