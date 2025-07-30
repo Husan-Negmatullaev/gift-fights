@@ -6,7 +6,7 @@ import {
 } from '@/features/wheel';
 import { LobbyStatus, type GetLobbyQuery } from '@/shared/api/graphql/graphql';
 import { WHEEL_ANIMATION } from '@/shared/constants/wheel-animation-constants';
-import { useAddGiftsToLobby } from '@/entities/lobby';
+// import { useAddGiftsToLobby } from '@/entities/lobby';
 
 type WheelContainerProps = {
   onAfterJoinToLobby(): void;
