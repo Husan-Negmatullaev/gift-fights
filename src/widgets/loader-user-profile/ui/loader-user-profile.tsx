@@ -21,7 +21,7 @@ export const LoadUserProfile = (props: LoadUserProfileProps) => {
 	const [minProgress, setMinProgress] = useState(0);
 	const navigate = useNavigate();
 	const tg = useTelegram();
-	const { lobbies, loading } = useGetLobbies(15, 0, [
+	const { lobbies } = useGetLobbies(15, 0, [
 		LobbyStatus.Countdown,
 		LobbyStatus.InProcess,
 		LobbyStatus.WaitingForPlayers,
