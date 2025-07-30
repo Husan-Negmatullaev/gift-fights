@@ -21,6 +21,14 @@ export const ProfileUserProvider = (props: ProfileUserProviderProps) => {
 		}
 	}, [profile, loading]);
 
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			refetch();
+		}, 5000);
+
+		return () => clearInterval(intervalId);
+	}, [refetch]);
+
 	const value = {
 		refetch: refetch as (
 			variables?: Partial<OperationVariables> | undefined,

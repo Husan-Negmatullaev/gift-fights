@@ -297,7 +297,7 @@ export const WheelContainer = (props: WheelContainerProps) => {
     <Wheel
       radius={162}
       gamePhase={status}
-      segments={segments}
+      segments={segments.reverse()}
       winner={predeterminedWinner}
       targetRotation={targetRotation}
       isSpinning={status === LobbyStatus.Completed}

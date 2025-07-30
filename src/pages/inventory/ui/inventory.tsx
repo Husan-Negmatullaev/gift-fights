@@ -19,11 +19,6 @@ import { Icons } from "@/shared/ui/icons/icons";
 import { Modal } from "@/shared/ui/modal/modal";
 import { useTonConnectUI } from "@tonconnect/ui-react";
 import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
-
-interface IFormInput {
-	gifts: string[];
-}
 
 export const Inventory = () => {
 	const {
@@ -41,44 +36,25 @@ export const Inventory = () => {
 		refetch: refetchWithdrawnGifts,
 	} = useGetWithdrawnGifts(50, 0);
 	const [open, setOpen] = useState(false);
+	const [selectedGiftIds, setSelectedGiftIds] = useState<string[]>([]);
 	const [tonConnectUI] = useTonConnectUI();
 	const { withdrawGifts } = useWithdrawGifts();
 	const { makeTransaction } = useCreateTransaction();
 	const { confirmTransaction } = useConfirmTransaction();
-	const {
-		register,
-		getValues,
-		handleSubmit,
-		formState: { isDirty },
-	} = useForm<IFormInput>({
-		values: {
-			gifts: [],
-		},
-	});
 
 	const { connected, connect } = useTonConnect();
 
 	const handleToggleModal = () => setOpen((prev) => !prev);
 
-	const filteredBlockedGifts = useMemo(
-		// () => mockGifts.filter((gift) => gift.blocked === false),
-		// [mockGifts],
-		() => gifts.filter((gift) => gift.blocked === false),
-		[gifts],
-	);
-
-	// const filteredPendingWithdrawnGifts = useMemo(
-	// 	() => withdrawnGifts?.filter((gift) => gift.status === "Pending") || [],
-	// 	[withdrawnGifts],
-	// );
-
-	const selectedGiftsIds = getValues("gifts");
+	const handleGiftSelection = (giftId: string, isSelected: boolean) => {
+		setSelectedGiftIds((prev) =>
+			isSelected ? [...prev, giftId] : prev.filter((id) => id !== giftId),
+		);
+	};
 
 	const selectedGifts = useMemo(() => {
-		return filteredBlockedGifts.filter((gift) =>
-			selectedGiftsIds.includes(gift.id),
-		);
-	}, [selectedGiftsIds, filteredBlockedGifts]);
+		return gifts.filter((gift) => selectedGiftIds.includes(gift.id));
+	}, [selectedGiftIds, gifts]);
 
 	const totalAmount = useMemo(() => {
 		return selectedGifts.reduce((acc, gift) => acc + gift.price, 0);
@@ -86,7 +62,9 @@ export const Inventory = () => {
 
 	const amountWithCommission = selectedGifts.length * 0.5;
 	const { showError } = useToast();
+
 	const handleConfirm = () => {
+		console.log("selectedGiftIds", selectedGiftIds);
 		if (selectedGifts.some((gift) => gift.withdrawable === false)) {
 			showError("Нельзя выводить бесплатные подарки");
 			return;
@@ -94,7 +72,7 @@ export const Inventory = () => {
 		handleToggleModal();
 	};
 
-	const handleWithdrawGifts = async (_form: IFormInput) => {
+	const handleWithdrawGifts = async () => {
 		const data = await makeTransaction({
 			type: TransactionType.Commission,
 			amount: amountWithCommission,
@@ -128,6 +106,7 @@ export const Inventory = () => {
 							transactionId: data.data?.createTransaction.id as string,
 						}).then(() => {
 							handleToggleModal();
+							setSelectedGiftIds([]); // Reset selection after successful withdrawal
 							refetchGifts();
 							refetchWithdrawnGifts();
 						}),
@@ -138,6 +117,7 @@ export const Inventory = () => {
 				console.log("Err", err);
 			});
 	};
+
 	if (isLoadingGifts || withdrawnGiftsLoading) {
 		return (
 			<div className="fixed inset-0 flex items-center justify-center z-50">
@@ -148,26 +128,34 @@ export const Inventory = () => {
 	return (
 		<div className="pb-16">
 			<div className="px-6 pb-6">
-				{filteredBlockedGifts.length > 0 && (
+				{gifts.length > 0 && (
 					<div className="flex flex-col justify-between mb-4">
 						<h5 className="font-bold text-[24px]">Ваши Gift's:</h5>
 						<p className="text-[#A8A8A8]">
 							Выберите подарки, которые хотите вывести. Комиссия за вывод 0.5
 							тон за каждый подарок.
+							<br />
+							Чтобы пополнить инвентарь отправьте подарок нашему боту{" "}
+							<a
+								className="text-blue-100 underline"
+								href="https://t.me/labs_relayer"
+							>
+								@labs_relayer
+							</a>
 						</p>
 					</div>
 				)}
 
 				<ul className="grid grid-cols-2 peer empty:mb-20 gap-x-2.5 gap-y-2">
-					{filteredBlockedGifts.map((gift) => {
+					{gifts.map((gift) => {
 						const withdrawnGift = withdrawnGifts?.find(
 							(withdrawnGift) => withdrawnGift.giftId === gift.id,
 						);
 						if (withdrawnGift?.status === "Completed") {
 							return null;
 						}
-						const isGiftWithdrawn =
-							withdrawnGift && (withdrawnGift.status as string) !== "Completed";
+						const isGiftWithdrawn = withdrawnGift?.gift.blocked;
+						const isSelected = selectedGiftIds.includes(gift.id);
 
 						if (isGiftWithdrawn) {
 							return (
@@ -180,12 +168,11 @@ export const Inventory = () => {
 											title={gift.title}
 											price={gift.price}
 											id={Number(gift.id)}
-											// status={gift.status}
 											checkbox={{
 												value: gift.id,
-												...register("gifts", {
-													required: true,
-												}),
+												checked: isSelected,
+												onChange: (e) =>
+													handleGiftSelection(gift.id, e.target.checked),
 											}}
 											withdrawable={gift.withdrawable}
 										/>
@@ -208,12 +195,11 @@ export const Inventory = () => {
 									title={gift.title}
 									price={gift.price}
 									id={Number(gift.id)}
-									// status={gift.status}
 									checkbox={{
 										value: gift.id,
-										...register("gifts", {
-											required: true,
-										}),
+										checked: isSelected,
+										onChange: (e) =>
+											handleGiftSelection(gift.id, e.target.checked),
 									}}
 									withdrawable={gift.withdrawable}
 								/>
@@ -247,24 +233,23 @@ export const Inventory = () => {
 				</div>
 			</div>
 
-			{!open && filteredBlockedGifts.length > 0 && (
+			{!open && gifts.length > 0 && (
 				<div className="fixed w-full bottom-safe-app-bottom left-1/2 -translate-x-1/2 px-6 pb-4.5">
 					<BottomButton
 						variant="primary"
 						withShadow
 						content="Вывести"
 						className="w-full"
-						disabled={!isDirty}
-						onClick={handleSubmit(handleConfirm)}
-						// onClick={handleSubmit((penis) => penis.gifts)}
+						disabled={selectedGiftIds.length === 0}
+						onClick={handleConfirm}
 					/>
 				</div>
 			)}
 
 			<Modal open={open} onClose={handleToggleModal}>
 				<div className="mb-4 text-center">
-					<h2 className="mb-2 font-medium text-lg/4.5">Вывод Gift’s</h2>
-					<p className="mb-4 text-xs">Вы хотите вывести gift’s на сумму:</p>
+					<h2 className="mb-2 font-medium text-lg/4.5">Вывод Gift's</h2>
+					<p className="mb-4 text-xs">Вы хотите вывести gift's на сумму:</p>
 					<span className="font-medium text-base text-blue-100">
 						{totalAmount} TON
 					</span>
@@ -299,7 +284,7 @@ export const Inventory = () => {
 						withShadow
 						content="Вывести"
 						className="w-full"
-						onClick={handleSubmit(handleWithdrawGifts)}
+						onClick={handleWithdrawGifts}
 					/>
 				</div>
 			</Modal>

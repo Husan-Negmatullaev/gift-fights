@@ -155,33 +155,24 @@ export const Wheel: React.FC<SpinWheelProps> = ({
   // }, [isSpinning, targetRotation, onSpinComplete, segmentsWithAngles]);
 
   useEffect(() => {
-    // Проверяем что нужна анимация и она еще не запущена
+    let timer: ReturnType<typeof setTimeout>;
     if (
       isSpinning &&
       targetRotation !== undefined &&
       Math.abs(targetRotation - internalRotation) > 0.1 &&
       !animationRef.current
     ) {
-      console.log('🎯 SpinWheel: Начинаем финальную анимацию:', {
-        startRotation: internalRotation,
-        targetRotation,
-        totalRotation: targetRotation - internalRotation,
-        targetDegreesNormalized: targetRotation % 360,
-      });
-
-      const duration = 1000; // 1 секунда для финальной анимации
+      const duration = 1000;
       const startTime = Date.now();
       const startRotation = internalRotation;
       const totalRotation = targetRotation - startRotation;
 
-      // Play spin sound
       // playSound('spin-start', 0.8);
 
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
 
-        // Очень мягкая easing функция для финальной остановки
         const easeOutQuart = 1 - Math.pow(1 - progress, 4);
         const currentRotation = startRotation + totalRotation * easeOutQuart;
 
@@ -191,53 +182,25 @@ export const Wheel: React.FC<SpinWheelProps> = ({
           animationRef.current = requestAnimationFrame(animate);
         } else {
           // Дополнительная проверка: какой сегмент теперь находится под стрелкой
-          const arrowPosition = 270; // стрелка всегда вверху на 270°
-          const normalizedFinalRotation = ((currentRotation % 360) + 360) % 360;
-          const adjustedArrowPosition =
-            (arrowPosition - normalizedFinalRotation + 360) % 360;
-          const adjustedArrowRadians = (adjustedArrowPosition * Math.PI) / 180;
+          // const arrowPosition = 270; // стрелка всегда вверху на 270°
+          // // const normalizedFinalRotation = ((currentRotation % 360) + 360) % 360;
+          // // const adjustedArrowPosition =
+          // //   (arrowPosition - normalizedFinalRotation + 360) % 360;
+          // // const adjustedArrowRadians = (adjustedArrowPosition * Math.PI) / 180;
 
-          // Находим сегмент под стрелкой
-          const segmentUnderArrow = segmentsWithAngles.find(
-            (segment) =>
-              adjustedArrowRadians >= segment.startAngle &&
-              adjustedArrowRadians <= segment.endAngle,
-          );
+          // // // Находим сегмент под стрелкой
+          // // const segmentUnderArrow = segmentsWithAngles.find(
+          // //   (segment) =>
+          // //     adjustedArrowRadians >= segment.startAngle &&
+          // //     adjustedArrowRadians <= segment.endAngle,
+          // // );
 
-          console.log('🎯 Проверка финального положения:', {
-            arrowPosition,
-            normalizedFinalRotation,
-            adjustedArrowPosition,
-            adjustedArrowRadians,
-            adjustedArrowDegrees: (adjustedArrowRadians * 180) / Math.PI,
-            allSegments: segmentsWithAngles.map((seg) => ({
-              playerName: seg.playerName,
-              startAngleDeg: (seg.startAngle * 180) / Math.PI,
-              endAngleDeg: (seg.endAngle * 180) / Math.PI,
-              isUnderArrow:
-                adjustedArrowRadians >= seg.startAngle &&
-                adjustedArrowRadians <= seg.endAngle,
-            })),
-            segmentUnderArrow: segmentUnderArrow
-              ? {
-                  playerName: segmentUnderArrow.playerName,
-                  userId: segmentUnderArrow.id,
-                  startAngleDeg: (segmentUnderArrow.startAngle * 180) / Math.PI,
-                  endAngleDeg: (segmentUnderArrow.endAngle * 180) / Math.PI,
-                }
-              : 'НЕ НАЙДЕН',
-          });
+          animationRef.current = null;
 
-          animationRef.current = null; // Сбрасываем флаг анимации
-
-          // Показываем имя победителя после завершения анимации
           setShowWinnerName(true);
 
-          // Через 1 секунду вызываем onSpinComplete
-          setTimeout(() => {
-            if (onSpinComplete) {
-              onSpinComplete();
-            }
+          timer = setTimeout(() => {
+            onSpinComplete?.();
           }, 1000);
         }
       };
@@ -250,6 +213,7 @@ export const Wheel: React.FC<SpinWheelProps> = ({
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
         animationRef.current = null;
+        clearTimeout(timer);
       }
     };
   }, [isSpinning, targetRotation, onSpinComplete, segmentsWithAngles]);
@@ -296,16 +260,16 @@ export const Wheel: React.FC<SpinWheelProps> = ({
   const reverseInternalRotation = internalRotation;
 
   // Отладка значений вращения
-  console.log('🔄 Rotation debug:', {
-    internalRotation,
-    internalRotationDegrees: (internalRotation * 180) / Math.PI,
-    reverseInternalRotation,
-    reverseInternalRotationDegrees: (reverseInternalRotation * 180) / Math.PI,
-    targetRotation,
-    targetRotationDegrees: targetRotation
-      ? (targetRotation * 180) / Math.PI
-      : 'undefined',
-  });
+  // console.log('🔄 Rotation debug:', {
+  //   internalRotation,
+  //   internalRotationDegrees: (internalRotation * 180) / Math.PI,
+  //   reverseInternalRotation,
+  //   reverseInternalRotationDegrees: (reverseInternalRotation * 180) / Math.PI,
+  //   targetRotation,
+  //   targetRotationDegrees: targetRotation
+  //     ? (targetRotation * 180) / Math.PI
+  //     : 'undefined',
+  // });
 
   return (
     <div className="flex flex-col items-center">
