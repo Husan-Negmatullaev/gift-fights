@@ -1,5 +1,7 @@
+import { useGetLobbies } from "@/entities/lobby";
 import { useProfileContext } from "@/entities/profile";
 import { useTelegram } from "@/entities/telegram";
+import { LobbyStatus } from "@/shared/api/graphql/graphql";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -19,6 +21,11 @@ export const LoadUserProfile = (props: LoadUserProfileProps) => {
 	const [minProgress, setMinProgress] = useState(0);
 	const navigate = useNavigate();
 	const tg = useTelegram();
+	const { lobbies, loading } = useGetLobbies(15, 0, [
+		LobbyStatus.Countdown,
+		LobbyStatus.InProcess,
+		LobbyStatus.WaitingForPlayers,
+	]);
 	// Effect to handle the loading animation based on the boolean
 	useEffect(() => {
 		if (isDataLoaded) {
@@ -34,10 +41,34 @@ export const LoadUserProfile = (props: LoadUserProfileProps) => {
 
 			if (tg.initDataUnsafe.start_param) {
 				const startParam = tg.initDataUnsafe.start_param;
-				const lobbyId = startParam
+				const lobbyTitle = startParam
 					? startParam.split("=")[1] || startParam
 					: "";
-				navigate(`/spin/${lobbyId}`);
+				let lobbyActualTitle = "";
+				switch (lobbyTitle) {
+					case "bezlimitniy":
+						lobbyActualTitle = "Безлимитный спин";
+						break;
+					case "novichok":
+						lobbyActualTitle = "Спин Новичка";
+						break;
+					case "investor":
+						lobbyActualTitle = "Спин Инвестора";
+						break;
+					case "lucky":
+						lobbyActualTitle = "Спин Удачи";
+						break;
+					case "epic":
+						lobbyActualTitle = "Эпический спин";
+						break;
+					default:
+						lobbyActualTitle = "";
+						break;
+				}
+				const lobby = lobbies.find((lobby) => lobby.title === lobbyActualTitle);
+				if (lobby) {
+					navigate(`/spin/${lobby?.id}`);
+				}
 			}
 			return;
 		}
