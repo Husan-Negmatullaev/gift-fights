@@ -48,7 +48,7 @@ export const Profile = () => {
 									<p className="max-w-35 font-thin text-sm mb-2.5">
 										Получайте до 20% с выводов своих рефералов !
 									</p>
-									<div className="bg-[#11161B] flex items-center justify-between gap-4 relative rounded-2.5 p-1 z-1">
+									<div className="bg-[#11161B] flex items-center justify-between gap-4 relative rounded-2.5 p-1">
 										<input
 											readOnly
 											value={profile.referralCode}
