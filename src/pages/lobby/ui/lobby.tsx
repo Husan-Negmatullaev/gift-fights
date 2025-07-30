@@ -265,7 +265,7 @@ export const Lobby = () => {
                   <Icons className="mx-auto animate-spin" name="loader" />
                 ) : (
                   <>
-                    Ставка сделана {currentUserBetting?.amount}{' '}
+                    Ставка сделана {currentUserBetting?.amount.toFixed(2)}{' '}
                     <span className="text-blue-100">
                       {totalPriceSelectedGifts
                         ? '+ ' + totalPriceSelectedGifts.toFixed(2)

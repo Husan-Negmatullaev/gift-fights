@@ -1,11 +1,11 @@
-import { LoadableLottie } from "@/shared/components/lottie/loadable-lottie";
-import { TouchableLottie } from "@/shared/components/lottie/touchable-lottie";
-import { Avatar } from "@/shared/ui/avatar/avatar";
-import { useNavigate, useParams } from "react-router";
-import ConfettiExplosion from "react-confetti-explosion";
-import { Icons } from "@/shared/ui/icons/icons";
-import { useGetLobby } from "@/entities/lobby";
-import { useEffect, useState } from "react";
+import { LoadableLottie } from '@/shared/components/lottie/loadable-lottie';
+import { TouchableLottie } from '@/shared/components/lottie/touchable-lottie';
+import { Avatar } from '@/shared/ui/avatar/avatar';
+import { useNavigate, useParams } from 'react-router';
+import ConfettiExplosion from 'react-confetti-explosion';
+import { Icons } from '@/shared/ui/icons/icons';
+import { useGetLobby } from '@/entities/lobby';
+import { useEffect, useState } from 'react';
 
 export const Result = () => {
   const navigate = useNavigate();
@@ -64,9 +64,8 @@ export const Result = () => {
           <h2 className="text-xl mb-2">Ошибка загрузки</h2>
           <p className="text-gray-400">Не удалось загрузить данные лобби</p>
           <button
-            onClick={() => navigate("/")}
-            className="mt-4 px-4 py-2 bg-blue rounded-lg"
-          >
+            onClick={() => navigate('/')}
+            className="mt-4 px-4 py-2 bg-blue rounded-lg">
             На главную
           </button>
         </div>
@@ -87,7 +86,7 @@ export const Result = () => {
       return acc.concat(participant.gifts);
     },
     [] as Array<{
-      __typename?: "Gift";
+      __typename?: 'Gift';
       id: string;
       slug: string;
       price: number;
@@ -100,7 +99,7 @@ export const Result = () => {
   // };
 
   const handleClose = () => {
-    navigate("/");
+    navigate('/');
   };
 
   const winRate =
@@ -126,15 +125,14 @@ export const Result = () => {
         </h1>
         <button
           onClick={handleClose}
-          className="basis-10 min-h-10 shrink-0 grid place-content-center cursor-pointer rounded-lg bg-white/10 backdrop-blur-[20px]"
-        >
+          className="basis-10 min-h-10 shrink-0 grid place-content-center cursor-pointer rounded-lg bg-white/10 backdrop-blur-[20px]">
           <Icons className="size-4" name="cross" />
         </button>
       </header>
       <div className="px-4 mb-4 pb-2">
         <div className="text-center mb-4">
           <Avatar
-            url={winner?.user.image || ""}
+            url={winner?.user.image || ''}
             className="size-25 mb-1 border-2 border-gray-350 mx-auto"
           />
           <h1 className="text-lg font-bold">{winner?.user.username}</h1>
@@ -143,10 +141,10 @@ export const Result = () => {
           <div className="p-2 bg-white/10 backdrop-blur-[1.25rem] border border-white/8 rounded-2xl text-center">
             <h6 className="text-gray-200 text-base/4.5 mb-1">Выигрыш</h6>
             <p className="flex items-center justify-center gap-1 font-bold text-lg text-white">
-              {totalAmount.toFixed(0)} TON{" "}
+              {totalAmount.toFixed(0)} TON{' '}
               <div className="bg-blue size-4 rounded-full grid place-content-center">
                 <Icons name="ton" className="size-4" />
-              </div>{" "}
+              </div>{' '}
             </p>
           </div>
           <div className="p-2 bg-white/10 backdrop-blur-[1.25rem] border border-white/8 rounded-2xl text-center">
@@ -184,10 +182,17 @@ const GiftCard = (props: GiftCardProps) => {
   return (
     <div>
       <div className="border border-white/40 relative rounded-lg overflow-hidden mb-2">
-        <TouchableLottie
-          animation={animation}
-          className="aspect-square rounded-lg overflow-hidden -mb-px"
-        />
+        {animation ? (
+          <TouchableLottie
+            animation={animation}
+            className="aspect-square rounded-lg overflow-hidden -mb-px"
+          />
+        ) : (
+          <img
+            className="bg-dark-blue-1500"
+            src="/assets/images/main/pepe_heart.webp"
+          />
+        )}
       </div>
       <p className="flex items-center justify-center gap-1">
         <span className="text-white font-bold text-sm">{price}</span>

@@ -12,7 +12,7 @@ export const WHEEL_ANIMATION = {
   SPIN_DURATION: 4000, // 4 секунды
 
   // Время показа имени победителя после завершения анимации (в миллисекундах)
-  WINNER_DISPLAY_DURATION: 2000, // 2 секунды
+  WINNER_DISPLAY_DURATION: 1000, // 2 секунды
 
   // Общее время от начала анимации до вызова onSpinComplete (в миллисекундах)
   TOTAL_ANIMATION_TIME: 6000, // 6 секунд (4 + 2)
