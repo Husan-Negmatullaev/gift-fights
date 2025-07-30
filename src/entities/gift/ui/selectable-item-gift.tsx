@@ -56,13 +56,14 @@ export const SelectableItemGift = (props: SelectableItemGiftProps) => {
 						)}
 					/>
 				)}
-
-				<Checkbox
-					readOnly
-					checked={active}
-					variant="bordered"
-					wrapperClassName="absolute top-2.5 left-2.5"
-				/>
+				<div>
+					<Checkbox
+						readOnly
+						checked={active}
+						variant="bordered"
+						wrapperClassName="absolute top-2.5 left-2.5 pointer-events-none"
+					/>
+				</div>
 			</div>
 			<div className="p-2">
 				<header
