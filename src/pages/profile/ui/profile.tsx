@@ -45,7 +45,7 @@ export const Profile = () => {
 									<h2 className="font-medium text-lg/5 max-w-50 mb-1.5">
 										Зарабатывайте на приглашениях !
 									</h2>
-									<p className="max-w-53 font-thin text-sm mb-2.5">
+									<p className="max-w-35 font-thin text-sm mb-2.5">
 										Получайте до 20% с выводов своих рефералов !
 									</p>
 									<div className="bg-[#11161B] flex items-center justify-between gap-4 relative rounded-2.5 p-1 z-1">
