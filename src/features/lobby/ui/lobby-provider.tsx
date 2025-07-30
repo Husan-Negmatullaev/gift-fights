@@ -1,6 +1,5 @@
 import React, { type ReactNode } from 'react';
-import { LobbyContext } from '@/entities/lobby/config/lobby-context';
-import { useGetLobbies } from '@/entities/lobby';
+import { useGetLobbies, LobbyContext } from '@/entities/lobby';
 import { LobbyStatus } from '@/shared/api/graphql/graphql';
 import { useGlobalLobbyUpdates } from '../hooks/use-global-lobby-updates';
 

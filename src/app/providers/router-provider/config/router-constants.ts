@@ -2,7 +2,8 @@
 import { Inventory } from '@/pages/inventory';
 // import { ActiveBattles } from "@/pages/active-battles";
 import { Leaders } from '@/pages/leaders';
-import { PlaySpin } from '@/pages/play';
+// import { PlaySpin } from '@/pages/play';
+import { Lobby } from '@/pages/lobby';
 import { Profile } from '@/pages/profile';
 import { Layout } from '@/widgets/layout';
 import { createBrowserRouter } from 'react-router';
@@ -60,7 +61,7 @@ export const BROWSER_ROUTERS = createBrowserRouter([
         children: [
           {
             index: true,
-            Component: PlaySpin,
+            Component: Lobby,
           },
           {
             path: 'result/:winnerId',

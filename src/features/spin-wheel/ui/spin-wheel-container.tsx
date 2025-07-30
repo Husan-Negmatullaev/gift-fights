@@ -2,11 +2,12 @@ import React from 'react';
 import { SpinWheel } from './spin-wheel';
 import { useSpinWheel } from '../hooks/use-spin-wheel';
 import { LobbyStatus, type GetLobbyQuery } from '@/shared/api/graphql/graphql';
-import { useLobbyCountdownSubscription } from '../../spin-gifts/hooks/use-lobby-countdown-subscription';
-import { useUserJoinedToLobbySocket } from '../../spin-gifts/hooks/use-user-joined-to-lobby-subscription';
-import { useLobbyProcessSubscription } from '../../spin-gifts/hooks/use-lobby-process-subscription';
-import { useLobbyWinnerSubscription } from '../../spin-gifts/hooks/use-lobby-winner-subscription';
-import { useUserAddedGiftsToLobbySubscription } from '../../spin-gifts/hooks/use-user-added-gifts-to-lobby-subscription';
+import {
+  useLobbyCountdownSubscription,
+  useUserJoinedToLobbySocket,
+  useLobbyWinnerSubscription,
+  useUserAddedGiftsToLobbySubscription,
+} from '@/features/wheel';
 import { useLobbyCacheUpdater } from '../hooks/use-lobby-cache-updater';
 
 interface SpinWheelContainerProps {
@@ -33,7 +34,7 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
     getPhaseText,
     // getPhaseLabel,
     handleAutoSpin,
-    startGame,
+    // startGame,
     updateGamePhase,
     updateCountdown,
     setGameStarted,
@@ -60,10 +61,10 @@ export const SpinWheelContainer: React.FC<SpinWheelContainerProps> = ({
     updateCountdown(lobby.timeToStart);
   });
 
-  useLobbyProcessSubscription(lobby.id, () => {
-    console.log('Игра началась!');
-    startGame();
-  });
+  // useLobbyProcessSubscription(lobby.id, () => {
+  //   console.log('Игра началась!');
+  //   startGame();
+  // });
 
   useLobbyWinnerSubscription(lobby.id, (payload) => {
     console.log('Игра закончилась!');

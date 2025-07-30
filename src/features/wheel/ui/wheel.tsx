@@ -1,81 +1,51 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Application } from '@pixi/react';
 import * as PIXI from 'pixi.js';
-import { LobbyStatus, type GetLobbyQuery } from '@/shared/api/graphql/graphql';
 import { Icons } from '@/shared/ui/icons/icons';
-import { HtmlAvatar } from './components/html-avatar';
+import { HtmlAvatar } from './html-avatar';
+import { LobbyStatus } from '@/shared/api/graphql/graphql';
 
 interface WheelSegment {
   id: number;
   label: string;
   stake: number;
   color: number;
+  image: string;
   reward: string;
   playerName: string;
   startAngle: number;
   endAngle: number;
   angle: number;
   percentage: number;
-  userId: number;
-  userImage?: string;
 }
 
 interface SpinWheelProps {
-  phaseText?: string;
+  text: string;
+  radius?: number;
   isSpinning?: boolean;
   gamePhase: LobbyStatus;
   targetRotation?: number;
   segments: WheelSegment[];
-  hasEnoughPlayers?: boolean;
-  lobby: GetLobbyQuery['lobby'];
+  onSpinComplete?: () => void;
+  winner: WheelSegment | null;
 }
 
-// Функция для форматирования времени в формат "00:XX" только для таймеров
-const formatTimer = (text: string): string => {
-  // Проверяем, является ли текст таймером (содержит число + "сек" или уже в формате времени)
-  const isTimer = text.match(/(\d+)\s*сек/) || text.match(/^\d{2}:\d{2}$/);
-
-  if (!isTimer) {
-    // Если это не таймер, возвращаем оригинальный текст
-    return text;
-  }
-
-  // Ищем число в тексте (например, "60 сек" -> "60")
-  const match = text.match(/(\d+)/);
-  if (match) {
-    const seconds = parseInt(match[1], 10);
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds
-      .toString()
-      .padStart(2, '0')}`;
-  }
-
-  // Если это уже в формате времени, возвращаем как есть
-  if (text.match(/^\d{2}:\d{2}$/)) {
-    return text;
-  }
-
-  // Для всех остальных случаев возвращаем оригинальный текст
-  return text;
-};
-
-export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
-  const {
-    segments,
-    gamePhase,
-    isSpinning = false,
-    targetRotation = 0,
-    phaseText = '60 сек',
-  } = props;
-
+export const Wheel: React.FC<SpinWheelProps> = ({
+  text,
+  winner,
+  segments,
+  gamePhase,
+  // radius = 200,
+  onSpinComplete,
+  isSpinning = false,
+  targetRotation = 0,
+}) => {
   const radius = 162;
   const sizes = 324 + 25;
-
   const animationRef = useRef<number | null>(null);
   const [internalRotation, setInternalRotation] = useState(0);
+  const [showWinnerName, setShowWinnerName] = useState(false);
 
-  // Calculate segment angles based on stake formula: (stake / totalStakes) * 100
   const calculateSegmentAngles = useCallback(() => {
     if (segments.length === 0) return [];
 
@@ -101,29 +71,89 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
     });
   }, [segments]);
 
-  // Удаляем логику загрузки текстур - теперь используем HTML img элементы
-
   const segmentsWithAngles = calculateSegmentAngles();
 
-  // Синхронизируем targetRotation с internalRotation
-  useEffect(() => {
-    if (!isSpinning && targetRotation !== undefined) {
-      // Добавляем tolerance для предотвращения бесконечных обновлений из-за floating-point неточности
-      const tolerance = 0.001;
-      const difference = Math.abs(targetRotation - internalRotation);
+  // useEffect(() => {
+  //   if (isSpinning && targetRotation !== undefined && !animationRef.current) {
+  //     console.log('🎬 Starting animation:', {
+  //       isSpinning,
+  //       targetRotation,
+  //       internalRotation,
+  //       difference: Math.abs(targetRotation - internalRotation),
+  //       animationRef: animationRef.current,
+  //     });
 
-      if (difference > tolerance) {
-        console.log('🔄 SpinWheel: Синхронизация targetRotation:', {
-          targetRotation,
-          internalRotation,
-          difference,
-        });
-        setInternalRotation(targetRotation);
-      }
-    }
-  }, [targetRotation, isSpinning]); // Убираем internalRotation из зависимостей!
+  //     // Сбрасываем показ имени победителя при новом спине
+  //     setShowWinnerName(false);
 
-  // Animate to target rotation when spinning (только для финальной анимации)
+  //     const duration = 2000;
+  //     const startTime = Date.now();
+  //     const startRotation = internalRotation;
+  //     const totalRotation = targetRotation - startRotation;
+
+  //     const animate = () => {
+  //       const elapsed = Date.now() - startTime;
+  //       const progress = Math.min(elapsed / duration, 1);
+
+  //       const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+  //       const currentRotation = startRotation + totalRotation * easeOutQuart;
+
+  //       setInternalRotation(currentRotation);
+
+  //       console.log('⏱️ Animation progress:', {
+  //         elapsed,
+  //         progress,
+  //         currentRotation,
+  //         isComplete: progress >= 1,
+  //       });
+
+  //       if (progress < 1) {
+  //         animationRef.current = requestAnimationFrame(animate);
+  //       } else {
+  //         console.log('🎉 Animation COMPLETED! Entering else block');
+  //         animationRef.current = null; // Сбрасываем флаг анимации
+
+  //         // Показываем имя победителя после завершения анимации
+  //         setShowWinnerName(true);
+
+  //         console.log('🏆 Animation completed, showing winner:', {
+  //           winner,
+  //           showWinnerName: true,
+  //           gamePhase,
+  //           winnerName: winner?.playerName,
+  //         });
+
+  //         setTimeout(() => {
+  //           if (onSpinComplete) {
+  //             onSpinComplete();
+  //           }
+  //         }, 500);
+  //       }
+  //     };
+
+  //     animationRef.current = requestAnimationFrame(animate);
+  //   } else {
+  //     console.log('❌ Animation NOT starting:', {
+  //       isSpinning,
+  //       targetRotation,
+  //       internalRotation,
+  //       difference:
+  //         targetRotation !== undefined
+  //           ? Math.abs(targetRotation - internalRotation)
+  //           : 'undefined',
+  //       animationRef: animationRef.current,
+  //     });
+  //   }
+
+  //   // Cleanup function
+  //   return () => {
+  //     if (animationRef.current) {
+  //       cancelAnimationFrame(animationRef.current);
+  //       animationRef.current = null;
+  //     }
+  //   };
+  // }, [isSpinning, targetRotation, onSpinComplete, segmentsWithAngles]);
+
   useEffect(() => {
     // Проверяем что нужна анимация и она еще не запущена
     if (
@@ -144,6 +174,9 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
       const startRotation = internalRotation;
       const totalRotation = targetRotation - startRotation;
 
+      // Play spin sound
+      // playSound('spin-start', 0.8);
+
       const animate = () => {
         const elapsed = Date.now() - startTime;
         const progress = Math.min(elapsed / duration, 1);
@@ -157,13 +190,6 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
         } else {
-          console.log('✅ SpinWheel: Финальная анимация завершена:', {
-            finalRotation: currentRotation,
-            finalDegreesNormalized: currentRotation % 360,
-            targetWas: targetRotation,
-            targetNormalizedWas: targetRotation % 360,
-          });
-
           // Дополнительная проверка: какой сегмент теперь находится под стрелкой
           const arrowPosition = 270; // стрелка всегда вверху на 270°
           const normalizedFinalRotation = ((currentRotation % 360) + 360) % 360;
@@ -182,10 +208,20 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
             arrowPosition,
             normalizedFinalRotation,
             adjustedArrowPosition,
+            adjustedArrowRadians,
+            adjustedArrowDegrees: (adjustedArrowRadians * 180) / Math.PI,
+            allSegments: segmentsWithAngles.map((seg) => ({
+              playerName: seg.playerName,
+              startAngleDeg: (seg.startAngle * 180) / Math.PI,
+              endAngleDeg: (seg.endAngle * 180) / Math.PI,
+              isUnderArrow:
+                adjustedArrowRadians >= seg.startAngle &&
+                adjustedArrowRadians <= seg.endAngle,
+            })),
             segmentUnderArrow: segmentUnderArrow
               ? {
                   playerName: segmentUnderArrow.playerName,
-                  userId: segmentUnderArrow.userId,
+                  userId: segmentUnderArrow.id,
                   startAngleDeg: (segmentUnderArrow.startAngle * 180) / Math.PI,
                   endAngleDeg: (segmentUnderArrow.endAngle * 180) / Math.PI,
                 }
@@ -193,6 +229,16 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
           });
 
           animationRef.current = null; // Сбрасываем флаг анимации
+
+          // Показываем имя победителя после завершения анимации
+          setShowWinnerName(true);
+
+          // Через 1 секунду вызываем onSpinComplete
+          setTimeout(() => {
+            if (onSpinComplete) {
+              onSpinComplete();
+            }
+          }, 1000);
         }
       };
 
@@ -206,7 +252,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
         animationRef.current = null;
       }
     };
-  }, [isSpinning, targetRotation]); // Убираем internalRotation из зависимостей!
+  }, [isSpinning, targetRotation, onSpinComplete, segmentsWithAngles]);
 
   const drawWheel = useCallback((g: PIXI.Graphics) => {
     g.clear();
@@ -245,6 +291,22 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
     g.endFill();
   }, []);
 
+  // const reverseInternalRotation = -internalRotation - 200;
+  // const reverseInternalRotation = -(internalRotation * internalRotation);
+  const reverseInternalRotation = internalRotation;
+
+  // Отладка значений вращения
+  console.log('🔄 Rotation debug:', {
+    internalRotation,
+    internalRotationDegrees: (internalRotation * 180) / Math.PI,
+    reverseInternalRotation,
+    reverseInternalRotationDegrees: (reverseInternalRotation * 180) / Math.PI,
+    targetRotation,
+    targetRotationDegrees: targetRotation
+      ? (targetRotation * 180) / Math.PI
+      : 'undefined',
+  });
+
   return (
     <div className="flex flex-col items-center">
       <div className="relative">
@@ -256,14 +318,53 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
           backgroundAlpha={0}
           resolution={window.devicePixelRatio || 1}>
           <pixiContainer x={sizes / 2} y={sizes / 2}>
-            <pixiContainer rotation={internalRotation}>
+            <pixiContainer rotation={reverseInternalRotation}>
+              {segmentsWithAngles.length === 0 && (
+                <pixiGraphics
+                  draw={(g: PIXI.Graphics) => {
+                    g.clear();
+
+                    const outerRadius = radius;
+                    const innerRadius = radius / 2;
+
+                    // Рисуем кольцо через построение пути
+                    g.beginFill(0xffffff, 0.1);
+
+                    // Строим путь для кольца
+                    const segments = 32;
+
+                    // Внешний контур
+                    for (let i = 0; i <= segments; i++) {
+                      const angle = (i / segments) * Math.PI * 2;
+                      const x = Math.cos(angle) * outerRadius;
+                      const y = Math.sin(angle) * outerRadius;
+
+                      if (i === 0) {
+                        g.moveTo(x, y);
+                      } else {
+                        g.lineTo(x, y);
+                      }
+                    }
+
+                    // Внутренний контур (в обратном направлении для создания отверстия)
+                    for (let i = segments; i >= 0; i--) {
+                      const angle = (i / segments) * Math.PI * 2;
+                      const x = Math.cos(angle) * innerRadius;
+                      const y = Math.sin(angle) * innerRadius;
+                      g.lineTo(x, y);
+                    }
+
+                    g.closePath();
+                    g.endFill();
+                  }}
+                />
+              )}
               {segmentsWithAngles.map((segment, index) => {
                 const startAngleDeg = (segment.startAngle * 180) / Math.PI;
                 const endAngleDeg = (segment.endAngle * 180) / Math.PI;
 
                 // Массив цветов для сегментов
-                const segmentColor =
-                  segmentColors[index % segmentColors.length];
+                const segmentColor = colors[index % colors.length];
 
                 // Создаем blur фильтр для тени
                 const blurFilter = new PIXI.BlurFilter(6, 4); // blur-radius = 6
@@ -346,8 +447,6 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
                   </pixiContainer>
                 );
               })}
-
-              {/* Аватары теперь рендерятся как HTML элементы поверх canvas */}
             </pixiContainer>
 
             <pixiContainer>
@@ -355,23 +454,57 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
               <pixiText
                 x={0}
                 y={0}
+                text={(() => {
+                  let displayText;
+
+                  if (showWinnerName && winner) {
+                    // Показываем имя победителя после завершения анимации
+                    displayText = winner.playerName;
+                  } else if (
+                    text === '' &&
+                    gamePhase === LobbyStatus.Completed
+                  ) {
+                    // Показываем "00:00" во время анимации когда статус Completed
+                    displayText = '00:00';
+                  } else {
+                    // Используем переданный текст
+                    displayText = text;
+                  }
+
+                  console.log('💬 Display text:', {
+                    showWinnerName,
+                    winner: winner?.playerName,
+                    originalText: text,
+                    finalText: displayText,
+                    gamePhase,
+                  });
+
+                  return displayText;
+                })()}
                 anchor={0.5}
-                text={formatTimer(phaseText)}
                 style={
                   new PIXI.TextStyle({
-                    fontSize: [LobbyStatus.WaitingForPlayers].includes(
-                      gamePhase,
-                    )
-                      ? 16
-                      : 32,
-                    fill: [LobbyStatus.WaitingForPlayers].includes(gamePhase)
-                      ? 0x808080
-                      : 0xffffff,
-                    fontWeight: [LobbyStatus.WaitingForPlayers].includes(
-                      gamePhase,
-                    )
-                      ? '400'
-                      : '700',
+                    fontSize: (() => {
+                      if (showWinnerName && winner) return 24; // Winner name size
+                      if (gamePhase === LobbyStatus.Countdown) return 32; // Countdown size
+                      if (gamePhase === LobbyStatus.WaitingForPlayers)
+                        return 16; // Waiting size
+                      return 32; // Default size
+                    })(),
+                    fill: (() => {
+                      if (showWinnerName && winner) return 0xffffff; // Winner name - white
+                      if (gamePhase === LobbyStatus.Countdown) return 0xffffff; // Countdown - white
+                      if (gamePhase === LobbyStatus.WaitingForPlayers)
+                        return 0x808080; // Waiting - gray
+                      return 0xffffff; // Default - white
+                    })(),
+                    fontWeight: (() => {
+                      if (showWinnerName && winner) return '700'; // Winner name - bold
+                      if (gamePhase === LobbyStatus.Countdown) return '700'; // Countdown - bold
+                      if (gamePhase === LobbyStatus.WaitingForPlayers)
+                        return '400'; // Waiting - normal
+                      return '700'; // Default - bold
+                    })(),
                   })
                 }
               />
@@ -393,9 +526,9 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
             <HtmlAvatar
               x={x}
               y={y}
+              src={segment.image}
               containerSize={sizes}
-              rotation={internalRotation}
-              src={segment.userImage || ''}
+              rotation={reverseInternalRotation}
               key={`html-avatar-${segment.id}`}
               playerName={segment.playerName}
             />
@@ -411,7 +544,7 @@ export const SpinWheel: React.FC<SpinWheelProps> = (props: SpinWheelProps) => {
   );
 };
 
-const segmentColors = [
+const colors = [
   0xc49cff, // #C49CFF - фиолетовый
   0xff86c8, // #FF86C8 - розовый
   0x7ef29d, // #7EF29D - зеленый

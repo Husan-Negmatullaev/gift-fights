@@ -58,13 +58,13 @@ const GET_PARTICIPANTS = graphql(`
         createdAt
         updatedAt
         participants {
-                id
-                amount
-                userId
-                lobbyId
-                createdAt
-                updatedAt
-            }
+          id
+          amount
+          userId
+          lobbyId
+          createdAt
+          updatedAt
+        }
       }
     }
   }
@@ -84,4 +84,4 @@ export const useGetParticipants = (args: { take: number; skip: number }) => {
     error,
     refetch,
   };
-}; 
+};

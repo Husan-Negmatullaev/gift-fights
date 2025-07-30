@@ -3,10 +3,15 @@ import { Avatar } from '@/shared/ui/avatar/avatar';
 import clsx from 'clsx';
 import { LobbyStatus, type GetLobbyQuery } from '@/shared/api/graphql/graphql';
 import { Icons } from '@/shared/ui/icons/icons';
-import { useLobbyCountdownSubscription } from '../hooks/use-lobby-countdown-subscription';
-import { useUserJoinedToLobbySocket } from '../hooks/use-user-joined-to-lobby-subscription';
-import { useLobbyProcessSubscription } from '../hooks/use-lobby-process-subscription';
-import { useLobbyWinnerSubscription } from '../hooks/use-lobby-winner-subscription';
+import {
+  useLobbyCountdownSubscription,
+  useLobbyWinnerSubscription,
+  useUserJoinedToLobbySocket,
+} from '@/features/wheel';
+// import { useLobbyCountdownSubscription } from '../hooks/use-lobby-countdown-subscription';
+// import { useUserJoinedToLobbySocket } from '../hooks/use-user-joined-to-lobby-subscription';
+// import { useLobbyProcessSubscription } from '../hooks/use-lobby-process-subscription';
+// import { useLobbyWinnerSubscription } from '../hooks/use-lobby-winner-subscription';
 
 type SpinCarouselProps = {
   gifts: string[];
@@ -265,13 +270,13 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
     return () => clearTimeout(timer);
   }, [gameTimer, gamePhase, isEternalSpinning]);
 
-  const startGame = () => {
-    if (!hasEnoughPlayers || gameStarted) return;
+  // const startGame = () => {
+  //   if (!hasEnoughPlayers || gameStarted) return;
 
-    setGameStarted(true);
-    setGamePhase(LobbyStatus.Countdown);
-    setCountdown(calculateActualCountdown());
-  };
+  //   setGameStarted(true);
+  //   setGamePhase(LobbyStatus.Countdown);
+  //   setCountdown(calculateActualCountdown());
+  // };
 
   useUserJoinedToLobbySocket(lobby.id, (payload) => {
     console.log('Кто-то присоединился к лобби!', payload);
@@ -289,11 +294,11 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
     setCountdown(calculateActualCountdown());
   });
 
-  useLobbyProcessSubscription(lobby.id, () => {
-    console.log('Игра началась!');
+  // useLobbyProcessSubscription(lobby.id, () => {
+  //   console.log('Игра началась!');
 
-    startGame();
-  });
+  //   startGame();
+  // });
 
   useLobbyWinnerSubscription(lobby.id, (payload) => {
     console.log('Игра закончилась!');
@@ -404,3 +409,6 @@ export const SpinCarousel = (props: SpinCarouselProps) => {
     </div>
   );
 };
+// function useLobbyProcessSubscription(id: number, arg1: () => void) {
+//   throw new Error('Function not implemented.');
+// }

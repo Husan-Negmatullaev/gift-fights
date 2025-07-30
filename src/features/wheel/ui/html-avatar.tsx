@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 
 interface HtmlAvatarProps {
+  src: string;
+  playerName: string;
   x: number;
   y: number;
-  src: string;
   rotation: number;
-  playerName: string;
   containerSize: number;
 }
 
 export const HtmlAvatar: React.FC<HtmlAvatarProps> = ({
+  src,
+  playerName,
   x,
   y,
-  src,
   rotation,
-  playerName,
   containerSize,
 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
