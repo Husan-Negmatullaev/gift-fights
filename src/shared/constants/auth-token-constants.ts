@@ -1,5 +1,5 @@
 let MOCK_TELEGRAM_AUTH =
-  'query_id=AAHTmpAvAAAAANOakC9Lg-GY&user=%7B%22id%22%3A798005971%2C%22first_name%22%3A%22HUSAN%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22Husan203%22%2C%22language_code%22%3A%22ru%22%2C%22is_premium%22%3Atrue%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FRDGUIBFtIMJxlvGNI_Q5WUJj7w9Fo5lLre75kJq0kyI.svg%22%7D&auth_date=1753699056&signature=9TyYeKRQZ0eTpP_FTEOMXCOmRqCkm-ARy0VuOliFT_-eRqARm4iEHYimPGW6EazFpWsp2VM_N1G4xEct72V5AQ&hash=2cb0974c35341025808bf5f5c598f3ceb281d35c46399776027bc71e96398394';
+  'query_id=AAF-IPwYAAAAAH4g_Bgb60jR&user=%7B%22id%22%3A419176574%2C%22first_name%22%3A%22droggeljug%22%2C%22last_name%22%3A%22%22%2C%22username%22%3A%22droggeljug%22%2C%22language_code%22%3A%22en%22%2C%22is_premium%22%3Atrue%2C%22allows_write_to_pm%22%3Atrue%2C%22photo_url%22%3A%22https%3A%5C%2F%5C%2Ft.me%5C%2Fi%5C%2Fuserpic%5C%2F320%5C%2FGLZY3ED6eA8-rClEA--rwC7aiSt28gr5r38Uyy32UUw.svg%22%7D&auth_date=1753883983&signature=2X7D8WDn0CeGk9J__rHdMXrD1aLQ0GcJHS7B12aobKf1se0lquH8Ll-q_zZ3VSeRb_QVnYaOVG8PPeQnfWwKDg&hash=185b5b2698d4236013795e73db63f928b8443fd679b900cbb0cba2da9be2ddda';
 
 if (import.meta.env.DEV) {
   if (confirm('IS AX')) {
