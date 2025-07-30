@@ -5,6 +5,7 @@ import {
   useLobbyWinnerSubscription,
 } from '@/features/wheel';
 import { LobbyStatus, type GetLobbyQuery } from '@/shared/api/graphql/graphql';
+import { WHEEL_ANIMATION } from '@/shared/constants/wheel-animation-constants';
 
 type WheelContainerProps = {
   onAfterJoinToLobby(): void;
@@ -119,7 +120,8 @@ export const WheelContainer = (props: WheelContainerProps) => {
 
   const startSpin = useCallback(() => {
     setStatus(LobbyStatus.Completed); // Переходим в статус Completed когда начинается анимация
-    setSpinTimeLeft(1); // 4X SPEED - 0.25 second animation but 1 second timer display
+    // Используем секунды для отображения, конвертируем из миллисекунд
+    setSpinTimeLeft(Math.ceil(WHEEL_ANIMATION.TOTAL_ANIMATION_TIME / 1000));
     return { predeterminedWinner: null, targetRotation: 0 };
   }, []);
 
@@ -144,12 +146,8 @@ export const WheelContainer = (props: WheelContainerProps) => {
   // Handle spin completion
   const handleSpinComplete = useCallback(() => {
     if (predeterminedWinner) {
-      setStatus(LobbyStatus.Completed);
+      // Анимация уже завершена, просто вызываем onWinner
       onWinner(predeterminedWinner.id.toString());
-
-      setTimeout(() => {
-        onWinner?.(predeterminedWinner.id.toString());
-      }, 3000);
     }
   }, [predeterminedWinner, onWinner]);
 
@@ -233,7 +231,7 @@ export const WheelContainer = (props: WheelContainerProps) => {
       });
 
       setTimeout(() => {
-        const excitingSpins = 5 * 360;
+        const excitingSpins = WHEEL_ANIMATION.EXCITING_SPINS * 360;
         const finalRotationDegrees = excitingSpins + rotationNeeded;
         const finalRotationRadians = finalRotationDegrees * (Math.PI / 180);
 
@@ -247,7 +245,8 @@ export const WheelContainer = (props: WheelContainerProps) => {
 
         setTargetRotation(finalRotationRadians);
         setStatus(LobbyStatus.Completed); // Устанавливаем Completed когда начинается анимация крутки
-        setSpinTimeLeft(4);
+        // Используем секунды для отображения, конвертируем из миллисекунд
+        setSpinTimeLeft(Math.ceil(WHEEL_ANIMATION.TOTAL_ANIMATION_TIME / 1000));
       }, 1200);
     } else {
       console.error('❌ Winner segment not found!', {

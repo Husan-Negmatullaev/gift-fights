@@ -4,6 +4,7 @@ import * as PIXI from 'pixi.js';
 import { Icons } from '@/shared/ui/icons/icons';
 import { HtmlAvatar } from './html-avatar';
 import { LobbyStatus } from '@/shared/api/graphql/graphql';
+import { WHEEL_ANIMATION } from '@/shared/constants/wheel-animation-constants';
 
 interface WheelSegment {
   id: number;
@@ -73,105 +74,31 @@ export const Wheel: React.FC<SpinWheelProps> = ({
 
   const segmentsWithAngles = calculateSegmentAngles();
 
-  // useEffect(() => {
-  //   if (isSpinning && targetRotation !== undefined && !animationRef.current) {
-  //     console.log('🎬 Starting animation:', {
-  //       isSpinning,
-  //       targetRotation,
-  //       internalRotation,
-  //       difference: Math.abs(targetRotation - internalRotation),
-  //       animationRef: animationRef.current,
-  //     });
-
-  //     // Сбрасываем показ имени победителя при новом спине
-  //     setShowWinnerName(false);
-
-  //     const duration = 2000;
-  //     const startTime = Date.now();
-  //     const startRotation = internalRotation;
-  //     const totalRotation = targetRotation - startRotation;
-
-  //     const animate = () => {
-  //       const elapsed = Date.now() - startTime;
-  //       const progress = Math.min(elapsed / duration, 1);
-
-  //       const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-  //       const currentRotation = startRotation + totalRotation * easeOutQuart;
-
-  //       setInternalRotation(currentRotation);
-
-  //       console.log('⏱️ Animation progress:', {
-  //         elapsed,
-  //         progress,
-  //         currentRotation,
-  //         isComplete: progress >= 1,
-  //       });
-
-  //       if (progress < 1) {
-  //         animationRef.current = requestAnimationFrame(animate);
-  //       } else {
-  //         console.log('🎉 Animation COMPLETED! Entering else block');
-  //         animationRef.current = null; // Сбрасываем флаг анимации
-
-  //         // Показываем имя победителя после завершения анимации
-  //         setShowWinnerName(true);
-
-  //         console.log('🏆 Animation completed, showing winner:', {
-  //           winner,
-  //           showWinnerName: true,
-  //           gamePhase,
-  //           winnerName: winner?.playerName,
-  //         });
-
-  //         setTimeout(() => {
-  //           if (onSpinComplete) {
-  //             onSpinComplete();
-  //           }
-  //         }, 500);
-  //       }
-  //     };
-
-  //     animationRef.current = requestAnimationFrame(animate);
-  //   } else {
-  //     console.log('❌ Animation NOT starting:', {
-  //       isSpinning,
-  //       targetRotation,
-  //       internalRotation,
-  //       difference:
-  //         targetRotation !== undefined
-  //           ? Math.abs(targetRotation - internalRotation)
-  //           : 'undefined',
-  //       animationRef: animationRef.current,
-  //     });
-  //   }
-
-  //   // Cleanup function
-  //   return () => {
-  //     if (animationRef.current) {
-  //       cancelAnimationFrame(animationRef.current);
-  //       animationRef.current = null;
-  //     }
-  //   };
-  // }, [isSpinning, targetRotation, onSpinComplete, segmentsWithAngles]);
+  // Сбрасываем показ имени победителя при новом спине
+  useEffect(() => {
+    if (isSpinning) {
+      setShowWinnerName(false);
+    }
+  }, [isSpinning]);
 
   useEffect(() => {
-    let timer: ReturnType<typeof setTimeout>;
+    let winnerTimer: ReturnType<typeof setTimeout>;
+    let completeTimer: ReturnType<typeof setTimeout>;
+
     if (
       isSpinning &&
       targetRotation !== undefined &&
       Math.abs(targetRotation - internalRotation) > 0.1 &&
       !animationRef.current
     ) {
-      const duration = 1000;
       const startTime = Date.now();
       const startRotation = internalRotation;
       const totalRotation = targetRotation - startRotation;
 
-      // playSound('spin-start', 0.8);
-
+      // Анимация вращения
       const animate = () => {
         const elapsed = Date.now() - startTime;
-        const progress = Math.min(elapsed / duration, 1);
+        const progress = Math.min(elapsed / WHEEL_ANIMATION.SPIN_DURATION, 1);
 
         const easeOutQuart = 1 - Math.pow(1 - progress, 4);
         const currentRotation = startRotation + totalRotation * easeOutQuart;
@@ -181,31 +108,21 @@ export const Wheel: React.FC<SpinWheelProps> = ({
         if (progress < 1) {
           animationRef.current = requestAnimationFrame(animate);
         } else {
-          // Дополнительная проверка: какой сегмент теперь находится под стрелкой
-          // const arrowPosition = 270; // стрелка всегда вверху на 270°
-          // // const normalizedFinalRotation = ((currentRotation % 360) + 360) % 360;
-          // // const adjustedArrowPosition =
-          // //   (arrowPosition - normalizedFinalRotation + 360) % 360;
-          // // const adjustedArrowRadians = (adjustedArrowPosition * Math.PI) / 180;
-
-          // // // Находим сегмент под стрелкой
-          // // const segmentUnderArrow = segmentsWithAngles.find(
-          // //   (segment) =>
-          // //     adjustedArrowRadians >= segment.startAngle &&
-          // //     adjustedArrowRadians <= segment.endAngle,
-          // // );
-
           animationRef.current = null;
-
-          setShowWinnerName(true);
-
-          timer = setTimeout(() => {
-            onSpinComplete?.();
-          }, 1000);
         }
       };
 
       animationRef.current = requestAnimationFrame(animate);
+
+      // Показываем имя победителя после завершения анимации вращения
+      winnerTimer = setTimeout(() => {
+        setShowWinnerName(true);
+      }, WHEEL_ANIMATION.SPIN_DURATION);
+
+      // Вызываем onSpinComplete после показа имени победителя
+      completeTimer = setTimeout(() => {
+        onSpinComplete?.();
+      }, WHEEL_ANIMATION.TOTAL_ANIMATION_TIME);
     }
 
     // Cleanup function
@@ -213,10 +130,11 @@ export const Wheel: React.FC<SpinWheelProps> = ({
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
         animationRef.current = null;
-        clearTimeout(timer);
       }
+      clearTimeout(winnerTimer);
+      clearTimeout(completeTimer);
     };
-  }, [isSpinning, targetRotation, onSpinComplete, segmentsWithAngles]);
+  }, [isSpinning, targetRotation, onSpinComplete]);
 
   const drawWheel = useCallback((g: PIXI.Graphics) => {
     g.clear();
