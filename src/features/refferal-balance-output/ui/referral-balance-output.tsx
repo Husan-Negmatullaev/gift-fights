@@ -95,9 +95,7 @@ export const ReferralBalanceOutput = () => {
           </div>
           <div className="flex justify-between mt-1">
             <p className="text-sm text-[#A8A8A8]">Мин. сумма: {1} TON</p>
-            <p className="text-sm text-white">
-              Баланс: {profile?.bonuses || 0} TON
-            </p>
+            <p className="text-sm text-white">Баланс: {bonuses} TON</p>
           </div>
           <button
             type="button"
